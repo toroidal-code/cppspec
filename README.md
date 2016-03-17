@@ -11,7 +11,7 @@ int n = 0;
 describe fabs_spec("fabs", _ {
   context("argument is zero", _ {
     it("return zero", _ {
-      expect(fabs(n)).to_equal(n)();
+      expect(fabs(n)).to_equal(n);
     });
   });
 
@@ -21,20 +21,19 @@ describe fabs_spec("fabs", _ {
 
   context("argument is positive", _ {
     it("return positive", _ {
-      expect(fabs(n)).to_equal(n)
-	    ("fabs(" + std::to_string(n) + ") didn't equal " + std::to_string(n));
+      expect(fabs(n)).to_equal(n, "fabs(" + std::to_string(n) + ") didn't equal " + std::to_string(n));
     });
   });
 
   context("argument is negative", _ {
     it("return positive", _ {
-      expect(fabs(-n)).to_equal(n)();
+      expect(fabs(-n)).to_equal(n);
     });
   });
 });
 
 describe_a <std::list<int>> int_list_spec({1,2,3}, _ {
-  it(_{ is_expected().to_include(3)(); });
+  it(_{ is_expected().to_include(3); });
 });
 
 int main(void) {
@@ -47,7 +46,7 @@ int main(void) {
 ```
 
 ## Why?
-Because BDD-testing on C and C++ sucks. It's hard, and not at all easy to read with current tools. I wanted something where I could make comprehensive _readable_ BDD tests really, really easily.
+Because good BDD-testing on C and C++ is hard. I wanted something where I could make comprehensive _readable_ BDD tests really, really easily.
 
 ## How?
 Unholy black magic.
@@ -65,8 +64,14 @@ Expecatations::Expectation<std::initializer_list<int>>({1,2,3}).to_include<std::
 
 Not fun. Cool. But definitely not fun.
 
+## Why should I use this instead of some other testing framework?
+
+So that your tests can look nice. Or because you want to use RSpec syntax for testing C or C++. Or because it's pretty simple to use, yet powerful thanks to the extensible matchers. There's a bunch of possible reasons.
+
+...Or maybe because you find it cool and you'd like to hack on it and contribute? (pretty please?)
+
 ## It's Ugly!
-Yeah, I know. Let's see you make it any prettier (and if you do, send me a pull request :P ).
+Yeah, I know. It's not the best. Let's see you make it any prettier (and if you do, send me a pull request :P ).
 
 In all honesty though, this was as close to RSpec or Jasmine syntax as I could get. I think I did
 a pretty darn good job, if I do say so myself. Even if the library itself seriously needs
@@ -89,6 +94,8 @@ You stick the library into your include folder, probably using something like `g
 I'm (We're?) working on an actual test runner, instead of the weird boolean and-ing that you can see in the example, but the explicit `run`-ing works for now, and will probably always be an option.
 
 There are really two ways to go about creating your tests: as a bunch of little individual executables, or as one giant monolithic one. CMake's CTest likes it when you have a bunch of individual test programs, but having a single runner file with a bunch of tests implemented in separate `something_spec.hpp` files might compile faster for you.
+
+
 
 ## Attribution
 Heavily inspired by [RSpec](https://github.com/rspec) and [Jasmine](http://jasmine.github.io).

@@ -11,75 +11,75 @@ describe bool_spec("Some Tests", _ {
 
     context("4 is", _ {
         it("equals 4", _ {
-            expect(4).to_equal(4)();
+            expect(4).to_equal(4);
           });
         it("does not equal 5", _ {
-            expect(4).not_().to_equal(5)();
+            expect(4).not_().to_equal(5);
           });
       });
 
     context("0 is", _ {
         it("between -1 and 1 (exclusive)", _ {
-            expect(0).to_be_between(-1, 1).exclusive()();
+            expect(0).to_be_between(-1, 1, Matchers::RangeMode::exclusive);
           });
         it("between -0 and 0 (inclusive)", _ {
-            expect(0).to_be_between(-0,0).inclusive()();
+            expect(0).to_be_between(-0,0, Matchers::RangeMode::inclusive);
           });
         it("not between -0 and 0 (exclusive)", _ {
-            expect(0).not_().to_be_between(-0,0).exclusive()();
+            expect(0).not_().to_be_between(-0,0, Matchers::RangeMode::exclusive);
           });
         it("not between 1 and -1", _ {
-            expect(0).not_().to_be_between(1,-1).exclusive()();
+            expect(0).not_().to_be_between(1,-1);
           });
         it("between -1.0 and 1.0 (exclusive)", _ {
-            expect(0).to_be_between(-1.0, 1.0).exclusive()();
+            expect(0).to_be_between(-1.0, 1.0, Matchers::RangeMode::exclusive);
           });
       });
 
 
     context("{1,2,3}", _ {
         it("includes 1", _ {
-            expect({1,2,3}).to_include({1})();
+            expect({1,2,3}).to_include({1});
           });
         it("includes [1,2,3]", _ {
-            expect({1,2,3}).to_include({1,2,3})();
+            expect({1,2,3}).to_include({1,2,3});
           });
         it("does not include 4", _ {
-            expect({1,2,3}).not_().to_include({4})();
+            expect({1,2,3}).not_().to_include({4});
           });
 
         it("does not include [4,5,6]", _ {
-            expect({1,2,3}).not_().to_include({4,5,6})();
+            expect({1,2,3}).not_().to_include({4,5,6});
           });
       });
 
 
     context <std::list<int>>({1,2,3}, _ {
-        it(_ { is_expected().to_include(1)(); });
+        it(_ { is_expected().to_include(1); });
 
         it("includes [1,2,3]", _ {
-            expect<std::list<int>>({1,2,3}).to_include({1,2,3})();
+            expect<std::list<int>>({1,2,3}).to_include({1,2,3});
           });
 
-        it( _ { is_expected().not_().to_include(4)(); });
+        it( _ { is_expected().not_().to_include(4); });
 
         it("does not include [4,5,6]", _ {
-            is_expected().not_().to_include({4,5,6})();
+            is_expected().not_().to_include({4,5,6});
           });
       });
 
     // context("std::map {{1,2},{3,4},{5,6}}", _ {
     //     it("includes 1", _ {
     //         std::map<int,int> m = {{1,2},{3,4},{5,6}};
-    //         expect(m).to_include({1})();
+    //         expect(m).to_include({1});
     //       });
     //     it("includes [1,2,3]", _ {
     //         std::map<int,int> m = {{1,2},{3,4},{5,6}};
-    //         expect(m).to_include({1,2,3})();
+    //         expect(m).to_include({1,2,3});
     //       });
     //     it("does not include 4", _ {
     //         std::map<int,int> m = {{1,2},{3,4},{5,6}};
-    //         expect(m).not_().to_include({4})();
+    //         expect(m).not_().to_include({4});
     //       });
     //     it("does not include 4,5,6", _ {
     //         std::map<int,int> m = {{1,2},{3,4},{5,6}};
@@ -124,7 +124,7 @@ describe bool_spec("Some Tests", _ {
 
 describe_a <std::vector<int>> vector_spec({1,2,3,4}, _ {
     it("should contain 2", _ {
-        expect({1,2,3,4}).to_include(6)();
+        expect({1,2,3,4}).to_include(6);
       });
   });
 
@@ -138,13 +138,13 @@ describe_a <std::vector<int>> vector_spec({1,2,3,4}, _ {
 //   });
 
 describe_a <std::vector<int>> another_vector_spec({1,2,3,4}, _ {
-    it( _ { is_expected().to_include(6)(); });
+    it( _ { is_expected().to_include(6); });
   });
 
 
 describe list_spec("A list spec", _ {
     context<std::list<int>>({1,2,3,4}, _ {
-        it( _ { is_expected().to_include(6)(); });
+        it( _ { is_expected().to_include(6); });
       });
   });
 

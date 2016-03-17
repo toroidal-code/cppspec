@@ -3,6 +3,7 @@
 #include <functional>
 #include <vector>
 #include "runnable.hpp"
+#include "matchers/basematcher.hpp"
 #include "matchers/be_between.hpp"
 #include "matchers/include.hpp"
 #include "matchers/equal.hpp"
@@ -48,23 +49,59 @@ class Expectation : public Child {
   bool get_sign();
 
   Expectation &not_();
-  Expectation &to_be();
+  Expectation &to();
+
+  // template <typename U>
+  // Matchers::Include<A, std::vector<U>, U> to_include(
+  //     std::initializer_list<U> expected);
+
+  // template <typename U>
+  // Matchers::Include<A, U, U> to_include(U expected);
+
+  // template <typename E>
+  // Matchers::BeBetween<A, E> to_be_between(E min, E max);
+
+  // template <typename E>
+  // Matchers::Equal<A, E> to_equal(E expected);
+
+  // template <typename E>
+  // Matchers::BeWithin<A, E> to_be_within(E expected);
 
   template <typename U>
-  Matchers::Include<A, std::vector<U>, U> to_include(
-      std::initializer_list<U> expected);
+  bool to_include(std::initializer_list<U> expected);
 
   template <typename U>
-  Matchers::Include<A, U, U> to_include(U expected);
+  bool to_include(std::initializer_list<U> expected, std::string msg);
+
+  template <typename U>
+  bool to_include(U expected);
+
+  template <typename U>
+  bool to_include(U expected, std::string msg);
 
   template <typename E>
-  Matchers::BeBetween<A, E> to_be_between(E min, E max);
+  bool to_be_between(E min, E max, Matchers::RangeMode mode);
 
   template <typename E>
-  Matchers::Equal<A, E> to_equal(E expected);
+  bool to_be_between(E min, E max, Matchers::RangeMode mode, std::string msg);
 
   template <typename E>
-  Matchers::BeWithin<A, E> to_be_within(E expected);
+  bool to_be_between(E min, E max);
+
+  template <typename E>
+  bool to_be_between(E min, E max, std::string msg);
+
+  template <typename E>
+  bool to_equal(E expected);
+
+  template <typename E>
+  bool to_equal(E expected, std::string msg);
+
+  template <typename E>
+  bool to_be_within(E expected);
+
+  template <typename E>
+  bool to_be_within(E expected, std::string msg);
 };
 
 template <typename A>
@@ -95,43 +132,96 @@ Expectation<A> &Expectation<A>::not_() {
 
 template <typename A>
 template <typename E>
-Matchers::BeBetween<A, E> Expectation<A>::to_be_between(E min, E max) {
-  auto matcher = new Matchers::BeBetween<A, E>(*this, min, max);
-  matcher->set_parent(this->get_parent());
-  return *matcher;
-}
-
-template <typename A>
-template <typename U>
-Matchers::Include<A, std::vector<U>, U> Expectation<A>::to_include(
-    std::initializer_list<U> expected) {
-  auto matcher = new Matchers::Include<A, std::vector<U>, U>(*this, expected);
-  matcher->set_parent(this->get_parent());
-  return *matcher;
-}
-
-template <typename A>
-template <typename U>
-Matchers::Include<A, U, U> Expectation<A>::to_include(U expected) {
-  auto matcher = new Matchers::Include<A, U, U>(*this, expected);
-  matcher->set_parent(this->get_parent());
-  return *matcher;
+bool Expectation<A>::to_be_between(E min, E max, Matchers::RangeMode mode) {
+  Matchers::BeBetween<A, E> matcher(*this, min, max, mode);
+  matcher.set_parent(this->get_parent());
+  return matcher();
 }
 
 template <typename A>
 template <typename E>
-Matchers::Equal<A, E> Expectation<A>::to_equal(E expected) {
-  auto matcher = new Matchers::Equal<A, E>(*this, expected);
-  matcher->set_parent(this->get_parent());
-  return *matcher;
+bool Expectation<A>::to_be_between(E min, E max, Matchers::RangeMode mode,
+                                   std::string msg) {
+  Matchers::BeBetween<A, E> matcher(*this, min, max, mode);
+  matcher.set_parent(this->get_parent());
+  return matcher(msg);
 }
 
 template <typename A>
 template <typename E>
-Matchers::BeWithin<A, E> Expectation<A>::to_be_within(E expected) {
-  auto matcher = new Matchers::BeWithin<A, E>(*this, expected);
-  matcher->set_parent(this->get_parent());
-  return *matcher;
+bool Expectation<A>::to_be_between(E min, E max) {
+  return this->to_be_between(min, max, Matchers::RangeMode::inclusive);
+}
+
+template <typename A>
+template <typename E>
+bool Expectation<A>::to_be_between(E min, E max, std::string msg) {
+  return this->to_be_between(min, max, Matchers::RangeMode::inclusive, msg);
+}
+
+template <typename A>
+template <typename U>
+bool Expectation<A>::to_include(std::initializer_list<U> expected) {
+  Matchers::Include<A, std::vector<U>, U> matcher(*this, expected);
+  matcher.set_parent(this->get_parent());
+  return matcher();
+}
+
+template <typename A>
+template <typename U>
+bool Expectation<A>::to_include(std::initializer_list<U> expected,
+                                std::string msg) {
+  Matchers::Include<A, std::vector<U>, U> matcher(*this, expected);
+  matcher.set_parent(this->get_parent());
+  return matcher(msg);
+}
+
+template <typename A>
+template <typename U>
+bool Expectation<A>::to_include(U expected) {
+  Matchers::Include<A, U, U> matcher(*this, expected);
+  matcher.set_parent(this->get_parent());
+  return matcher();
+}
+
+template <typename A>
+template <typename U>
+bool Expectation<A>::to_include(U expected, std::string msg) {
+  Matchers::Include<A, U, U> matcher(*this, expected);
+  matcher.set_parent(this->get_parent());
+  return matcher(msg);
+}
+
+template <typename A>
+template <typename E>
+bool Expectation<A>::to_equal(E expected) {
+  Matchers::Equal<A, E> matcher(*this, expected);
+  matcher.set_parent(this->get_parent());
+  return matcher();
+}
+
+template <typename A>
+template <typename E>
+bool Expectation<A>::to_equal(E expected, std::string msg) {
+  Matchers::Equal<A, E> matcher(*this, expected);
+  matcher.set_parent(this->get_parent());
+  return matcher(msg);
+}
+
+template <typename A>
+template <typename E>
+bool Expectation<A>::to_be_within(E expected) {
+  Matchers::BeWithin<A, E> matcher(*this, expected);
+  matcher.set_parent(this->get_parent());
+  return matcher();
+}
+
+template <typename A>
+template <typename E>
+bool Expectation<A>::to_be_within(E expected, std::string msg) {
+  Matchers::BeWithin<A, E> matcher(*this, expected);
+  matcher.set_parent(this->get_parent());
+  return matcher(msg);
 }
 }
 #endif /* EXPECTATION_H */

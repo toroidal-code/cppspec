@@ -4,25 +4,40 @@
 #include "basematcher.hpp"
 
 namespace Matchers {
+enum class RangeMode { exclusive, inclusive };
+
 template <typename A, typename E>
 class BeBetween : public BaseMatcher<A, E> {
   E min;
   E max;
-  enum class Mode { exclusive, inclusive } mode;
+  RangeMode mode;
   enum class LtOp { lt, lt_eq } lt_op;
   enum class GtOp { gt, gt_eq } gt_op;
 
  public:
-  BeBetween(Expectations::Expectation<A> &expectation, E min, E max)
-      : BaseMatcher<A, E>(expectation),
-        min(min),
-        max(max),
-        mode(Mode::inclusive),
-        lt_op(LtOp::lt_eq),
-        gt_op(GtOp::gt_eq) {
-    // static_assert(std::is_same<A,E>::value, "Expected and actual value's
-    // types are different");
+  // BeBetween(Expectations::Expectation<A> &expectation, E min, E max)
+  //     : BaseMatcher<A, E>(expectation),
+  //       min(min),
+  //       max(max),
+  //       mode(Mode::inclusive),
+  //       lt_op(LtOp::lt_eq),
+  //       gt_op(GtOp::gt_eq){
+  //           // static_assert(std::is_same<A,E>::value, "Expected and actual
+  //           // value's
+  //           // types are different");
+
+  //       };
+
+  BeBetween(Expectations::Expectation<A> &expectation, E min, E max,
+            RangeMode m)
+      : BaseMatcher<A, E>(expectation), min(min), max(max), mode(m) {
+    if (mode == RangeMode::inclusive) {
+      this->inclusive();
+    } else if (mode == RangeMode::exclusive) {
+      this->exclusive();
+    }
   }
+
   virtual bool matches(A actual);
   virtual std::string description();
   BeBetween &inclusive();
@@ -42,7 +57,7 @@ template <typename A, typename E>
 BeBetween<A, E> &BeBetween<A, E>::inclusive() {
   lt_op = LtOp::lt_eq;
   gt_op = GtOp::gt_eq;
-  mode = Mode::inclusive;
+  mode = RangeMode::inclusive;
   return *this;
 }
 
@@ -56,7 +71,7 @@ template <typename A, typename E>
 BeBetween<A, E> &BeBetween<A, E>::exclusive() {
   lt_op = LtOp::lt;
   gt_op = GtOp::gt;
-  mode = Mode::exclusive;
+  mode = RangeMode::exclusive;
   return *this;
 }
 
@@ -88,7 +103,7 @@ template <typename A, typename E>
 std::string BeBetween<A, E>::description() {
   std::stringstream ss;
   ss << "be between " << min << " and " << max << " ("
-     << (mode == Mode::exclusive ? "exclusive" : "inclusive") << ")";
+     << (mode == RangeMode::exclusive ? "exclusive" : "inclusive") << ")";
   return ss.str();
 }
 }
