@@ -5,26 +5,29 @@
 
 namespace Matchers {
 template <typename A, typename E>
-class BeBetween : public BaseMatcher<A,E> {
+class BeBetween : public BaseMatcher<A, E> {
   E min;
   E max;
   enum class Mode { exclusive, inclusive } mode;
   enum class LtOp { lt, lt_eq } lt_op;
   enum class GtOp { gt, gt_eq } gt_op;
+
  public:
-  BeBetween(Expectations::Expectation<A> &expectation, 
-            E min, E max) 
-      : BaseMatcher<A,E>(expectation), min(min), max(max), 
-        mode(Mode::inclusive), lt_op(LtOp::lt_eq), 
+  BeBetween(Expectations::Expectation<A> &expectation, E min, E max)
+      : BaseMatcher<A, E>(expectation),
+        min(min),
+        max(max),
+        mode(Mode::inclusive),
+        lt_op(LtOp::lt_eq),
         gt_op(GtOp::gt_eq) {
-    //static_assert(std::is_same<A,E>::value, "Expected and actual value's types are different");
+    // static_assert(std::is_same<A,E>::value, "Expected and actual value's
+    // types are different");
   }
   virtual bool matches(A actual);
   virtual std::string description();
-  BeBetween & inclusive();
-  BeBetween & exclusive();
+  BeBetween &inclusive();
+  BeBetween &exclusive();
 };
-
 
 /**
  * Makes the between comparison inclusive
@@ -36,7 +39,7 @@ class BeBetween : public BaseMatcher<A,E> {
  *       provides a way to be more explicit about it.
  */
 template <typename A, typename E>
-BeBetween<A,E> & BeBetween<A,E>::inclusive() {
+BeBetween<A, E> &BeBetween<A, E>::inclusive() {
   lt_op = LtOp::lt_eq;
   gt_op = GtOp::gt_eq;
   mode = Mode::inclusive;
@@ -50,15 +53,15 @@ BeBetween<A,E> & BeBetween<A,E>::inclusive() {
  *   expect(4).to(be_between(2,3).exclusive())
  */
 template <typename A, typename E>
-BeBetween<A,E> & BeBetween<A,E>::exclusive() {
+BeBetween<A, E> &BeBetween<A, E>::exclusive() {
   lt_op = LtOp::lt;
   gt_op = GtOp::gt;
   mode = Mode::exclusive;
   return *this;
 }
 
-template <typename A, typename E> 
-bool BeBetween<A,E>::matches(A actual) {
+template <typename A, typename E>
+bool BeBetween<A, E>::matches(A actual) {
   this->actual = actual;
   bool result1;
   switch (gt_op) {
@@ -82,13 +85,11 @@ bool BeBetween<A,E>::matches(A actual) {
 }
 
 template <typename A, typename E>
-std::string BeBetween<A,E>::description() {
+std::string BeBetween<A, E>::description() {
   std::stringstream ss;
-  ss << "be between " << min << " and " << max << " (" << 
-      (mode == Mode::exclusive ? "exclusive" : "inclusive") 
-     << ")";
+  ss << "be between " << min << " and " << max << " ("
+     << (mode == Mode::exclusive ? "exclusive" : "inclusive") << ")";
   return ss.str();
 }
-
 }
 #endif /* BE_BETWEEN_H */

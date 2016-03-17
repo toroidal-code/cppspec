@@ -35,7 +35,16 @@ class Description : public Runnable {
   Description &context(std::string descr, block_t body);
 
   template <class T>
-  ClassDescription<T> &context(std::string descr, block_t body);
+  ClassDescription<T> &context(T subject,
+                               std::function<void(ClassDescription<T> &)> body);
+
+  template <class T>
+  ClassDescription<T> &context(T &subject,
+                               std::function<void(ClassDescription<T> &)> body);
+
+  template <class T, typename U>
+  ClassDescription<T> &context(std::initializer_list<U> init_list,
+                               std::function<void(ClassDescription<T> &)> body);
 
   void before(std::string descr, block_t body);
 
@@ -44,6 +53,9 @@ class Description : public Runnable {
 
   template <class T>
   ClassDescription<T> subject(T &subject);
+
+  template <class T>
+  ClassDescription<std::vector<T>> subject(std::initializer_list<T> init_list);
 
   bool run();
 };
@@ -92,6 +104,14 @@ template <class U>
 ClassDescription<U> Description::subject(U &subject) {
   ClassDescription<U> cd(this);
   cd->example = subject;
+  return cd;
+}
+
+template <class U>
+ClassDescription<std::vector<U>> Description::subject(
+    std::initializer_list<U> init_list) {
+  ClassDescription<U> cd(this);
+  cd->example = std::vector<U>(init_list);
   return cd;
 }
 

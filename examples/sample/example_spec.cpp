@@ -54,22 +54,17 @@ describe bool_spec("Some Tests", _ {
       });
 
 
-    context("std::list {1,2,3}", _ {
-        it("includes 1", _ {
-            std::list<int> l = {1,2,3};
-            expect(l).to_include({1})();
-          });
+    context <std::list<int>>({1,2,3}, _ {
+        it(_ { is_expected().to_include(1)(); });
+
         it("includes [1,2,3]", _ {
-            std::list<int> l = {1,2,3};
-            expect(l).to_include({1,2,3})();
+            expect<std::list<int>>({1,2,3}).to_include({1,2,3})();
           });
-        it("does not include 4", _ {
-            std::list<int> l = {1,2,3};
-            expect(l).not_().to_include({4})();
-          });
+
+        it( _ { is_expected().not_().to_include(4)(); });
+
         it("does not include [4,5,6]", _ {
-            std::list<int> l = {1,2,3};
-            expect(l).not_().to_include({4,5,6})();
+            is_expected().not_().to_include({4,5,6})();
           });
       });
 
@@ -129,14 +124,14 @@ describe bool_spec("Some Tests", _ {
 
 describe_a <std::vector<int>> vector_spec({1,2,3,4}, _ {
     it("should contain 2", _ {
-        expect({1,2,3,4}).to_include(2)();
+        expect({1,2,3,4}).to_include(6)();
       });
   });
 
 // describe_a<std::vector<int>> another_vector_spec({1,2,3,4}, _ {
 //     // it(_ { assert(static_cast<ClassDescription<std::vector<int>>*>(self.get_parent()) != nullptr); });
 //     it(_ {
-//         ClassDescription<T> cd =                               
+//         ClassDescription<T> cd =
 //       static_cast<ClassDescription<T> >(*(this->get_parent()));
 //         self.is_expected(cd);
 //  });
@@ -147,13 +142,18 @@ describe_a <std::vector<int>> another_vector_spec({1,2,3,4}, _ {
   });
 
 
+describe list_spec("A list spec", _ {
+    context<std::list<int>>({1,2,3,4}, _ {
+        it( _ { is_expected().to_include(6)(); });
+      });
+  });
 
 /* Here is the declaration of fabs description defined in an other file (fabs_spec.c in this sample)*/
 int main(){
   bool r = true;
   r &= bool_spec.run();
   r &= vector_spec.run();
-  r &= another_vector_spec.run(); 
+  r &= another_vector_spec.run();
 // #undef expect
 // #undef it
 //  Description d("halp", _ {});
@@ -164,4 +164,3 @@ int main(){
   //strcmp_spec.run();
   return r ? EXIT_SUCCESS : EXIT_FAILURE;
 }
-

@@ -52,6 +52,7 @@ class ClassDescription : public Description {
   ClassDescription<T>(Description& d) : Description(d){};
 
   const bool has_subject = true;
+  void set_subject(T& subject) { example = subject; }
   T& get_subject() { return example; }
 
   ItCd<T>& it(std::string descr, std::function<void(ItCd<T>&)> body);
@@ -91,7 +92,33 @@ ClassContext<T>& ClassDescription<T>::context(
 template <class T>
 ClassContext<T>& ClassDescription<T>::context(
     std::function<void(ClassDescription&)> body) {
-  Context* c = new ClassContext<T>(body);
+  ClassContext<T>* c = new ClassContext<T>(body);
+  c->set_parent(this);
+  tasks.push_back(c);
+  return *c;
+}
+
+template <class T>
+ClassContext<T>& Description::context(
+    T subject, std::function<void(ClassDescription<T>&)> body) {
+  ClassContext<T>* c = new ClassDescription<T>(body);
+  c->set_subject(subject);
+  c->set_parent(this);
+  tasks.push_back(c);
+  return *c;
+}
+
+// template <class T>
+// ClassContext<T>& Description::context(
+//     T& subject, std::function<void(ClassDescription<T>&)> body) {
+//   return context(subject, body);
+// }
+
+template <class T, typename U>
+ClassContext<T>& Description::context(
+    std::initializer_list<U> init_list,
+    std::function<void(ClassDescription<T>&)> body) {
+  ClassContext<T>* c = new ClassContext<T>(T(init_list), body);
   c->set_parent(this);
   tasks.push_back(c);
   return *c;

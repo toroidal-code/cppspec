@@ -5,10 +5,9 @@
 
 #define _ [](auto &self) -> auto
 #define it self.it
-#define context self.context
-#define expect self.expect
+#define context self.template context
+#define expect self.template expect
 #define is_expected self.is_expected
-#define subject auto self = self.subject
 
 typedef Description describe;
 

@@ -1,3 +1,6 @@
+#ifndef IT_BASE_H
+#define IT_BASE_H
+
 #include <string>
 #include "runnable.hpp"
 
@@ -15,3 +18,5 @@ class ItBase : public Runnable {
   void set_needs_descr(bool nd) { does_need_descr = nd; }
   bool needs_descr() { return does_need_descr; }
 };
+
+#endif /* IT_BASE_H */

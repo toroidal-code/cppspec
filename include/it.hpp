@@ -86,7 +86,9 @@ Expectations::Expectation<T> ItCd<T>::is_expected() {
 }
 
 bool ItD::run() {
-  std::cout << padding() << descr << std::endl;
+  if (!this->needs_descr()) {
+    std::cout << padding() << descr << std::endl;
+  }
   body(*this);
   return this->get_status();
 }

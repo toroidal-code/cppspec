@@ -81,10 +81,13 @@ template <typename A, typename E>
 bool BaseMatcher<A, E>::operator()(std::string message) {
   bool matched;
   ItBase *par = static_cast<ItBase *>(this->get_parent());
+
   if (par->needs_descr()) {
-    std::cout << par->padding() << "should " << this->description()
+    std::cout << par->padding() << "should "
+              << (expectation.get_sign() ? "" : "not ") << this->description()
               << std::endl;
   }
+
   if (expectation.get_sign()) {
     matched = PositiveExpectationHandler::handle_matcher<A>(
         expectation.get_target(), *this, message);
