@@ -16,12 +16,12 @@ class Description : public Runnable {
   typedef std::function<void(Description &)> block_t;
 
  protected:
-  std::string descr;
+  std::string descr = "";
   std::vector<block_t> befores;
   std::vector<block_t> afters;
   std::vector<Runnable *> tasks;
 
-  Description(std::string descr) : descr(descr){};
+  explicit Description(std::string descr) : descr(descr){};
 
  public:
   // Constructor
@@ -30,15 +30,20 @@ class Description : public Runnable {
   const bool has_subject = false;
 
   // Spec functions
-  It &it(std::string descr, std::function<void(It &)> body);
-  It &it(std::function<void(It &)> body);
+  ItD &it(std::string descr, std::function<void(ItD &)> body);
+  ItD &it(std::function<void(ItD &)> body);
   Description &context(std::string descr, block_t body);
-  void before(std::string descr, block_t body);
-  template <class U>
-  ClassDescription<U> subject(U subject);
 
-  template <class U>
-  ClassDescription<U> subject(U &subject);
+  template <class T>
+  ClassDescription<T> &context(std::string descr, block_t body);
+
+  void before(std::string descr, block_t body);
+
+  template <class T>
+  ClassDescription<T> subject(T subject);
+
+  template <class T>
+  ClassDescription<T> subject(T &subject);
 
   bool run();
 };
@@ -53,15 +58,15 @@ Context &Description::context(std::string name,
   return *c;
 }
 
-It &Description::it(std::string name, std::function<void(It &)> body) {
-  It *it = new It(name, body);
+ItD &Description::it(std::string name, std::function<void(ItD &)> body) {
+  ItD *it = new ItD(name, body);
   it->set_parent(this);
   tasks.push_back(it);
   return *it;
 }
 
-It &Description::it(std::function<void(It &)> body) {
-  It *it = new It(body);
+ItD &Description::it(std::function<void(ItD &)> body) {
+  ItD *it = new ItD(body);
   it->set_parent(this);
   tasks.push_back(it);
   return *it;

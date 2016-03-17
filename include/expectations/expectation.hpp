@@ -44,8 +44,8 @@ class Expectation : public Child {
   Expectation(std::initializer_list<U> init_list)
       : target(std::vector<U>(init_list)) {}
 
-  A &get_target() { return target; }
-  bool get_sign() { return is_positive; }
+  A &get_target();
+  bool get_sign();
 
   Expectation &not_();
   Expectation &to_be();
@@ -66,6 +66,16 @@ class Expectation : public Child {
   template <typename E>
   Matchers::BeWithin<A, E> to_be_within(E expected);
 };
+
+template <typename A>
+A &Expectation<A>::get_target() {
+  return target;
+}
+
+template <typename A>
+bool Expectation<A>::get_sign() {
+  return is_positive;
+}
 
 /**
  * @brief Inverts the current matcher

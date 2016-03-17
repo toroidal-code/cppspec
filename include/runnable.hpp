@@ -3,15 +3,16 @@
 #include <string>
 
 class Child {
-  Child *parent = nullptr;
+  Child* parent = nullptr;
   // represents whether the children were all healthy/successful.
   bool status = true;
 
  public:
-  virtual ~Child() {}
+  virtual ~Child(){};
+
   std::string padding();
-  Child *get_parent() { return this->parent; }
-  void set_parent(Child *parent) { this->parent = parent; }
+  Child* get_parent() { return this->parent; }
+  void set_parent(Child* parent) { this->parent = parent; }
   bool get_status() { return this->status; }
   void failed() {
     this->status = false;

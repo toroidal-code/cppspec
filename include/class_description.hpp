@@ -6,15 +6,14 @@
 #include <map>
 #include <functional>
 #include <iostream>
-
-#include "description.hpp"
 #include "util.hpp"
+#include "description.hpp"
 #include "it.hpp"
 #include "expectations/expectation.hpp"
 
 template <class T>
 class ClassDescription : public Description {
-  typedef std::function<void(ClassDescription&)> block_t;
+  typedef std::function<void(ClassDescription<T>&)> block_t;
   T example;
 
  public:
@@ -55,8 +54,8 @@ class ClassDescription : public Description {
   const bool has_subject = true;
   T& get_subject() { return example; }
 
-  It& it(std::string descr, std::function<void(It&)> body);
-  It& it(std::function<void(It&)> body);
+  ItCd<T>& it(std::string descr, std::function<void(ItCd<T>&)> body);
+  ItCd<T>& it(std::function<void(ItCd<T>&)> body);
   ClassDescription<T>& context(T subject, block_t body);
   ClassDescription<T>& context(T& subject, block_t body);
   ClassDescription<T>& context(block_t body);
@@ -67,6 +66,8 @@ class ClassDescription : public Description {
 
   template <class U>
   ClassDescription<U> subject(U& subject);
+
+  static ClassDescription cast(Runnable r);
 };
 
 template <class T>
@@ -97,16 +98,17 @@ ClassContext<T>& ClassDescription<T>::context(
 }
 
 template <class T>
-It& ClassDescription<T>::it(std::string name, std::function<void(It&)> body) {
-  It* it = new It(name, body);
+ItCd<T>& ClassDescription<T>::it(std::string name,
+                                 std::function<void(ItCd<T>&)> body) {
+  ItCd<T>* it = new ItCd<T>(name, body);
   it->set_parent(this);
   tasks.push_back(it);
   return *it;
 }
 
 template <class T>
-It& ClassDescription<T>::it(std::function<void(It&)> body) {
-  It* it = new It(body);
+ItCd<T>& ClassDescription<T>::it(std::function<void(ItCd<T>&)> body) {
+  ItCd<T>* it = new ItCd<T>(body);
   it->set_parent(this);
   tasks.push_back(it);
   return *it;

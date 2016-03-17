@@ -8,6 +8,7 @@
 #include "pretty_matchers.hpp"
 #include "../runnable.hpp"
 #include "../expectations/handler.hpp"
+#include "../it_base.hpp"
 
 namespace Expectations {
 template <class T>
@@ -79,6 +80,11 @@ std::string BaseMatcher<A, E>::description() {
 template <typename A, typename E>
 bool BaseMatcher<A, E>::operator()(std::string message) {
   bool matched;
+  ItBase *par = static_cast<ItBase *>(this->get_parent());
+  if (par->needs_descr()) {
+    std::cout << par->padding() << "should " << this->description()
+              << std::endl;
+  }
   if (expectation.get_sign()) {
     matched = PositiveExpectationHandler::handle_matcher<A>(
         expectation.get_target(), *this, message);
