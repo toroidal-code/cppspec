@@ -54,10 +54,14 @@ class ItCd : public ItExpBase {
 };
 
 /**
-   * expect(1)
-   * expect(true)
-   * expect([] -> int { return 4; })
-   */
+ * @brief A simple expect statement
+ *
+ * @code
+ *   expect(1)
+ *   expect(true)
+ *   expect([] -> int { return 4; })
+ * @endcode
+ */
 template <class T>
 Expectations::Expectation<T> ItExpBase::expect(T value) {
   Expectations::Expectation<T> expectation(value);
@@ -66,7 +70,11 @@ Expectations::Expectation<T> ItExpBase::expect(T value) {
 }
 
 /**
- * expect({1,2,3})
+ * @brief An expect for initializer_list subjects
+ *
+ * @code
+ *   expect({1,2,3})
+ * @endcode
  */
 template <class T>
 Expectations::Expectation<std::vector<T>> ItExpBase::expect(

@@ -95,13 +95,6 @@ std::string inspect_object(char *o) {
   ss << "(" << Util::demangle(typeid(o).name()) << ") => " << '"' << o << '"';
   return ss.str();
 }
-
-template <typename O>
-inline std::string polymorphic_to_string(O o) {
-  std::stringstream ss;
-  ss << o;
-  return ss.str();
-}
 }
 
 #endif /* UTIL_H */

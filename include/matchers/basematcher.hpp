@@ -6,9 +6,9 @@
 #include <iostream>
 #include <memory>
 #include "pretty_matchers.hpp"
-#include "../runnable.hpp"
-#include "../expectations/handler.hpp"
-#include "../it_base.hpp"
+#include "runnable.hpp"
+#include "expectations/handler.hpp"
+#include "it_base.hpp"
 
 namespace Expectations {
 template <class T>

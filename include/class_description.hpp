@@ -21,21 +21,21 @@ class ClassDescription : public Description {
   // if there's no explicit subject given, then default using
   // the default constructor of the given type as the subject.
   ClassDescription<T>(block_t body)
-      : Description(Util::polymorphic_to_string(T()) + " : " +
+      : Description(Pretty::to_word(T()) + " : " +
                     Util::demangle(typeid(T).name())),
         example(T()) {
     body(*this);
   };
 
   ClassDescription(T subject, block_t body)
-      : Description(Util::polymorphic_to_string(subject) + " : " +
+      : Description(Pretty::to_word(subject) + " : " +
                     Util::demangle(typeid(T).name())),
         example(subject) {
     body(*this);
   };
 
   ClassDescription(T& subject, block_t body)
-      : Description(Util::polymorphic_to_string(subject) + " : " +
+      : Description(Pretty::to_word(subject) + " : " +
                     Util::demangle(typeid(T).name())),
         example(subject) {
     body(*this);
@@ -43,7 +43,7 @@ class ClassDescription : public Description {
 
   template <typename U>
   ClassDescription(std::initializer_list<U> init_list, block_t body)
-      : Description(Util::polymorphic_to_string(init_list) + " : " +
+      : Description(Pretty::to_word(init_list) + " : " +
                     Util::demangle(typeid(T).name())),
         example(T(init_list)) {
     body(*this);

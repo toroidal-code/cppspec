@@ -1,6 +1,6 @@
 #ifndef PRETTY_MATCHERS_H
 #define PRETTY_MATCHERS_H
-#include "../cxx-prettyprint/prettyprint.hpp"
+#include "cxx-prettyprint/prettyprint.hpp"
 #include <string>
 #include <sstream>
 #include <vector>
@@ -13,30 +13,50 @@ template <typename A, typename E>
 class BaseMatcher;
 }
 
+/**
+ * @class Pretty
+ * @brief A helper base class that assists in pretty-printing various objects.
+ *
+ * This class provides helper string manipulation functions
+ * that are used to generate human-readable information and output.
+ */
 struct Pretty {
   std::string _name = "";
-  template <class T> 
-  static std::string to_sentance(std::vector<T> &words);
-  template <class T> 
-  static std::string to_sentance(T &thing);
-  template <class T> 
-  static std::string to_word(T item);
   std::string name();
   std::string name_to_sentance();
-  std::string split_words(std::string sym);
-  std::string underscore(std::string camel_cased_word);
-  std::string last(const std::string &s, const char delim);
+  static std::string split_words(std::string sym);
+  static std::string underscore(std::string camel_cased_word);
+  static std::string last(const std::string &s, const char delim);
+  static std::string improve_hash_formatting(std::string inspect_string);
+
+  template <class T>
+  static std::string to_word(T &item);
+
   template <typename A, typename E>
-  static std::string to_word(Matchers::BaseMatcher<A,E> &matcher);
-  std::string improve_hash_formatting(std::string inspect_string);
+  static std::string to_word(Matchers::BaseMatcher<A, E> &matcher);
+
+  template <class T>
+  static std::string to_sentance(T &item);
+
+  template <class T>
+  static std::string to_sentance(std::vector<T> &words);
 };
 
-
+/**
+ * Takes a vector of objects and formats them as an
+ * English style list (i.e. "a, b, and c")
+ *
+ * @param words the collection of objects to be processed
+ *
+ * @return a human-readable comma-delimited list
+ */
 template <typename T>
 std::string Pretty::to_sentance(std::vector<T> &words) {
   words = std::vector<T>(words);
-  std::vector<std::string> my_words; 
-  for (T word: words) { my_words.push_back(to_word(word)); }
+  std::vector<std::string> my_words;
+  for (T word : words) {
+    my_words.push_back(to_word(word));
+  }
   std::stringstream ss;
   switch (my_words.size()) {
     case 0:
@@ -59,40 +79,62 @@ std::string Pretty::to_sentance(std::vector<T> &words) {
   return ss.str();
 }
 
+/**
+ * Take a single object and format it as a sentance
+ *
+ * @param item the object to be processed
+ *
+ * @return a human-readable representation of the object (as a list)
+ */
 template <typename T>
-std::string Pretty::to_sentance(T &thing) {
-  std::vector<T> v = { thing };
+std::string Pretty::to_sentance(T &item) {
+  std::vector<T> v = {item};
   return to_sentance(v);
 }
 
-
-template <typename T>  
-std::string Pretty::to_word(T item) {
+/**
+ * Formats an object as a string
+ *
+ * In reality, this uses the `<<` operator, simply
+ * providing a way to convert the object to a string without
+ * having to deal with stringstreams.
+ *
+ * @param item the object to be processed
+ *
+ * @return the string representation
+ */
+template <typename T>
+std::string Pretty::to_word(T &item) {
   std::stringstream ss;
   ss << item;
   return ss.str();
 }
 
-
+/**
+ * Formats a Matcher as a string
+ *
+ * Unlike the generic to_word(), this is specialized for Matchers,
+ * which have a custom description associated with them for better
+ * information.
+ *
+ * @param matcher the matcher to process
+ *
+ * @return a string representation of the Matcher
+ */
 template <typename A, typename E>
-std::string Pretty::to_word(Matchers::BaseMatcher<A,E> &matcher) {
+std::string Pretty::to_word(Matchers::BaseMatcher<A, E> &matcher) {
   std::string description = matcher.description();
-  if ( description.empty()) {
+  if (description.empty()) {
     return "[No description]";
   } else {
     return description;
   }
 }
 
-
-std::string Pretty::name_to_sentance() {
-  return split_words(name());
-}
-
-
+std::string Pretty::name_to_sentance() { return split_words(name()); }
 
 std::string Pretty::name() {
-  if ( _name.empty()){ 
+  if (_name.empty()) {
     return last(typeid(this).name(), ':');
   } else {
     return _name;
@@ -108,20 +150,19 @@ std::string Pretty::split_words(std::string sym) {
 }
 
 std::string Pretty::underscore(std::string word) {
-  regex_replace(word,std::regex("([A-Z]+)([A-Z][a-z])"),"$1_$2");
-  regex_replace(word,std::regex("([a-z\\d])([A-Z])"),"$1_$2");
-  regex_replace(word,std::regex("-"),"_");
+  regex_replace(word, std::regex("([A-Z]+)([A-Z][a-z])"), "$1_$2");
+  regex_replace(word, std::regex("([a-z\\d])([A-Z])"), "$1_$2");
+  regex_replace(word, std::regex("-"), "_");
   transform(word.begin(), word.end(), word.begin(), ::tolower);
   return word;
 }
 
-std::string Pretty::last(const std::string &s, 
-                            const char delim) {
+std::string Pretty::last(const std::string &s, const char delim) {
   std::vector<std::string> elems;
   std::stringstream ss(s);
   std::string item;
   while (getline(ss, item, delim)) {
-    if(!item.empty()){
+    if (!item.empty()) {
       elems.push_back(item);
     }
   }
@@ -133,9 +174,4 @@ std::string Pretty::improve_hash_formatting(std::string inspect_string) {
   return inspect_string;
 }
 
-
 #endif /* PRETTY_MATCHERS_H */
-
-
-
-

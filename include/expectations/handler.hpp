@@ -41,13 +41,13 @@ struct NegativeExpectationHandler;
 
 struct PositiveExpectationHandler {
   template <typename A, class Matcher>
-  static bool handle_matcher(A actual, Matcher &matcher, std::string messsage);
+  static bool handle_matcher(A actual, Matcher &matcher, std::string message);
   static std::string verb() { return "should"; }
 };
 
 struct NegativeExpectationHandler {
   template <typename A, class Matcher>
-  static bool handle_matcher(A actual, Matcher &matcher, std::string messsage);
+  static bool handle_matcher(A actual, Matcher &matcher, std::string message);
   static std::string verb() { return "should not"; }
   template <typename A, class Matcher>
   static bool does_not_match(Matcher &matcher, A actual);

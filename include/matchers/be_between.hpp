@@ -13,21 +13,10 @@ class BeBetween : public BaseMatcher<A, E> {
   RangeMode mode;
   enum class LtOp { lt, lt_eq } lt_op;
   enum class GtOp { gt, gt_eq } gt_op;
+  BeBetween &inclusive();
+  BeBetween &exclusive();
 
  public:
-  // BeBetween(Expectations::Expectation<A> &expectation, E min, E max)
-  //     : BaseMatcher<A, E>(expectation),
-  //       min(min),
-  //       max(max),
-  //       mode(Mode::inclusive),
-  //       lt_op(LtOp::lt_eq),
-  //       gt_op(GtOp::gt_eq){
-  //           // static_assert(std::is_same<A,E>::value, "Expected and actual
-  //           // value's
-  //           // types are different");
-
-  //       };
-
   BeBetween(Expectations::Expectation<A> &expectation, E min, E max,
             RangeMode m)
       : BaseMatcher<A, E>(expectation), min(min), max(max), mode(m) {
@@ -38,10 +27,9 @@ class BeBetween : public BaseMatcher<A, E> {
     }
   }
 
+  // operator BaseMatcher<A,E>() { BaseMatcher<A,E> *bm = this; return *bm; }
   virtual bool matches(A actual);
   virtual std::string description();
-  BeBetween &inclusive();
-  BeBetween &exclusive();
 };
 
 /**
