@@ -11,10 +11,23 @@
 #include "it.hpp"
 #include "expectations/expectation.hpp"
 
+/**
+ * @brief A Description with an implicit subject
+ *
+ * A ClassDescription is a subclass of Description that
+ * allows for templating and specification of the subject
+ * of the tests prior to any `it` objects.
+ *
+ * It is also aliased to the context keyword through
+ * Description whenever it is templated, allowing the
+ * implicit subject in any child `it` blocks
+ */
 template <class T>
 class ClassDescription : public Description {
   typedef std::function<void(ClassDescription<T>&)> block_t;
+  block_t body;
   T example;
+  bool first;
 
  public:
   // Constructor
@@ -23,31 +36,27 @@ class ClassDescription : public Description {
   ClassDescription<T>(block_t body)
       : Description(Pretty::to_word(T()) + " : " +
                     Util::demangle(typeid(T).name())),
-        example(T()) {
-    body(*this);
-  };
+        body(body),
+        example(T()){};
 
   ClassDescription(T subject, block_t body)
       : Description(Pretty::to_word(subject) + " : " +
                     Util::demangle(typeid(T).name())),
-        example(subject) {
-    body(*this);
-  };
+        body(body),
+        example(subject){};
 
   ClassDescription(T& subject, block_t body)
       : Description(Pretty::to_word(subject) + " : " +
                     Util::demangle(typeid(T).name())),
-        example(subject) {
-    body(*this);
-  };
+        body(body),
+        example(subject){};
 
   template <typename U>
   ClassDescription(std::initializer_list<U> init_list, block_t body)
       : Description(Pretty::to_word(init_list) + " : " +
                     Util::demangle(typeid(T).name())),
-        example(T(init_list)) {
-    body(*this);
-  };
+        body(body),
+        example(T(init_list)){};
 
   ClassDescription<T>(Description& d) : Description(d){};
 
@@ -55,57 +64,51 @@ class ClassDescription : public Description {
   void set_subject(T& subject) { example = subject; }
   T& get_subject() { return example; }
 
-  ItCd<T>& it(std::string descr, std::function<void(ItCd<T>&)> body);
-  ItCd<T>& it(std::function<void(ItCd<T>&)> body);
-  ClassDescription<T>& context(T subject, block_t body);
-  ClassDescription<T>& context(T& subject, block_t body);
-  ClassDescription<T>& context(block_t body);
-  void before(std::string descr, block_t body);
+  bool it(std::string descr, std::function<void(ItCd<T>&)> body);
+  bool it(std::function<void(ItCd<T>&)> body);
+  bool context(T subject, block_t body);
+  bool context(T& subject, block_t body);
+  bool context(block_t body);
+  bool run();
 
   template <class U>
   ClassDescription<U> subject(U subject);
 
   template <class U>
   ClassDescription<U> subject(U& subject);
-
-  static ClassDescription cast(Runnable r);
 };
 
 template <class T>
 using ClassContext = ClassDescription<T>;
 
 template <class T>
-ClassContext<T>& ClassDescription<T>::context(
-    T subject, std::function<void(ClassDescription&)> body) {
-  Context* c = new ClassContext<T>(subject, body);
-  c->set_parent(this);
-  tasks.push_back(c);
-  return *c;
+bool ClassDescription<T>::context(T subject,
+                                  std::function<void(ClassDescription&)> body) {
+  ClassContext<T> context(subject, body);
+  context.set_parent(this);
+  return context.run();
 }
 
 template <class T>
-ClassContext<T>& ClassDescription<T>::context(
-    T& subject, std::function<void(ClassDescription&)> body) {
+bool ClassDescription<T>::context(T& subject,
+                                  std::function<void(ClassDescription&)> body) {
   return context(subject, body);
 }
 
 template <class T>
-ClassContext<T>& ClassDescription<T>::context(
-    std::function<void(ClassDescription&)> body) {
-  ClassContext<T>* c = new ClassContext<T>(body);
-  c->set_parent(this);
-  tasks.push_back(c);
-  return *c;
+bool ClassDescription<T>::context(std::function<void(ClassDescription&)> body) {
+  ClassContext<T> context(body);
+  context.set_parent(this);
+  return context.run();
 }
 
 template <class T>
-ClassContext<T>& Description::context(
-    T subject, std::function<void(ClassDescription<T>&)> body) {
-  ClassContext<T>* c = new ClassDescription<T>(body);
-  c->set_subject(subject);
-  c->set_parent(this);
-  tasks.push_back(c);
-  return *c;
+bool Description::context(T subject,
+                          std::function<void(ClassDescription<T>&)> body) {
+  ClassContext<T> context(body);
+  context.set_subject(subject);
+  context.set_parent(this);
+  return context.run();
 }
 
 // template <class T>
@@ -115,30 +118,68 @@ ClassContext<T>& Description::context(
 // }
 
 template <class T, typename U>
-ClassContext<T>& Description::context(
-    std::initializer_list<U> init_list,
-    std::function<void(ClassDescription<T>&)> body) {
-  ClassContext<T>* c = new ClassContext<T>(T(init_list), body);
-  c->set_parent(this);
-  tasks.push_back(c);
-  return *c;
+bool Description::context(std::initializer_list<U> init_list,
+                          std::function<void(ClassDescription<T>&)> body) {
+  ClassContext<T> context(T(init_list), body);
+  context.set_parent(this);
+  return context.run();
 }
 
+/**
+ * Jasmine-style `it` declaration, with an explicit docstring
+ * provided for verbose printing.
+ *
+ * As this is an ItCd, it passes along associated type information
+ * about the implicit subject from the containing
+ * ClassDescription / ClassContext.
+ *
+ * @code
+ *   describe_a <std::string> (_{
+ *     it("is empty upon initialization", _{
+ *       is_expected.to_be_empty();
+ *     });
+ *   });
+ * @endcode
+ *
+ * @param name the name of the test
+ * @param body the contents of test
+ *
+ * @return the result of the test
+ */
 template <class T>
-ItCd<T>& ClassDescription<T>::it(std::string name,
-                                 std::function<void(ItCd<T>&)> body) {
-  ItCd<T>* it = new ItCd<T>(name, body);
-  it->set_parent(this);
-  tasks.push_back(it);
-  return *it;
+bool ClassDescription<T>::it(std::string name,
+                             std::function<void(ItCd<T>&)> body) {
+  ItCd<T> it(name, body);
+  it.set_parent(this);
+  return it.run();
 }
 
+/**
+ * Rspec-style `it` declaration, with an implicit docstring
+ * generated by the contained `expect`s. Particularly handy
+ * if testing multiple facets of a single behavior and there
+ * is a desire to be verbose, as each expectation prints its
+ * own docstring.
+ *
+ * As this is an ItCd, it passes along associated type information
+ * about the implicit subject from the containing
+ * ClassDescription / ClassContext.
+ *
+ * @code
+ *   describe_a <std::string> ("", _{
+ *     it(_{ is_expected.to_be_empty(); });
+ *   });
+ * @endcode
+ *
+ * @param body the contents of the test
+ *
+ * @return the result of the test
+ */
 template <class T>
-ItCd<T>& ClassDescription<T>::it(std::function<void(ItCd<T>&)> body) {
-  ItCd<T>* it = new ItCd<T>(body);
-  it->set_parent(this);
-  tasks.push_back(it);
-  return *it;
+bool ClassDescription<T>::it(std::function<void(ItCd<T>&)> body) {
+  ItCd<T> it(body);
+  it.set_parent(this);
+  return it.run();
 }
 
 template <class T>
@@ -155,6 +196,14 @@ ClassDescription<U> ClassDescription<T>::subject(U& subject) {
   ClassDescription<U> cd(static_cast<Description>(this));
   cd->example = subject;
   return cd;
+}
+
+template <class T>
+bool ClassDescription<T>::run() {
+  std::cout << padding() << descr << std::endl;
+  body(*this);
+  std::cout << std::endl;
+  return this->get_status();
 }
 
 #endif /* CLASS_DESCRIPTION_H */

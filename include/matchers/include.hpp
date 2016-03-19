@@ -8,7 +8,7 @@
 namespace Matchers {
 
 /**
- * The virtual base class for the Include matcher.
+ * The abstract base class for the Include matcher.
  * See template specializations below.
  */
 template <typename A, typename E, typename U>
@@ -32,7 +32,7 @@ class IncludeBase : public BaseMatcher<A, E> {
 
 template <typename A, typename E, typename U>
 std::string IncludeBase<A, E, U>::description() {
-  std::vector<E> described_items;
+  // std::vector<E> described_items;
   return Pretty::improve_hash_formatting("include" +
                                          Pretty::to_sentance(this->expected));
 }

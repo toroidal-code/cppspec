@@ -3,7 +3,7 @@
 #include "it.hpp"
 #include "expectations/expectation.hpp"
 
-#define _ [](auto &self) -> auto
+#define _ [](auto &self)
 #define it self.it
 #define context self.template context
 #define expect self.template expect

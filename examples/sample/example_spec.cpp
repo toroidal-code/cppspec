@@ -1,5 +1,4 @@
 #include <list>
-#include <cassert>
 #include "cppspec.hpp"
 
 describe bool_spec("Some Tests", _ {

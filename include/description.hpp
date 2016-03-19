@@ -6,6 +6,7 @@
 #include <map>
 #include <functional>
 #include <iostream>
+#include <memory>
 #include "runnable.hpp"
 #include "it.hpp"
 
@@ -14,37 +15,37 @@ class ClassDescription;
 
 class Description : public Runnable {
   typedef std::function<void(Description &)> block_t;
+  block_t body;
 
  protected:
   std::string descr = "";
-  std::vector<block_t> befores;
-  std::vector<block_t> afters;
-  std::vector<Runnable *> tasks;
+  // std::vector<block_t> before_all;
+  // std::vector<block_t> after_all;
+  // std::vector<block_t> before_each;
+  // std::vector<block_t> after_each;
 
   explicit Description(std::string descr) : descr(descr){};
 
  public:
   // Constructor
-  Description(std::string descr, block_t body) : descr(descr) { body(*this); };
+  Description(std::string descr, block_t body) : body(body), descr(descr){};
 
   const bool has_subject = false;
 
   // Spec functions
-  ItD &it(std::string descr, std::function<void(ItD &)> body);
-  ItD &it(std::function<void(ItD &)> body);
-  Description &context(std::string descr, block_t body);
+  bool it(std::string descr, std::function<void(ItD &)> body);
+  bool it(std::function<void(ItD &)> body);
+  bool context(std::string descr, block_t body);
 
   template <class T>
-  ClassDescription<T> &context(T subject,
-                               std::function<void(ClassDescription<T> &)> body);
+  bool context(T subject, std::function<void(ClassDescription<T> &)> body);
 
   template <class T>
-  ClassDescription<T> &context(T &subject,
-                               std::function<void(ClassDescription<T> &)> body);
+  bool context(T &subject, std::function<void(ClassDescription<T> &)> body);
 
   template <class T, typename U>
-  ClassDescription<T> &context(std::initializer_list<U> init_list,
-                               std::function<void(ClassDescription<T> &)> body);
+  bool context(std::initializer_list<U> init_list,
+               std::function<void(ClassDescription<T> &)> body);
 
   void before(std::string descr, block_t body);
 
@@ -62,35 +63,23 @@ class Description : public Runnable {
 
 typedef Description Context;
 
-Context &Description::context(std::string name,
-                              std::function<void(Description &)> body) {
-  Context *c = new Context(name, body);
-  c->set_parent(this);
-  tasks.push_back(c);
-  return *c;
+bool Description::context(std::string name,
+                          std::function<void(Description &)> body) {
+  Context context(name, body);
+  context.set_parent(this);
+  return context.run();
 }
 
-ItD &Description::it(std::string name, std::function<void(ItD &)> body) {
-  ItD *it = new ItD(name, body);
-  it->set_parent(this);
-  tasks.push_back(it);
-  return *it;
+bool Description::it(std::string name, std::function<void(ItD &)> body) {
+  ItD it(name, body);
+  it.set_parent(this);
+  return it.run();
 }
 
-ItD &Description::it(std::function<void(ItD &)> body) {
-  ItD *it = new ItD(body);
-  it->set_parent(this);
-  tasks.push_back(it);
-  return *it;
-}
-
-bool Description::run() {
-  std::cout << padding() << descr << std::endl;
-  for (Runnable *task : tasks) {
-    (*task).run();
-  }
-  std::cout << std::endl;
-  return this->get_status();
+bool Description::it(std::function<void(ItD &)> body) {
+  ItD it(body);
+  it.set_parent(this);
+  return it.run();
 }
 
 template <class U>
@@ -113,6 +102,13 @@ ClassDescription<std::vector<U>> Description::subject(
   ClassDescription<U> cd(this);
   cd->example = std::vector<U>(init_list);
   return cd;
+}
+
+bool Description::run() {
+  std::cout << padding() << descr << std::endl;
+  body(*this);
+  std::cout << std::endl;
+  return this->get_status();
 }
 
 #endif /* DESCRIPTION_H */
