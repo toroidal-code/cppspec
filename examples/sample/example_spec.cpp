@@ -1,19 +1,25 @@
 #include <list>
 #include "cppspec.hpp"
 
-describe bool_spec("Some Tests", _ {
+
+describe bool_spec("Some Tests", $ {
     // context("true is", _ {
     //     it("true", _ {
     //         expect(true).to_be;
     //       });
     //   });
 
-    explain("4 is", _ {
+    int i = 4;    
+    explain("4", _ {
         it("equals 4", _ {
-            expect(4).to_equal(4);
+            expect(i).to_equal(4);
           });
         it("does not equal 5", _ {
-            expect(4).not_().to_equal(5);
+            expect(i).not_().to_equal(5);
+          });
+
+        it("plus 1 equals 5", _ {
+            expect(i+1).to_equal(5);
           });
       });
 
@@ -121,7 +127,7 @@ describe bool_spec("Some Tests", _ {
 //   });
 // });
 
-describe_a <std::vector<int>> vector_spec({1,2,3,4}, _ {
+describe_a <std::vector<int>> vector_spec({1,2,3,4}, $ {
     it("should contain 2", _ {
         expect({1,2,3,4}).to_include(6);
       });
@@ -136,13 +142,13 @@ describe_a <std::vector<int>> vector_spec({1,2,3,4}, _ {
 //  });
 //   });
 
-describe_a <std::vector<int>> another_vector_spec({1,2,3,4}, _ {
+describe_a <std::vector<int>> another_vector_spec({1,2,3,4}, $ {
     it( _ { is_expected().to_include(6); });
   });
 
 
-describe list_spec("A list spec", _ {
-    context<std::list<int>>({1,2,3,4}, _ {
+describe list_spec("A list spec", $ {
+    explain <std::list<int>> ({1,2,3,4}, _ {
         it( _ { is_expected().to_include(6); });
       });
   });

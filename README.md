@@ -8,20 +8,17 @@ Have a taste of some RSpec in your C++.
 #include "cppspec.hpp"
 
 
-describe fabs_spec("fabs", _ {
-  int n = 0;
-  
+describe fabs_spec("fabs", $ {
   // you can use the `explain` keyword to
   // group behavior and nest descriptions
   explain("argument is zero", _ {
     it("return zero", _ {
-      expect(fabs(n)).to_equal(n);
+      expect(fabs(0)).to_equal(0);
     });
   });
 
-  before("each", _ {
-    n = rand();
-  });
+  int n = 0;
+  before_each([&]{ n = rand(); });
 
   // you can also use `context` instead of
   // `explain`, just like in RSpec
@@ -38,7 +35,7 @@ describe fabs_spec("fabs", _ {
   });
 });
 
-describe_a <std::list<int>> int_list_spec({1,2,3}, _ {
+describe_a <std::list<int>> int_list_spec({1,2,3}, $ {
   it(_{ is_expected().to_include(3); });
 });
 
@@ -101,10 +98,18 @@ to be cleaned up.
 ## It's Beautiful!
 Why, thank you! I certainly tried.
 
-## What the heck is `_`!?
-It's literally `[](auto &self) -> auto`.
+## What the heck are `$` and `_`!?
+TLDR: They're syntax sugar for `[](auto &self)` and `[=](auto &self)` respectively. 
 
-We need this to pass a reference to the containing "thing". For example, `describe` blocks get a `Description` object, while `it` blocks get an `It` object.
+They're defined to avoid repetition and improve readability. (`it([=](auto &self){ is_expected.to_equal(5); });` isn't exactly what I was aiming for with syntax) 
+
+We need them to pass a reference to the containing "thing". For example, `describe` 
+blocks get a `Description` object, while `it` blocks get an `It` object. 
+
+Annoyingly, you can't have an automatic capture-list on a non-local lambda 
+(which is what a top-level `describe`'s body is). This means that there needs 
+to be a separate one-character shortcut. If they really bother you, or you just 
+want to be verbose, you can stick `#undef $` and/or `#undef _` at the top of your file.
 
 ## It's awesome and I totally want to use it, but how?
 

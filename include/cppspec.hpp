@@ -3,7 +3,8 @@
 #include "it.hpp"
 #include "expectations/expectation.hpp"
 
-#define _ [](auto &self)
+#define _ [=](auto &self)
+#define $ [](auto &self)
 #define it self.it
 #define context self.template context
 #define explain context
