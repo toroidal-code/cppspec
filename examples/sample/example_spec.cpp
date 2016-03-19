@@ -8,7 +8,7 @@ describe bool_spec("Some Tests", _ {
     //       });
     //   });
 
-    context("4 is", _ {
+    explain("4 is", _ {
         it("equals 4", _ {
             expect(4).to_equal(4);
           });
@@ -17,7 +17,7 @@ describe bool_spec("Some Tests", _ {
           });
       });
 
-    context("0 is", _ {
+    explain("0 is", _ {
         it("between -1 and 1 (exclusive)", _ {
             expect(0).to_be_between(-1, 1, Matchers::RangeMode::exclusive);
           });
@@ -36,7 +36,7 @@ describe bool_spec("Some Tests", _ {
       });
 
 
-    context("{1,2,3}", _ {
+    explain("{1,2,3}", _ {
         it("includes 1", _ {
             expect({1,2,3}).to_include({1});
           });
@@ -53,7 +53,7 @@ describe bool_spec("Some Tests", _ {
       });
 
 
-    context <std::list<int>>({1,2,3}, _ {
+    explain <std::list<int>> ({1,2,3}, _ {
         it(_ { is_expected().to_include(1); });
 
         it("includes [1,2,3]", _ {

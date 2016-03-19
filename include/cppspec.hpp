@@ -6,6 +6,7 @@
 #define _ [](auto &self)
 #define it self.it
 #define context self.template context
+#define explain context
 #define expect self.template expect
 #define is_expected self.is_expected
 

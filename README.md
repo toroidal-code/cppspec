@@ -7,9 +7,13 @@ Have a taste of some RSpec in your C++.
 #include <list>
 #include "cppspec.hpp"
 
-int n = 0;
+
 describe fabs_spec("fabs", _ {
-  context("argument is zero", _ {
+  int n = 0;
+  
+  // you can use the `explain` keyword to
+  // group behavior and nest descriptions
+  explain("argument is zero", _ {
     it("return zero", _ {
       expect(fabs(n)).to_equal(n);
     });
@@ -19,13 +23,15 @@ describe fabs_spec("fabs", _ {
     n = rand();
   });
 
+  // you can also use `context` instead of
+  // `explain`, just like in RSpec
   context("argument is positive", _ {
     it("return positive", _ {
       expect(fabs(n)).to_equal(n, "fabs(" + std::to_string(n) + ") didn't equal " + std::to_string(n));
     });
   });
 
-  context("argument is negative", _ {
+  explain("argument is negative", _ {
     it("return positive", _ {
       expect(fabs(-n)).to_equal(n);
     });
@@ -46,7 +52,22 @@ int main(void) {
 ```
 
 ## Why?
-Because good BDD-testing on C and C++ is hard. I wanted something where I could make comprehensive _readable_ BDD tests really, really easily.
+Short answer: Because I got fed up with using assertions.
+
+Long answer:
+
+Because good BDD-testing on C and C++ is hard.
+
+I come from a software-engineering background, and it's been driven through my head that
+testing is one of (if not _the_) the most important thing about writing stable software.
+So when I started doing C++ development seriously about three years ago, I was really
+surprised to see that there was no flexible RSpec-like testing framework for a language
+that is used daily by thousands (millions?).
+
+I wanted a library that let me make comprehensive and readable BDD tests really, really easily,
+but nothing fit what I was looking for.
+
+So I decided to try and make it myself.
 
 ## How?
 Unholy black magic.
@@ -54,12 +75,12 @@ Unholy black magic.
 ## No, really. How?
 Lots of templates. Templates everywhere. _Literally_ everywhere. It's why this library is header-only.
 
-A single 'Describe' is actually a local variable that has a runtime-created execution tree.
+A single 'describe' is actually a local variable that has a runtime-created execution tree.
 Calling `.run()` on the root recursively calls `.run()` on its' children.
 
 A common expectation like `expect({1,2,3}).to_include({1,2});` is more like
 ```cpp
-Expecatations::Expectation<std::initializer_list<int>>({1,2,3}).to_include<std::initializer_list<int>>({1,2})
+Expecatations::Expectation<std::vector<int>>({1,2,3}).to_include<std::vector<int>,std::vector<int>,int>({1,2})
 ```
 
 Not fun. Cool. But definitely not fun.
@@ -94,8 +115,6 @@ You stick the library into your include folder, probably using something like `g
 I'm (We're?) working on an actual test runner, instead of the weird boolean and-ing that you can see in the example, but the explicit `run`-ing works for now, and will probably always be an option.
 
 There are really two ways to go about creating your tests: as a bunch of little individual executables, or as one giant monolithic one. CMake's CTest likes it when you have a bunch of individual test programs, but having a single runner file with a bunch of tests implemented in separate `something_spec.hpp` files might compile faster for you.
-
-
 
 ## Attribution
 Heavily inspired by [RSpec](https://github.com/rspec) and [Jasmine](http://jasmine.github.io).
