@@ -10,6 +10,10 @@
 #define explain context
 #define expect self.template expect
 #define is_expected self.is_expected
+#define before_all self.before_all
+#define before_each self.before_each
+#define after_all self.after_all
+#define after_each self.after_each
 
 typedef Description describe;
 

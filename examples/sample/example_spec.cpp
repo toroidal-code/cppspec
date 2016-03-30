@@ -1,3 +1,5 @@
+#include <cmath>
+#include <cstdlib>
 #include <list>
 #include "cppspec.hpp"
 
@@ -109,6 +111,47 @@ describe bool_spec("Some Tests", $ {
     //   });
   });
 
+describe abs_spec("abs", $ {
+  // you can use the `explain` keyword to
+  // group behavior and nest descriptions
+  explain("argument is zero", _ {
+    it("return zero", _ {
+      expect(abs(0)).to_equal(0);
+    });
+  });
+
+  before_all([]{ std::srand(std::time(0)); });
+  
+  int n = 0;
+  before_each([&]{ n = std::rand(); });
+
+  // you can also use `context` instead of
+  // `explain`, just like in RSpec
+  context("argument is positive", _ {
+    it("return positive", _ {
+      expect(abs(n)).to_equal(n, "abs(" + std::to_string(n) + ") didn't equal " + std::to_string(n));
+    });
+  });
+
+  explain("argument is negative", _ {
+    it("return positive", _ {
+      expect(abs(-n)).to_equal(n);
+    });
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* Here is the description of strcmp */
 // describe strcmp_spec("int strcmp ( const char * str1, const char * str2 )", _ {
 //   it( "returns 0 only when strings are equal", _ {
@@ -157,6 +200,7 @@ describe list_spec("A list spec", $ {
 int main(){
   bool r = true;
   r &= bool_spec.run();
+  r &= abs_spec.run();
   r &= vector_spec.run();
   r &= another_vector_spec.run();
 // #undef expect
