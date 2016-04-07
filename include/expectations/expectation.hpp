@@ -4,10 +4,11 @@
 #include <vector>
 #include "runnable.hpp"
 #include "matchers/basematcher.hpp"
+#include "matchers/be.hpp"
 #include "matchers/be_between.hpp"
+#include "matchers/be_within.hpp"
 #include "matchers/include.hpp"
 #include "matchers/equal.hpp"
-#include "matchers/be_within.hpp"
 
 namespace Expectations {
 
@@ -17,10 +18,10 @@ namespace Expectations {
  *   expect(something)
  *   expect([] -> auto { return something })
  *
- *   // used with `to` matchers
+ *   // used with a matcher
  *   expect(actual).to_equal(target)
  *
- *   // used with `not` and matchers
+ *   // used with `not` and a matcher
  *   expect(actual).not_().to_equal(target)
  * @endcode
  *
@@ -31,32 +32,64 @@ template <class A>
 class Expectation : public Child {
   A target;
   std::function<A(void)> block;
-  bool has_block = false;
-  bool is_positive = true;
+  bool has_block = false;   // Is the target a lambda?
+  bool is_positive = true;  // Have we been negated?
 
   template <typename E>
   bool setup_and_run(Matchers::BaseMatcher<A, E> &matcher, std::string msg);
 
  public:
+  /**
+   * @brief Create an Expectation using a value.
+   *
+   * @param value The target to test, an explicit value.
+   *
+   * @return The constructed Expectation.
+   */
   Expectation(A &value) : target(value) {}
 
+  /**
+   * @brief Create an Expectation using a function.
+   *
+   * This does not simply contain the return value of the given
+   * lambda, but instead wraps the thunk, delaying execution until it is time
+   * to perform the match.
+   *
+   * @param block A function that returns some value to test against.
+   *
+   * @return The constructed Expectation.
+   */
   Expectation(std::function<A(void)> block) : block(block), has_block(true) {}
 
+  /**
+   * @brief Create an Expectation using an initializer list.
+   *
+   * @param init_list The initializer list to match against.
+   *
+   * @return The constructed Expectation.
+   */
   template <typename U>
   Expectation(std::initializer_list<U> init_list)
       : target(std::vector<U>(init_list)) {}
 
-  A &get_target();
-  bool get_sign();
+  /** @brief Get the target of the expectation. */
+  A &get_target() { return target; }
+
+  /** @brief Get whether the expectation is normal or negated. */
+  bool get_sign() { return is_positive; }
 
   Expectation &not_();
-  Expectation &to();
+
+  bool to_be(std::function<bool(A)>, std::string msg = "");
+  bool to_be_null(std::string msg = "");
+  bool to_be_true(std::string msg = "");
+  bool to_be_false(std::string msg = "");
 
   template <typename U>
   bool to_include(std::initializer_list<U> expected, std::string msg = "");
 
-  template <typename U>
-  bool to_include(U expected, std::string msg = "");
+  template <typename E>
+  bool to_include(E expected, std::string msg = "");
 
   template <typename E>
   bool to_be_between(E min, E max, Matchers::RangeMode mode,
@@ -72,18 +105,8 @@ class Expectation : public Child {
   bool to_be_within(E expected, std::string msg = "");
 };
 
-template <typename A>
-A &Expectation<A>::get_target() {
-  return target;
-}
-
-template <typename A>
-bool Expectation<A>::get_sign() {
-  return is_positive;
-}
-
 /**
- * @brief Inverts the current matcher
+ * @brief Invert the current matcher.
  */
 template <typename A>
 Expectation<A> &Expectation<A>::not_() {
@@ -106,6 +129,69 @@ bool Expectation<A>::setup_and_run(Matchers::BaseMatcher<A, E> &matcher,
   return matcher(msg);
 }
 
+/** 
+ * @brief Match using the Matchers::Be matcher.
+ *
+ * @param test The function to use to test the output of the
+ *             expectation expression.
+ * @param msg Optional message to give on failure.
+ *
+ * @return Whether the expectation succeeds or fails.
+ */ template <typename A>
+bool Expectation<A>::to_be(std::function<bool(A)> test, std::string msg) {
+  Matchers::Be<A> matcher(*this, test);
+  return setup_and_run(matcher, msg);
+}
+
+/**
+ * @brief Match using the Matchers::BeNullptr matcher.
+ *
+ * @param msg Optional message to give on failure.
+ *
+ * @return
+ */
+template <typename A>
+bool Expectation<A>::to_be_null(std::string msg) {
+  Matchers::BeNullptr<A> matcher(*this);
+  return setup_and_run(matcher, msg);
+}
+
+/**
+ * @brief Match using the Matchers::Be matcher, testing for truthy-ness.
+ *
+ * @param msg Optional message to give on failure.
+ *
+ * @return
+ */
+template <typename A>
+bool Expectation<A>::to_be_true(std::string msg) {
+  Matchers::Be<A> matcher(*this, [](A t) { return static_cast<bool>(t); });
+  return setup_and_run(matcher, msg);
+}
+
+/**
+ * @brief Match using the Matchers::Be matcher, testing for falsy-ness.
+ *
+ * @param msg Optional message to give on failure.
+ *
+ * @return
+ */
+template <typename A>
+bool Expectation<A>::to_be_false(std::string msg) {
+  Matchers::Be<A> matcher(*this, [](A t) { return not static_cast<bool>(t); });
+  return setup_and_run(matcher, msg);
+}
+
+/**
+ * @brief Match using the Matchers::BeBetween matcher.
+ *
+ * @param min
+ * @param max
+ * @param mode
+ * @param msg Optional message to give on failure.
+ *
+ * @return
+ */
 template <typename A>
 template <typename E>
 bool Expectation<A>::to_be_between(E min, E max, Matchers::RangeMode mode,
@@ -114,12 +200,30 @@ bool Expectation<A>::to_be_between(E min, E max, Matchers::RangeMode mode,
   return setup_and_run(matcher, msg);
 }
 
+/**
+ * @brief Match using the Matchers::BeBetween matcher, with an explicit
+ *        range mode.
+ *
+ * @param min
+ * @param max
+ * @param msg Optional message to give on failure.
+ *
+ * @return
+ */
 template <typename A>
 template <typename E>
 bool Expectation<A>::to_be_between(E min, E max, std::string msg) {
   return this->to_be_between(min, max, Matchers::RangeMode::inclusive, msg);
 }
 
+/**
+ * @brief Match using the Matchers::Include matcher, given an initializer list.
+ *
+ * @param expected
+ * @param msg Optional message to give on failure.
+ *
+ * @return
+ */
 template <typename A>
 template <typename U>
 bool Expectation<A>::to_include(std::initializer_list<U> expected,
@@ -128,13 +232,29 @@ bool Expectation<A>::to_include(std::initializer_list<U> expected,
   return setup_and_run(matcher, msg);
 }
 
+/**
+ * @brief Match using the Matchers::Include matcher.
+ *
+ * @param expected
+ * @param msg Optional message to give on failure.
+ *
+ * @return
+ */
 template <typename A>
-template <typename U>
-bool Expectation<A>::to_include(U expected, std::string msg) {
-  Matchers::Include<A, U, U> matcher(*this, expected);
+template <typename E>
+bool Expectation<A>::to_include(E expected, std::string msg) {
+  Matchers::Include<A, E, E> matcher(*this, expected);
   return setup_and_run(matcher, msg);
 }
 
+/**
+ * @brief Match using the Matchers::Equal matcher.
+ *
+ * @param expected
+ * @param msg Optional message to give on failure.
+ *
+ * @return
+ */
 template <typename A>
 template <typename E>
 bool Expectation<A>::to_equal(E expected, std::string msg) {
@@ -142,6 +262,14 @@ bool Expectation<A>::to_equal(E expected, std::string msg) {
   return setup_and_run(matcher, msg);
 }
 
+/**
+ * @brief Match using the Matchers::BeWithin matcher.
+ *
+ * @param expected
+ * @param msg Optional message to give on failure.
+ *
+ * @return
+ */
 template <typename A>
 template <typename E>
 bool Expectation<A>::to_be_within(E expected, std::string msg) {

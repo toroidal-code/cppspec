@@ -28,9 +28,7 @@ class ItD : public ItExpBase {
   ItD(std::string descr, std::function<void(ItD &)> body)
       : ItExpBase(descr), body(body) {}
 
-  ItD(std::function<void(ItD &)> body) : body(body) {
-    this->set_needs_descr(true);
-  }
+  ItD(std::function<void(ItD &)> body) : body(body) {}
 
   bool run();
 };
@@ -45,9 +43,7 @@ class ItCd : public ItExpBase {
   ItCd(std::string descr, std::function<void(ItCd<T> &)> body)
       : ItExpBase(descr), body(body) {}
 
-  ItCd(std::function<void(ItCd<T> &)> body) : body(body) {
-    this->set_needs_descr(true);
-  }
+  ItCd(std::function<void(ItCd<T> &)> body) : body(body) {}
 
   Expectations::Expectation<T> is_expected();
   bool run();
@@ -86,8 +82,7 @@ Expectations::Expectation<std::vector<T>> ItExpBase::expect(
 
 template <class T>
 Expectations::Expectation<T> ItCd<T>::is_expected() {
-  ClassDescription<T> *cd =
-      static_cast<ClassDescription<T> *>(this->get_parent());
+  auto cd = static_cast<ClassDescription<T> *>(this->get_parent());
   Expectations::Expectation<T> expectation(cd->get_subject());
   expectation.set_parent(this);
   return expectation;
@@ -95,7 +90,7 @@ Expectations::Expectation<T> ItCd<T>::is_expected() {
 
 bool ItD::run() {
   if (!this->needs_descr()) {
-    std::cout << padding() << descr << std::endl;
+    std::cout << padding() << get_descr() << std::endl;
   }
   body(*this);
   return this->get_status();
@@ -104,7 +99,7 @@ bool ItD::run() {
 template <class T>
 bool ItCd<T>::run() {
   if (!this->needs_descr()) {
-    std::cout << padding() << descr << std::endl;
+    std::cout << padding() << get_descr() << std::endl;
   }
   body(*this);
   return this->get_status();

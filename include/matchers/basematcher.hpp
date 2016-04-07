@@ -38,8 +38,6 @@ class BaseMatcher : public Child, public Pretty {
     //               different");
   }
 
-  virtual ~BaseMatcher(){};
-
   virtual bool matches(Actual actual);
   virtual std::string failure_message();
   virtual std::string failure_message_when_negated();
@@ -80,7 +78,7 @@ std::string BaseMatcher<A, E>::description() {
 template <typename A, typename E>
 bool BaseMatcher<A, E>::operator()(std::string message) {
   bool matched;
-  ItBase *par = static_cast<ItBase *>(this->get_parent());
+  auto par = static_cast<ItBase *>(this->get_parent());
 
   if (par->needs_descr()) {
     std::cout << par->padding() << "should "

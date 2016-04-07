@@ -8,6 +8,12 @@
 
 namespace Matchers {
 
+/**
+ * @brief The `equal` matcher
+ *
+ * @tparam A the type of the actual value
+ * @tparam E the type of the expected value
+ */
 template <typename A, typename E>
 class Equal : public BaseMatcher<A, E> {
  public:
@@ -100,7 +106,7 @@ std::string Equal<A, E>::actual_inspected() {
   return Util::inspect_object(BaseMatcher<A, E>::get_actual());
 }
 
-// template <typename A, >
+// template <typename A, bool E>
 // std::string Equal<A, bool>::simple_failure_message() {
 //   std::stringstream ss;
 //   ss << "\nexpected " << std::boolalpha <<
