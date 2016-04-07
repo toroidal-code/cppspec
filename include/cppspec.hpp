@@ -14,6 +14,9 @@
 #define before_each self.before_each
 #define after_all self.after_all
 #define after_each self.after_each
+#define let(name, body)              \
+  auto name = make_let(#name, body); \
+  self.let(#name, name)
 
 typedef Description describe;
 

@@ -3,13 +3,14 @@
 
 #include <string>
 #include <queue>
-#include <map>
+#include <unordered_map>
 #include <functional>
 #include <iostream>
 #include <memory>
 #include "util.hpp"
 #include "runnable.hpp"
 #include "it.hpp"
+#include "let.hpp"
 
 template <class T>
 class ClassDescription;
@@ -24,6 +25,7 @@ class Description : public Runnable {
   std::deque<rule_block_t> after_alls;
   std::deque<rule_block_t> before_eaches;
   std::deque<rule_block_t> after_eaches;
+  std::unordered_map<std::string, Runnable *> lets;
 
   explicit Description(std::string descr) : descr(descr){};
 
@@ -63,6 +65,8 @@ class Description : public Runnable {
   void after_all(rule_block_t block);
   void exec_before_eaches();
   void exec_after_eaches();
+
+  void let(std::string name, Runnable &body);
 
   bool run();
 };
@@ -142,6 +146,11 @@ void Description::exec_before_eaches() {
 
 void Description::exec_after_eaches() {
   for (rule_block_t b : after_eaches) b();
+}
+
+void Description::let(std::string name, Runnable &body) {
+  auto p = lets.insert({name, &body});
+  if (!p.second) p.first->second = &body;  // assign if the key is already there
 }
 
 bool Description::run() {
