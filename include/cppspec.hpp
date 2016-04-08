@@ -16,7 +16,7 @@
 #define after_each self.after_each
 #define let(name, body)              \
   auto name = make_let(#name, body); \
-  self.let(#name, name)
+  self.let(#name, name);
 
 typedef Description describe;
 

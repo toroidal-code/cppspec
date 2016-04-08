@@ -220,4 +220,23 @@ bool ClassDescription<T>::run() {
   return this->get_status();
 }
 
+template <class T>
+Expectations::Expectation<T> ItCd<T>::is_expected() {
+  auto cd = static_cast<ClassDescription<T>*>(this->get_parent());
+  Expectations::Expectation<T> expectation(cd->get_subject());
+  expectation.set_parent(this);
+  return expectation;
+}
+
+template <class T>
+bool ItCd<T>::run() {
+  if (!this->needs_descr()) {
+    std::cout << padding() << get_descr() << std::endl;
+  }
+  body(*this);
+  auto cd = static_cast<ClassDescription<T>*>(this->get_parent());
+  cd->reset_lets();
+  return this->get_status();
+}
+
 #endif /* CLASS_DESCRIPTION_H */

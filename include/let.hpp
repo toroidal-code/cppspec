@@ -1,25 +1,47 @@
 #ifndef LET_H
 #define LET_H
 #include <functional>
-#include <type_traits>
-#include <iostream>
 #include "runnable.hpp"
 
+class LetBase : public Runnable {
+ protected:
+  bool delivered;
+
+ public:
+  LetBase() : delivered(false){};
+  void reset() { delivered = false; }
+  bool has_result() { return delivered; }
+  bool run() { return false; }
+};
+
 template <typename T>
-class Let : public Runnable {
+class Let : public LetBase {
   typedef std::function<T()> block_t;
+  T result;
 
   std::string name;
   block_t body;
 
  public:
-  explicit Let(std::string name, block_t body) : name(name), body(body){};
+  explicit Let(std::string name, block_t body)
+      : LetBase(), name(name), body(body){};
+
+  T &get_result() {
+    run();
+    return result;
+  }
+
+  std::string get_name() { return name; }
+
   bool run();
 };
 
 template <typename T>
 bool Let<T>::run() {
-  body();
+  if (!delivered) {
+    result = body();
+    delivered = true;
+  }
   return true;
 }
 

@@ -66,9 +66,10 @@ class Description : public Runnable {
   void exec_before_eaches();
   void exec_after_eaches();
 
-  void let(std::string name, Runnable &body);
-
+  void let(std::string, Runnable &body);
   bool run();
+  void reset_lets();
+  Runnable *find_let(std::string);
 };
 
 typedef Description Context;
@@ -128,7 +129,8 @@ void Description::before_each(rule_block_t b) {
   // Due to how lambdas and their contexts are passed around, we need to prime
   // the environment by executing the before_each, so that when an 'it'
   // declaration's lambda captures that env, it has the correct values for the
-  // variables. Truthfully, 'before_each' is a misnomer, as they are not getting
+  // variables. Truthfully, 'before_each' is a misnomer, as they are not
+  // getting
   // executed directly before the lambda's execution as one might expect, but
   // instead before the *next* lambda is declared.
   b();
@@ -149,8 +151,7 @@ void Description::exec_after_eaches() {
 }
 
 void Description::let(std::string name, Runnable &body) {
-  auto p = lets.insert({name, &body});
-  if (!p.second) p.first->second = &body;  // assign if the key is already there
+  lets.insert({name, &body});
 }
 
 bool Description::run() {
@@ -158,6 +159,55 @@ bool Description::run() {
   body(*this);
   for (auto a : after_alls) a();
   std::cout << std::endl;
+  return this->get_status();
+}
+
+void Description::reset_lets() {
+  for (auto &pair : lets) {
+    auto base = static_cast<LetBase *>(pair.second);  // downcast.
+    base->reset();
+  }
+
+  if (has_parent()) {
+    auto parent = static_cast<Description *>(get_parent());
+    parent->reset_lets();
+  }
+}
+
+Runnable *Description::find_let(std::string name) {
+  auto got = lets.find(name);
+
+  if (got == lets.end()) {
+    if (this->has_parent()) {
+      auto parent = static_cast<Description *>(get_parent());
+      return parent->find_let(name);
+    } else {  // this should never, *ever* happen.
+      throw(std::out_of_range("Could not find let '" + name + "'"));
+    }
+  } else {
+    return got->second;
+  }
+}
+
+template <class T>
+Expectations::Expectation<T> ItExpBase::expect(Let<T> let) {
+  auto parent = static_cast<Description *>(this->get_parent());
+  Let<T> *actual_let = static_cast<Let<T> *>(parent->find_let(let.get_name()));
+  T res = actual_let->get_result();
+  Expectations::Expectation<T> expectation(res);
+  expectation.set_parent(this);
+  return expectation;
+}
+
+bool ItD::run() {
+  if (!this->needs_descr()) {
+    std::cout << padding() << get_descr() << std::endl;
+  }
+  body(*this);
+
+  auto parent = static_cast<Description *>(this->get_parent());
+  parent->reset_lets();
+
   return this->get_status();
 }
 

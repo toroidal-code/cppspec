@@ -3,6 +3,7 @@
 #include <functional>
 #include <vector>
 #include "runnable.hpp"
+#include "let.hpp"
 #include "matchers/basematcher.hpp"
 #include "matchers/be.hpp"
 #include "matchers/be_between.hpp"
@@ -59,6 +60,8 @@ class Expectation : public Child {
    *
    * @return The constructed Expectation.
    */
+  // TODO: create a "lazy" parameter for differentiating between delayed and
+  // immediate execution
   Expectation(std::function<A(void)> block) : block(block), has_block(true) {}
 
   /**

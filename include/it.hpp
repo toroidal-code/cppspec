@@ -2,12 +2,9 @@
 #define IT_H
 #include <string>
 #include <functional>
+#include <unordered_map>
+#include "it_base.hpp"
 #include "expectations/expectation.hpp"
-
-class Description;
-
-template <class T>
-class ClassDescription;
 
 class ItExpBase : public ItBase {
  public:
@@ -16,9 +13,15 @@ class ItExpBase : public ItBase {
   template <class U>
   Expectations::Expectation<U> expect(U value);
 
+  // template <class U>
+  // Expectations::Expectation<U> expect(U &value);
+
   template <class U>
   Expectations::Expectation<std::vector<U>> expect(
       std::initializer_list<U> init_list);
+
+  template <class U>
+  Expectations::Expectation<U> expect(Let<U> let);
 };
 
 class ItD : public ItExpBase {
@@ -65,6 +68,13 @@ Expectations::Expectation<T> ItExpBase::expect(T value) {
   return expectation;
 }
 
+// template <class T>
+// Expectations::Expectation<T> ItExpBase::expect(T const &value) {
+//   Expectations::Expectation<T> expectation(value);
+//   expectation.set_parent(this);
+//   return expectation;
+// }
+
 /**
  * @brief An expect for initializer_list subjects
  *
@@ -78,31 +88,6 @@ Expectations::Expectation<std::vector<T>> ItExpBase::expect(
   Expectations::Expectation<std::vector<T>> expectation(init_list);
   expectation.set_parent(this);
   return expectation;
-}
-
-template <class T>
-Expectations::Expectation<T> ItCd<T>::is_expected() {
-  auto cd = static_cast<ClassDescription<T> *>(this->get_parent());
-  Expectations::Expectation<T> expectation(cd->get_subject());
-  expectation.set_parent(this);
-  return expectation;
-}
-
-bool ItD::run() {
-  if (!this->needs_descr()) {
-    std::cout << padding() << get_descr() << std::endl;
-  }
-  body(*this);
-  return this->get_status();
-}
-
-template <class T>
-bool ItCd<T>::run() {
-  if (!this->needs_descr()) {
-    std::cout << padding() << get_descr() << std::endl;
-  }
-  body(*this);
-  return this->get_status();
 }
 
 #endif /* IT_H */

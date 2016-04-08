@@ -31,11 +31,19 @@ class Be : public BaseMatcher<A, bool>, BeHelpers<Be<A>> {
   Be(Expectations::Expectation<A> expectation, std::function<bool(A)> test)
       : BaseMatcher<A, bool>(expectation), test(test) {}
 
+  std::string description() override;
   std::string failure_message() override;
   std::string failure_message_when_negated() override;
 
   bool match(bool, A actual) override;
 };
+
+template <typename A>
+std::string Be<A>::description() {
+  std::stringstream ss;
+  ss << "be" << Pretty::to_sentance(this->expected);
+  return ss.str();
+}
 
 template <typename A>
 std::string Be<A>::failure_message() {
