@@ -35,7 +35,10 @@ describe fabs_spec("fabs", $ {
   });
 });
 
+// describe_a allows you to create specs with implied subjects,
+// useful for testing specific classes and a mock instance
 describe_a <std::list<int>> int_list_spec({1,2,3}, $ {
+  // the `is_expected` function is used for matching an implied subject
   it(_{ is_expected().to_include(3); });
 });
 
@@ -99,11 +102,9 @@ to be cleaned up.
 Why, thank you! I certainly tried.
 
 ## What the heck are `$` and `_`!?
-TLDR: They're syntax sugar for `[](auto &self)` and `[=](auto &self)` respectively. 
+They're just syntax sugar for `[](auto &self)` and `[=](auto &self)` respectively, defined to avoid repetition and improve readability. `it([=](auto &self){ is_expected.to_equal(5); });` isn't exactly what I'm aiming for with syntax.
 
-They're defined to avoid repetition and improve readability. (`it([=](auto &self){ is_expected.to_equal(5); });` isn't exactly what I was aiming for with syntax) 
-
-We need them to pass a reference to the containing "thing". For example, `describe` 
+We need that `self` parameter to pass a reference to the containing structure. For example, `describe` 
 blocks get a `Description` object, while `it` blocks get an `It` object. 
 
 Annoyingly, you can't have an automatic capture-list on a non-local lambda 
