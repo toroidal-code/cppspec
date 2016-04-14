@@ -1,0 +1,11 @@
+site_name: C++Spec
+site_description: C++Spec
+site_author: C++Spec contributors
+repo_url: htpps://github.com/toroidal-code/cppspec/tree/master/docs
+copyright: Copyright © 2014-2016 Katherine Whitlock
+theme: readthedocs
+
+pages:
+  - Home: index.md
+  - Syntax:
+    - Describe: syntax/describe.md
