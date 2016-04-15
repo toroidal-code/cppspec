@@ -1,9 +1,5 @@
 #ifndef IT_H
 #define IT_H
-#include <string>
-#include <functional>
-#include <unordered_map>
-#include "it_base.hpp"
 #include "expectations/expectation.hpp"
 
 class ItExpBase : public ItBase {
@@ -42,11 +38,14 @@ class ItCd : public ItExpBase {
   std::function<void(ItCd<T> &)> body;
 
  public:
-  // This is only ever instantiated by ClassDescription<T>
-  ItCd(std::string descr, std::function<void(ItCd<T> &)> body)
-      : ItExpBase(descr), body(body) {}
+  T &subject;
 
-  ItCd(std::function<void(ItCd<T> &)> body) : body(body) {}
+  // This is only ever instantiated by ClassDescription<T>
+  ItCd(T &subject, std::string descr, std::function<void(ItCd<T> &)> body)
+      : ItExpBase(descr), body(body), subject(subject) {}
+
+  ItCd(T &subject, std::function<void(ItCd<T> &)> body)
+      : body(body), subject(subject) {}
 
   Expectations::Expectation<T> is_expected();
   bool run();

@@ -1,8 +1,6 @@
 #ifndef INCLUDE_H
 #define INCLUDE_H
-#include <string>
-#include "../util.hpp"
-
+#include "util.hpp"
 #include "basematcher.hpp"
 
 namespace Matchers {

@@ -1,7 +1,6 @@
 #ifndef BE_WITHIN_H
 #define BE_WITHIN_H
 #include <complex>
-#include <sstream>
 #include "basematcher.hpp"
 
 namespace Matchers {

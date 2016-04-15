@@ -1,10 +1,7 @@
 #ifndef EQUAL_H
 #define EQUAL_H
-#include <string>
-#include <sstream>
-#include <typeinfo>
 #include "basematcher.hpp"
-#include "../util.hpp"
+#include "util.hpp"
 
 namespace Matchers {
 

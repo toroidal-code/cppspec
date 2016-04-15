@@ -1,3 +1,7 @@
+/**
+ * @file
+ * @brief Utility functions and classes
+ */
 #ifndef UTIL_H
 #define UTIL_H
 
@@ -6,11 +10,8 @@
 #endif
 
 #include <typeinfo>
-#include <iostream>
 #include <sstream>
-#include <string>
 #include <memory>
-#include <cstdlib>
 
 namespace Util {
 
@@ -42,6 +43,12 @@ struct verbose_assert {
   static bool const value = A::value;
 };
 
+template <typename T>
+struct is_true : public std::is_same<std::true_type, T> {};
+
+template <typename T>
+struct is_false : public std::is_same<std::false_type, T> {};
+
 /**
  * @brief Functions for testing if a class is iterable
  */
@@ -50,7 +57,7 @@ template <class C>
 auto test(void *) -> decltype(void(std::declval<C>().begin()),
                               void(std::declval<C>().end()), std::true_type{});
 
-template <class C>
+template <class>
 auto test(...) -> std::false_type;
 };
 
@@ -67,8 +74,10 @@ template <class T>
 class is_iterable : public decltype(is_iterable_imp::test<T>(0)) {};
 
 /** @brief Helper variable template for is_iterable. */
+#ifdef HAS_VARIABLE_TEMPLATES
 template <class T>
 constexpr bool is_iterable_v = is_iterable<T>::value;
+#endif
 
 /**
  * @brief Functions for testing if a class is a container
@@ -76,11 +85,10 @@ constexpr bool is_iterable_v = is_iterable<T>::value;
 namespace is_container_imp {
 template <class C>
 auto test(void *)
-    -> decltype(std::true_type(is_iterable<C>::value),
-                void(std::declval<C>().max_size()),
-                void(std::declval<C>().empty()), std::true_type{});
+    -> decltype(void(std::declval<C>().max_size()),
+                void(std::declval<C>().empty()), is_iterable<C>{});
 
-template <class C>
+template <class>
 auto test(...) -> std::false_type;
 }
 
@@ -100,17 +108,58 @@ template <class T>
 struct is_container : public decltype(is_container_imp::test<T>(0)) {};
 
 /** @brief Helper variable template for is_container. */
+#ifdef HAS_VARIABLE_TEMPLATES
 template <class T>
 constexpr bool is_container_v = is_container<T>::value;
+#endif
 
-/** 
+/**
+ * @brief Functions for testing if a class can be streamed
+ */
+namespace is_streamable_imp {
+template <class C>
+auto test(void *) -> std::is_same<
+    // check for an operator<< via SFINAE
+    decltype(operator<<(std::declval<std::ostream &>(),
+                        std::declval<C const &>())),
+
+    std::ostream &  // make sure the return type is ostream&
+    >;
+
+template <class>
+auto test(...) -> std::false_type;  // fallthrough
+}
+
+/**
+ * @brief Checks whether T can be streamed.
+ *
+ * Provides the member constant value which is equal
+ * to `true`, if T is a streamable type. Otherwise,
+ * value is equal to `false`.
+ *
+ * A streamable type is defined by having the operator<<
+ * defined in scope.
+ *
+ * @tparam T a type to check
+ */
+template <class T>
+struct is_streamable : public decltype(is_streamable_imp::test<T>(0)) {};
+
+/** @brief Helper variable template for is_container. */
+#ifdef HAS_VARIABLE_TEMPLATES
+template <class T>
+constexpr bool is_streamable_v = is_streamable<T>::value;
+#endif
+
+/**
  * @brief Generate a string of the class and data of an object
  *
  * @param o the object to inspect
  *
  * @return the generated string
- */ template <typename O>
-std::string inspect_object(O o) {
+ */
+template <typename O>
+std::string inspect_object(O &o) {
   std::stringstream ss;
   ss << "(" << Util::demangle(typeid(o).name()) << ") => " << o;
   return ss.str();
@@ -124,9 +173,9 @@ std::string inspect_object(O o) {
  * @return the generated string
  */
 template <>
-std::string inspect_object(const char *o) {
+std::string inspect_object<const char *>(const char *&o) {
   std::stringstream ss;
-  ss << "(" << Util::demangle(typeid(o).name()) << ") => " << '"' << o << '"';
+  ss << "(const char *) => " << '"' << o << '"';
   return ss.str();
 }
 
@@ -138,9 +187,9 @@ std::string inspect_object(const char *o) {
  * @return the generated string
  */
 template <>
-std::string inspect_object(std::string &o) {
+std::string inspect_object<std::string>(std::string &o) {
   std::stringstream ss;
-  ss << "(" << Util::demangle(typeid(o).name()) << ") => " << '"' << o << '"';
+  ss << "(std::string) => " << '"' << o << '"';
   return ss.str();
 }
 }

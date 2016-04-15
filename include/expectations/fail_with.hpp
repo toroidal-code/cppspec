@@ -1,6 +1,5 @@
 #ifndef FAIL_WITH_H
 #define FAIL_WITH_H
-#include <string>
 #include <stdexcept>
 #include <iostream>
 // the following are UBUNTU/LINUX ONLY terminal color codes.

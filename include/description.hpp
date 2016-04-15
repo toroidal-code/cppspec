@@ -1,16 +1,12 @@
+/**
+ * @file
+ * @brief Defines the Description class and associated functions
+ */
 #ifndef DESCRIPTION_H
 #define DESCRIPTION_H
-
-#include <string>
 #include <queue>
 #include <unordered_map>
-#include <functional>
-#include <iostream>
-#include <memory>
-#include "util.hpp"
-#include "runnable.hpp"
 #include "it.hpp"
-#include "let.hpp"
 
 template <class T>
 class ClassDescription;
@@ -27,6 +23,7 @@ class Description : public Runnable {
   std::deque<rule_block_t> after_eaches;
   std::unordered_map<std::string, Runnable *> lets;
 
+  explicit Description(){};
   explicit Description(std::string descr) : descr(descr){};
 
  public:

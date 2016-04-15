@@ -1,18 +1,9 @@
 #ifndef CLASS_DESCRIPTION_H
 #define CLASS_DESCRIPTION_H
-
-#include <string>
-#include <vector>
-#include <map>
-#include <functional>
-#include <iostream>
-#include "util.hpp"
 #include "description.hpp"
-#include "it.hpp"
-#include "expectations/expectation.hpp"
 
 /**
- * @brief A Description with an implicit subject
+ * @brief A Description with a defined subject
  *
  * A ClassDescription is a subclass of Description that
  * allows for templating and specification of the subject
@@ -26,43 +17,51 @@ template <class T>
 class ClassDescription : public Description {
   typedef std::function<void(ClassDescription<T>&)> block_t;
   block_t body;
-  T example;
   bool first;
 
  public:
+  T subject;  // subject field exposed for usage in `expect([self.]subject)`
+
   // Constructor
-  // if there's no explicit subject given, then default using
-  // the default constructor of the given type as the subject.
-  ClassDescription<T>(block_t body)
-      : Description(Pretty::to_word(T()) + " : " +
-                    Util::demangle(typeid(T).name())),
-        body(body),
-        example(T()){};
+  // if there's no explicit subject given, then use
+  // the default constructor of the given type as the implicit subject.
+  ClassDescription<T>(block_t body) : Description(), body(body), subject(T()) {
+    this->descr = Pretty::to_word_type(subject);
+  };
+
+  ClassDescription<T>(std::string descr, block_t body)
+      : Description(descr), body(body), subject(T()){};
 
   ClassDescription(T subject, block_t body)
-      : Description(Pretty::to_word(subject) + " : " +
-                    Util::demangle(typeid(T).name())),
+      : Description(Pretty::to_word_type(subject)),
         body(body),
-        example(subject){};
+        subject(subject){};
+
+  ClassDescription(std::string descr, T subject, block_t body)
+      : Description(descr), body(body), subject(subject){};
 
   ClassDescription(T& subject, block_t body)
-      : Description(Pretty::to_word(subject) + " : " +
-                    Util::demangle(typeid(T).name())),
+      : Description(Pretty::to_word_type(subject)),
         body(body),
-        example(subject){};
+        subject(subject){};
+
+  ClassDescription(std::string descr, T& subject, block_t body)
+      : Description(descr), body(body), subject(subject){};
 
   template <typename U>
   ClassDescription(std::initializer_list<U> init_list, block_t body)
-      : Description(Pretty::to_word(init_list) + " : " +
-                    Util::demangle(typeid(T).name())),
-        body(body),
-        example(T(init_list)){};
+      : Description(), body(body), subject(T(init_list)) {
+    this->descr = Pretty::to_word_type(subject);
+  };
+
+  template <typename U>
+  ClassDescription(std::string descr, std::initializer_list<U> init_list,
+                   block_t body)
+      : Description(descr), body(body), subject(T(init_list)){};
 
   ClassDescription<T>(Description& d) : Description(d){};
 
   const bool has_subject = true;
-  void set_subject(T& subject) { example = subject; }
-  T& get_subject() { return example; }
 
   bool it(std::string descr, std::function<void(ItCd<T>&)> body);
   bool it(std::function<void(ItCd<T>&)> body);
@@ -70,12 +69,6 @@ class ClassDescription : public Description {
   bool context(T& subject, block_t body);
   bool context(block_t body);
   bool run();
-
-  template <class U>
-  ClassDescription<U> subject(U subject);
-
-  template <class U>
-  ClassDescription<U> subject(U& subject);
 };
 
 template <class T>
@@ -110,7 +103,7 @@ template <class T>
 bool Description::context(T subject,
                           std::function<void(ClassDescription<T>&)> body) {
   ClassContext<T> context(body);
-  context.set_subject(subject);
+  context.subject = subject;
   context.set_parent(this);
   context.before_eaches = this->before_eaches;
   context.after_eaches = this->after_eaches;
@@ -157,7 +150,7 @@ bool Description::context(std::initializer_list<U> init_list,
 template <class T>
 bool ClassDescription<T>::it(std::string name,
                              std::function<void(ItCd<T>&)> body) {
-  ItCd<T> it(name, body);
+  ItCd<T> it(this->subject, name, body);
   it.set_parent(this);
   bool result = it.run();
   exec_after_eaches();
@@ -188,28 +181,12 @@ bool ClassDescription<T>::it(std::string name,
  */
 template <class T>
 bool ClassDescription<T>::it(std::function<void(ItCd<T>&)> body) {
-  ItCd<T> it(body);
+  ItCd<T> it(this->subject, body);
   it.set_parent(this);
   bool result = it.run();
   exec_after_eaches();
   exec_before_eaches();
   return result;
-}
-
-template <class T>
-template <class U>
-ClassDescription<U> ClassDescription<T>::subject(U subject) {
-  ClassDescription<U> cd(static_cast<Description>(this));
-  cd->example = subject;
-  return cd;
-}
-
-template <class T>
-template <class U>
-ClassDescription<U> ClassDescription<T>::subject(U& subject) {
-  ClassDescription<U> cd(static_cast<Description>(this));
-  cd->example = subject;
-  return cd;
 }
 
 template <class T>
@@ -223,7 +200,7 @@ bool ClassDescription<T>::run() {
 template <class T>
 Expectations::Expectation<T> ItCd<T>::is_expected() {
   auto cd = static_cast<ClassDescription<T>*>(this->get_parent());
-  Expectations::Expectation<T> expectation(cd->get_subject());
+  Expectations::Expectation<T> expectation(cd->subject);
   expectation.set_parent(this);
   return expectation;
 }

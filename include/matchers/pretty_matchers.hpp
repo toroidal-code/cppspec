@@ -1,12 +1,9 @@
 #ifndef PRETTY_MATCHERS_H
 #define PRETTY_MATCHERS_H
-#include "cxx-prettyprint/prettyprint.hpp"
-#include <string>
-#include <sstream>
-#include <vector>
-#include <typeinfo>
 #include <regex>
 #include <algorithm>
+#include "cxx-prettyprint/prettyprint.hpp"
+#include "util.hpp"
 
 namespace Matchers {
 template <typename A, typename E>
@@ -29,8 +26,18 @@ struct Pretty {
   static std::string last(const std::string &s, const char delim);
   static std::string improve_hash_formatting(std::string inspect_string);
 
-  template <class T>
-  static std::string to_word(T &item);
+  template <typename T>
+  static
+      typename std::enable_if<Util::is_streamable<T>::value, std::string>::type
+      to_word(T &item);
+
+  template <typename T>
+  static
+      typename std::enable_if<!Util::is_streamable<T>::value, std::string>::type
+      to_word(T &item);
+
+  template <typename T>
+  static std::string to_word_type(T &item);
 
   template <typename A, typename E>
   static std::string to_word(Matchers::BaseMatcher<A, E> &matcher);
@@ -80,7 +87,7 @@ std::string Pretty::to_sentance(std::vector<T> &words) {
 }
 
 /**
- * Take a single object and format it as a sentance
+ * @brief Take a single object and format it as a sentance
  *
  * @param item the object to be processed
  *
@@ -93,7 +100,7 @@ std::string Pretty::to_sentance(T &item) {
 }
 
 /**
- * Formats an object as a string
+ * @brief Formats an object as a string when operator<< is available
  *
  * In reality, this uses the `<<` operator, simply
  * providing a way to convert the object to a string without
@@ -104,9 +111,26 @@ std::string Pretty::to_sentance(T &item) {
  * @return the string representation
  */
 template <typename T>
-std::string Pretty::to_word(T &item) {
+typename std::enable_if<Util::is_streamable<T>::value, std::string>::type
+Pretty::to_word(T &item) {
   std::stringstream ss;
   ss << item;
+  return ss.str();
+}
+
+/**
+ * @brief Formats an object as a string when there is no operator<<
+ *
+ * @param item the object to be processed
+ *
+ * @return the string representation
+ */
+template <typename T>
+typename std::enable_if<!Util::is_streamable<T>::value, std::string>::type
+Pretty::to_word(T &item) {
+  std::stringstream ss;
+  // Ruby-style inspect for objects without an overloaded operator<<
+  ss << "#<" << Util::demangle(typeid(item).name()) << ":" << &item << ">";
   return ss.str();
 }
 
@@ -129,6 +153,15 @@ std::string Pretty::to_word(Matchers::BaseMatcher<A, E> &matcher) {
   } else {
     return description;
   }
+}
+
+template <typename T>
+std::string Pretty::to_word_type(T &item) {
+  std::string word = to_word(item);
+  if (Util::is_streamable<T>::value) {
+    word += " : " + Util::demangle(typeid(T).name());
+  }
+  return word;
 }
 
 std::string Pretty::name_to_sentance() { return split_words(name()); }

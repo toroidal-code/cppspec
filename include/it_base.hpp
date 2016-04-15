@@ -1,7 +1,5 @@
 #ifndef IT_BASE_H
 #define IT_BASE_H
-
-#include <string>
 #include "runnable.hpp"
 
 /**

@@ -1,9 +1,6 @@
 #ifndef BE_H
 #define BE_H
-#include <string>
-#include <sstream>
 #include "basematcher.hpp"
-#include "pretty_matchers.hpp"
 
 namespace Matchers {
 

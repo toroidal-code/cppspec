@@ -1,10 +1,10 @@
+/**
+ * @file
+ * @brief Defines the Expectations::Expectation class and associated functions
+ */
 #ifndef EXPECTATION_H
 #define EXPECTATION_H
-#include <functional>
-#include <vector>
-#include "runnable.hpp"
 #include "let.hpp"
-#include "matchers/basematcher.hpp"
 #include "matchers/be.hpp"
 #include "matchers/be_between.hpp"
 #include "matchers/be_within.hpp"

@@ -1,12 +1,7 @@
 #ifndef BASEMATCHER_H
 #define BASEMATCHER_H
 
-#include <string>
-#include <sstream>
-#include <iostream>
-#include <memory>
 #include "pretty_matchers.hpp"
-#include "runnable.hpp"
 #include "expectations/handler.hpp"
 #include "it_base.hpp"
 
@@ -42,8 +37,8 @@ class BaseMatcher : public Child, public Pretty {
   virtual std::string failure_message();
   virtual std::string failure_message_when_negated();
   virtual std::string description();
-  Actual get_actual() { return actual; }
-  Expected get_expected() { return expected; }
+  Actual &get_actual() { return actual; }
+  Expected &get_expected() { return expected; }
   virtual bool match(Expected, Actual) { return false; }
   bool operator()(std::string message = "");
 };
