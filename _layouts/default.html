@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ site.title }}</title>
+  <link rel="stylesheet" href="{{ site.baseurl }}assets/css/style.css">
+  <link rel="stylesheet" href="{{ site.baseurl }}assets/css/highlight.css">
+</head>
+<body>
+  <div class="profile">
+    <section id="wrapper">
+      <header id="header">
+        <h1>{{ site.name }}</h1>
+        <h2>{{ site.description }}</h2>
+	{% include navigation.html %}
+      </header>
+    </section>
+  </div>
+
+  <section id="wrapper" class="{% if page.profile %}home{% endif %}">
+    {{ content }}
+  </section>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="{{ site.baseurl }}assets/js/main.js"></script>
+</body>
+</html>
+
+
+

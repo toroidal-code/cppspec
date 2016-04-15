@@ -1,0 +1,33 @@
+name: C++Spec
+author: Katherine Whitlock
+
+title: C++Spec | BDD testing for C++
+description: A BDD testing library for C++
+
+baseurl: '/cppspec/'
+url: 'http://toroidal-code.github.io/cppspec/'
+
+
+markdown: kramdown
+highlighter: rouge
+
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+links:
+  - name:         GitHub
+    url:          http://github.com/toroidal-code/cppspec
+    external:     true
+
+  - name:         Documentation
+    url:          http://cppspec.readthedocs.org/
+    external:     true
+
+  - name:         API Docs
+    url:          /dox/html/index.html
+
+  - name:         Download
+    url:          https://github.com/toroidal-code/cppspec/releases/latest
+    id:           latest-download
+    external:     true
