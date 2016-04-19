@@ -41,11 +41,14 @@ class BaseMatcher : public Runnable, public Pretty {
   virtual std::string description();
   Actual &get_actual() { return expectation.get_target(); }
   Expected &get_expected() { return expected; }
+  Expectation<Actual> &get_expectation() { return expectation; }
   virtual BaseMatcher &set_message(std::string message) {
     this->message = message;
     return *this;
   }
   bool run() override;
+
+  typedef Expected expected_t;
 };
 
 template <typename A, typename E>
@@ -65,7 +68,9 @@ std::string BaseMatcher<A, E>::failure_message_when_negated() {
 template <typename A, typename E>
 std::string BaseMatcher<A, E>::description() {
   std::stringstream ss;
-  ss << this->name_to_sentance() << this->to_sentance(expected);
+  std::string pretty_expected = this->to_sentance(expected);
+  ss << "match " << this->name_to_sentance(Util::demangle(typeid(*this).name()))
+     << "(" << pretty_expected.substr(1, pretty_expected.length()) << ")";
   return ss.str();
 }
 

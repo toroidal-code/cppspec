@@ -6,6 +6,11 @@ add_executable( describe_a_spec describe_a_spec.cpp )
 target_link_libraries( describe_a_spec c++spec ${CMAKE_THREAD_LIBS_INIT} )
 add_test ( describe_a_spec describe_a_spec )
 
+add_executable( expectation_spec expectations/expectation_spec.cpp )
+target_link_libraries( expectation_spec c++spec ${CMAKE_THREAD_LIBS_INIT} )
+add_test ( expectation_spec expectation_spec )
+
+
 add_executable( be_within_spec matchers/be_within_spec.cpp )
 target_link_libraries( be_within_spec c++spec ${CMAKE_THREAD_LIBS_INIT} )
 add_test ( be_within_spec be_within_spec )

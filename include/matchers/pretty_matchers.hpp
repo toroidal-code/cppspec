@@ -19,8 +19,8 @@ class BaseMatcher;
  */
 struct Pretty {
   std::string _name = "";
-  std::string name();
-  std::string name_to_sentance();
+  std::string name(std::string name);
+  std::string name_to_sentance(std::string name);
   static std::string split_words(std::string sym);
   static std::string underscore(std::string camel_cased_word);
   static std::string last(const std::string &s, const char delim);
@@ -164,11 +164,13 @@ std::string Pretty::to_word_type(T &item) {
   return word;
 }
 
-std::string Pretty::name_to_sentance() { return split_words(name()); }
+std::string Pretty::name_to_sentance(std::string n) {
+  return split_words(name(n));
+}
 
-std::string Pretty::name() {
+std::string Pretty::name(std::string name) {
   if (_name.empty()) {
-    return last(typeid(this).name(), ':');
+    return last(name, ':');
   } else {
     return _name;
   }

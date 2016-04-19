@@ -37,6 +37,13 @@ class Expectation : public Child {
   bool is_positive = true;  // Have we been negated?
 
  public:
+  Expectation(Expectation const &copy)
+      :  // Child(((Expectation)copy).get_parent())
+        target(copy.target),
+        block(copy.block),
+        has_block(copy.has_block),
+        is_positive(copy.is_positive){};
+
   /**
    * @brief Create an Expectation using a value.
    *
@@ -44,7 +51,7 @@ class Expectation : public Child {
    *
    * @return The constructed Expectation.
    */
-  Expectation(ItBase &it, A &value) : Child(it), target(value) {}
+  Expectation(ItBase &it, A value) : Child(it), target(value) {}
 
   /**
    * @brief Create an Expectation using a function.
@@ -81,6 +88,9 @@ class Expectation : public Child {
 
   Expectation &not_();
 
+  template <class M>
+  bool to(M matcher, std::string msg = "");
+
   bool to_be(std::function<bool(A)>, std::string msg = "");
   bool to_be_null(std::string msg = "");
   bool to_be_true(std::string msg = "");
@@ -107,7 +117,7 @@ class Expectation : public Child {
  */
 template <typename A>
 Expectation<A> &Expectation<A>::not_() {
-  is_positive = not is_positive;
+  this->is_positive = not this->is_positive;
   return *this;
 }
 
@@ -243,6 +253,18 @@ Matchers::BeWithin<A, E> Expectation<A>::to_be_within(E expected,
   Matchers::BeWithin<A, E> matcher(*this, expected);
   matcher.set_message(msg);
   return matcher;
+}
+
+template <typename A>
+template <class M>
+bool Expectation<A>::to(M matcher, std::string msg) {
+  static_assert(
+      std::is_base_of<Matchers::BaseMatcher<A, typename M::expected_t>,
+                      M>::value,
+      "Matcher is not a subclass of BaseMatcher.");
+  // auto base_matcher = static_cast<Matchers::BaseMatcher<A,typename
+  // M::expected_t>>(matcher);
+  return matcher.set_message(msg).run();
 }
 }
 
