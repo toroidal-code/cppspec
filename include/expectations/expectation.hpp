@@ -103,7 +103,9 @@ class Expectation : public Child {
   bool to_include(E expected, std::string msg = "");
 
   template <typename E>
-  Matchers::BeBetween<A, E> to_be_between(E min, E max, std::string msg = "");
+  bool to_be_between(E min, E max,
+                     Matchers::RangeMode mode = Matchers::RangeMode::inclusive,
+                     std::string msg = "");
 
   template <typename E>
   bool to_equal(E expected, std::string msg = "");
@@ -186,11 +188,11 @@ bool Expectation<A>::to_be_false(std::string msg) {
  */
 template <typename A>
 template <typename E>
-Matchers::BeBetween<A, E> Expectation<A>::to_be_between(E min, E max,
-                                                        std::string msg) {
-  Matchers::BeBetween<A, E> matcher(*this, min, max);
-  matcher.set_message(msg);
-  return matcher;
+bool Expectation<A>::to_be_between(E min, E max, Matchers::RangeMode mode,
+                                   std::string msg) {
+  return Matchers::BeBetween<A, E>(*this, min, max, mode)
+      .set_message(msg)
+      .run();
 }
 
 /**

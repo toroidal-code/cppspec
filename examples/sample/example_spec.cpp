@@ -5,101 +5,101 @@
 
 
 describe bool_spec("Some Tests", $ {
-    context("true is", _ {
-        it("true", _ {
-            expect(static_cast<bool>(1)).to_equal(true);
-          });
+  context("true is", _ {
+    it("true", _ {
+      expect(static_cast<bool>(1)).to_equal(true);
+    });
 
-        it("true", _ {
-            expect(true).to_equal(true);
-          });
+    it("true", _ {
+      expect(true).to_equal(true);
+    });
 
-      });
-
-    int i = 4;    
-    explain("4", _ {
-        it("equals 4", _ {
-            expect(i).to_equal(4);
-          });
-        it("does not equal 5", _ {
-            expect(i).not_().to_equal(5);
-          });
-
-        it("plus 1 equals 5", _ {
-            expect(i+1).to_equal(5);
-          });
-      });
-
-    explain("0 is", _ {
-        it("between -1 and 1 (exclusive)", _ {
-            expect(0).to_be_between(-1, 1).exclusive();
-          });
-        it("between -0 and 0 (inclusive)", _ {
-            expect(0).to_be_between(-0,0).inclusive();
-          });
-        it("not between -0 and 0 (exclusive)", _ {
-            expect(0).not_().to_be_between(-0,0).exclusive();
-          });
-        it("not between 1 and -1 (inclusive)", _ {
-            expect(0).not_().to_be_between(1,-1).inclusive();
-          });
-        it("between -1.0 and 1.0 (exclusive)", _ {
-            expect(0).to_be_between(-1.0, 1.0).exclusive();
-          });
-      });
-
-
-    explain("{1,2,3}", _ {
-        it("includes 1", _ {
-            expect({1,2,3}).to_include({1});
-          });
-        it("includes [1,2,3]", _ {
-            expect({1,2,3}).to_include({1,2,3});
-          });
-        it("does not include 4", _ {
-            expect({1,2,3}).not_().to_include({4});
-          });
-
-        it("does not include [4,5,6]", _ {
-            expect({1,2,3}).not_().to_include({4,5,6});
-          });
-      });
-
-
-    explain <std::list<int>> ({1,2,3}, _ {
-        it(_ { is_expected().to_include(1); });
-
-        it("includes [1,2,3]", _ {
-            expect<std::list<int>>({1,2,3}).to_include({1,2,3});
-          });
-
-        it( _ { is_expected().not_().to_include(4); });
-
-        it("does not include [4,5,6]", _ {
-            is_expected().not_().to_include({4,5,6});
-          });
-      });
-
-
-    // context("std::map {{1,2},{3,4},{5,6}}", _ {
-    //     it("includes 1", _ {
-    //         std::map<int,int> m = {{1,2},{3,4},{5,6}};
-    //         expect(m).to_include({1});
-    //       });
-    //     it("includes [1,2,3]", _ {
-    //         std::map<int,int> m = {{1,2},{3,4},{5,6}};
-    //         expect(m).to_include({1,2,3});
-    //       });
-    //     it("does not include 4", _ {
-    //         std::map<int,int> m = {{1,2},{3,4},{5,6}};
-    //         expect(m).not_().to_include({4});
-    //       });
-    //     it("does not include 4,5,6", _ {
-    //         std::map<int,int> m = {{1,2},{3,4},{5,6}};
-    //         expect({1,2,3}).not_().to_include({4,5,6});
-    //       });
-    //   });
   });
+
+  int i = 4;
+  explain("4", _ {
+    it("equals 4", _ {
+      expect(i).to_equal(4);
+    });
+    it("does not equal 5", _ {
+      expect(i).not_().to_equal(5);
+    });
+
+    it("plus 1 equals 5", _ {
+      expect(i+1).to_equal(5);
+    });
+  });
+
+  explain("0 is", _ {
+    using namespace Matchers;
+    it("between -1 and 1 (exclusive)", _ {
+      expect(0).to_be_between(-1, 1, RangeMode::exclusive);
+    });
+    it("between -0 and 0 (inclusive)", _ {
+      expect(0).to_be_between(-0,0, RangeMode::inclusive);
+    });
+    it("not between -0 and 0 (exclusive)", _ {
+      expect(0).not_().to_be_between(-0,0, RangeMode::exclusive);
+    });
+    it("not between 1 and -1", _ {
+      expect(0).not_().to_be_between(1,-1);
+    });
+    it("between -1.0 and 1.0 (exclusive)", _ {
+      expect(0).to_be_between(-1.0, 1.0, RangeMode::exclusive);
+    });
+  });
+
+
+  explain("{1,2,3}", _ {
+    it("includes 1", _ {
+      expect({1,2,3}).to_include({1});
+    });
+    it("includes [1,2,3]", _ {
+      expect({1,2,3}).to_include({1,2,3});
+    });
+    it("does not include 4", _ {
+      expect({1,2,3}).not_().to_include({4});
+    });
+
+    it("does not include [4,5,6]", _ {
+      expect({1,2,3}).not_().to_include({4,5,6});
+    });
+  });
+
+
+  explain <std::list<int>> ({1,2,3}, _ {
+    it(_ { is_expected().to_include(1); });
+
+    it("includes [1,2,3]", _ {
+      expect<std::list<int>>({1,2,3}).to_include({1,2,3});
+    });
+
+    it( _ { is_expected().not_().to_include(4); });
+
+    it("does not include [4,5,6]", _ {
+      is_expected().not_().to_include({4,5,6});
+    });
+  });
+
+  // context("std::map {{1,2},{3,4},{5,6}}", _ {
+  //     it("includes 1", _ {
+  //         std::map<int,int> m = {{1,2},{3,4},{5,6}};
+  //         expect(m).to_include({1});
+  //       });
+  //     it("includes [1,2,3]", _ {
+  //         std::map<int,int> m = {{1,2},{3,4},{5,6}};
+  //         expect(m).to_include({1,2,3});
+  //       });
+  //     it("does not include 4", _ {
+  //         std::map<int,int> m = {{1,2},{3,4},{5,6}};
+  //         expect(m).not_().to_include({4});
+  //       });
+  //     it("does not include 4,5,6", _ {
+  //         std::map<int,int> m = {{1,2},{3,4},{5,6}};
+  //         expect({1,2,3}).not_().to_include({4,5,6});
+  //       });
+  //   });
+});
 
 describe abs_spec("abs", $ {
   // you can use the `explain` keyword to
@@ -184,10 +184,10 @@ describe let_spec("let", $ {
 //   });
 
 describe list_spec("A list spec", $ {
-    explain <std::list<int>> ({1,2,3,4}, _ {
-        it( _ { is_expected().to_include(6); });
-      });
+  explain <std::list<int>> ({1,2,3,4}, _ {
+    it( _ { is_expected().to_include(6); });
   });
+});
 
 /* Here is the declaration of fabs description defined in an other file (fabs_spec.c in this sample)*/
 int main(){

@@ -10,6 +10,9 @@ add_executable( expectation_spec expectations/expectation_spec.cpp )
 target_link_libraries( expectation_spec c++spec ${CMAKE_THREAD_LIBS_INIT} )
 add_test ( expectation_spec expectation_spec )
 
+add_executable( be_between_spec matchers/be_between_spec.cpp )
+target_link_libraries( be_between_spec c++spec ${CMAKE_THREAD_LIBS_INIT} )
+add_test ( be_between_spec be_between_spec )
 
 add_executable( be_within_spec matchers/be_within_spec.cpp )
 target_link_libraries( be_within_spec c++spec ${CMAKE_THREAD_LIBS_INIT} )

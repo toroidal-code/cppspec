@@ -1,4 +1,11 @@
 #include "cppspec.hpp"
+/**
+ * @file
+ *
+ * Adapted from rpsec-expectation's be_within_spec.rb
+ * which is copyrighted under the MIT License
+ * to the RSpec team from 2005-2016
+ */
 
 describe be_within_spec("expect(actual).to_be_within(delta).of(expected)", $  {
   it("passes when actual == expected", _ {
@@ -28,15 +35,29 @@ describe be_within_spec("expect(actual).to_be_within(delta).of(expected)", $  {
   it("passes with negative arguments", _ {
     expect(-1.0001).to_be_within(5).percent_of(-1);
   });
+  
+  it("works with std::time", _ {
+    expect(std::time(nullptr)).to_be_within(0.1).of(std::time(nullptr));
+  });
 
-  // Do failures here
+//  it("fails when actual < (expected - delta)", _ {
+//    expect([]{
+//      expect(4.49).to_be_within(0.5).of(5.0);
+//    }).to_fail_with("expected 4.49 to be within 0.5 of 5.0");
+//  });
+//
+//  it("fails when actual > (expected + delta)", _ {
+//    expect([]{
+//      expect(5.51).to_be_within(0.5).of(5.0);
+//    }).to_fail_with("expected 5.51 to be within 0.5 of 5.0");
+//  });
 
   it("provides a description", _ {
     auto d = 5.1;
     Expectations::Expectation<double> ex(self, d);
     Matchers::BeWithin<double, double> matcher(ex, 0.5);
     matcher.of(5.0);
-    expect(matcher.description()).to_equal(std::string("be within 0.5 of 5"));
+    expect(matcher.description()).to_equal("be within 0.5 of 5");
   });
 
   context("expect(actual).to_be_within(delta).percent_of(expected)", _ {
@@ -62,7 +83,7 @@ describe be_within_spec("expect(actual).to_be_within(delta).of(expected)", $  {
       Expectations::Expectation<double> ex(self, d);
       Matchers::BeWithin<double, double> matcher(ex, 0.5);
       matcher.percent_of(5.0);
-      expect(matcher.description()).to_equal(std::string("be within 0.5% of 5"));
+      expect(matcher.description()).to_equal("be within 0.5% of 5");
     });
   });
 
@@ -76,11 +97,38 @@ describe be_within_spec("expect(actual).to_be_within(delta).of(expected)", $  {
     });
 
     // it("fails when actual == expected", _ {
-    //   expect([]{
-    //     expect(5.51).not_().to_be_within(0.5).of(5.0)();
-    //   }).to_fail_with("expected 5.0 not to be within 0.5 of 5.0")();
+    //   expect([=]{
+    // 	expect(5.0).not_().to_be_within(0.5).of(5.0);
+    //   }).to_fail_with("expected 5.0 not to be within 0.5 of 5.0");
     // });
 
+    // it("fails when actual < (expected + delta)", _ {
+    //   expect([=]{
+    // 	expect(5.49).not_().to_be_within(0.5).of(5.0);
+    //   }).to_fail_with("expected 5.49 not to be within 0.5 of 5.0");
+    // });
+
+    // it("fails when actual > (expected - delta)", _ {
+    //   expect([=]{
+    // 	expect(4.51).not_().to_be_within(0.5).of(5.0);
+    //   }).to_fail_with("expected 4.51 not to be within 0.5 of 5.0");
+    // });
+
+    // it("fails when actual == (expected - delta)", _ {
+    //   expect([=]{
+    // 	expect(4.5).not_().to_be_within(0.5).of(5.0);
+    //   }).to_fail_with("expected 4.5 not to be within 0.5 of 5.0");
+    // });
+
+    // it("fails when actual == (expected + delta)", _ {
+    //   expect([=]{
+    // 	expect(5.5).not_().to_be_within(0.5).of(5.0);
+    //   }).to_fail_with("expected 5.5 not to be within 0.5 of 5.0");
+    // });
+
+    // it("passes if the actual is not numeric", _ {
+    //   expect(nullptr).not_().to_be_within(0.1).of(0);
+    // });
   });
 });
 

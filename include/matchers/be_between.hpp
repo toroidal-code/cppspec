@@ -4,56 +4,38 @@
 #include "basematcher.hpp"
 
 namespace Matchers {
+enum class RangeMode { exclusive, inclusive };
+
 template <typename A, typename E>
 class BeBetween : public BaseMatcher<A, E> {
-  enum class RangeMode { exclusive, inclusive };
   E min;
   E max;
-  RangeMode mode = RangeMode::inclusive;
+  RangeMode mode;
   enum class LtOp { lt, lt_eq } lt_op;
   enum class GtOp { gt, gt_eq } gt_op;
 
  public:
-  BeBetween(Expectations::Expectation<A> &expectation, E min, E max)
-      : BaseMatcher<A, E>(expectation), min(min), max(max) {}
+  //  BeBetween(Expectations::Expectation<A> &expectation, E min, E max)
+  //      : BaseMatcher<A, E>(expectation), min(min), max(max) {}
 
-  bool inclusive();
-  bool exclusive();
+  BeBetween(Expectations::Expectation<A> &expectation, E min, E max,
+            RangeMode mode = RangeMode::inclusive)
+      : BaseMatcher<A, E>(expectation), min(min), max(max), mode(mode) {
+    switch (mode) {
+      case RangeMode::inclusive:
+        lt_op = LtOp::lt_eq;
+        gt_op = GtOp::gt_eq;
+        break;
+      case RangeMode::exclusive:
+        lt_op = LtOp::lt;
+        gt_op = GtOp::gt;
+        break;
+    }
+  }
 
   bool match() override;
   std::string description() override;
 };
-
-/**
- * Makes the between comparison inclusive
- *
- * @example
- *   expect(4).to(be_between(2,3).inclusive())
- *
- * @note The matcher is inclusive by default; this simply
- *       provides a way to be more explicit about it.
- */
-template <typename A, typename E>
-bool BeBetween<A, E>::inclusive() {
-  lt_op = LtOp::lt_eq;
-  gt_op = GtOp::gt_eq;
-  mode = RangeMode::inclusive;
-  return this->run();
-}
-
-/**
- * Makes the between comparison exclusive
- *
- * @example
- *   expect(4).to(be_between(2,3).exclusive())
- */
-template <typename A, typename E>
-bool BeBetween<A, E>::exclusive() {
-  lt_op = LtOp::lt;
-  gt_op = GtOp::gt;
-  mode = RangeMode::exclusive;
-  return this->run();
-}
 
 template <typename A, typename E>
 bool BeBetween<A, E>::match() {
