@@ -15,10 +15,9 @@ describe_a <TestClass> describe_a_implicit_spec("Implicit subjects", $ {
   });
 });
 
-
 describe_a <TestClass> describe_a_explicit_spec ("Explicit subjects",
                                                  TestClass("bar", "baz"), $ {
-  it("Default constructor should be called", _ {
+  it("Specified constructor should be called", _ {
     expect(subject.field1).to_equal("bar");
     expect(subject.field2).to_equal("baz");
   });

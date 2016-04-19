@@ -4,8 +4,8 @@
 
 class ItExpBase : public ItBase {
  public:
-  ItExpBase() : ItBase(){};
-  ItExpBase(std::string descr) : ItBase(descr){};
+  ItExpBase(Child &parent) : ItBase(parent){};
+  ItExpBase(Child &parent, std::string descr) : ItBase(parent, descr){};
   template <class U>
   Expectations::Expectation<U> expect(U value);
 
@@ -24,10 +24,11 @@ class ItD : public ItExpBase {
   std::function<void(ItD &)> body;
 
  public:
-  ItD(std::string descr, std::function<void(ItD &)> body)
-      : ItExpBase(descr), body(body) {}
+  ItD(Child &parent, std::string descr, std::function<void(ItD &)> body)
+      : ItExpBase(parent, descr), body(body) {}
 
-  ItD(std::function<void(ItD &)> body) : body(body) {}
+  ItD(Child &parent, std::function<void(ItD &)> body)
+      : ItExpBase(parent), body(body) {}
 
   bool run();
 };
@@ -38,14 +39,15 @@ class ItCd : public ItExpBase {
   std::function<void(ItCd<T> &)> body;
 
  public:
-  T &subject;
+  T &subject;  // reference to parent ClassDescription's subject
 
   // This is only ever instantiated by ClassDescription<T>
-  ItCd(T &subject, std::string descr, std::function<void(ItCd<T> &)> body)
-      : ItExpBase(descr), body(body), subject(subject) {}
+  ItCd(Child &parent, T &subject, std::string descr,
+       std::function<void(ItCd<T> &)> body)
+      : ItExpBase(parent, descr), body(body), subject(subject) {}
 
-  ItCd(T &subject, std::function<void(ItCd<T> &)> body)
-      : body(body), subject(subject) {}
+  ItCd(Child &parent, T &subject, std::function<void(ItCd<T> &)> body)
+      : ItExpBase(parent), body(body), subject(subject) {}
 
   Expectations::Expectation<T> is_expected();
   bool run();
@@ -62,8 +64,7 @@ class ItCd : public ItExpBase {
  */
 template <class T>
 Expectations::Expectation<T> ItExpBase::expect(T value) {
-  Expectations::Expectation<T> expectation(value);
-  expectation.set_parent(this);
+  Expectations::Expectation<T> expectation(*this, value);
   return expectation;
 }
 
@@ -84,8 +85,7 @@ Expectations::Expectation<T> ItExpBase::expect(T value) {
 template <class T>
 Expectations::Expectation<std::vector<T>> ItExpBase::expect(
     std::initializer_list<T> init_list) {
-  Expectations::Expectation<std::vector<T>> expectation(init_list);
-  expectation.set_parent(this);
+  Expectations::Expectation<std::vector<T>> expectation(*this, init_list);
   return expectation;
 }
 

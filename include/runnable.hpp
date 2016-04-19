@@ -32,6 +32,10 @@ class Child {
   bool status = true;
 
  public:
+  Child(){};
+  explicit Child(Child* parent) : parent(parent){};
+  explicit Child(Child& parent) : parent(&parent){};
+
   /**
    * @brief Check to see if the Child has a parent.
    * @return whether or not the Child has a parent.
@@ -73,6 +77,8 @@ class Child {
  */
 class Runnable : public Child {
  public:
+  Runnable(){};
+  explicit Runnable(Child& parent) : Child(parent){};
   virtual bool run() = 0;
 };
 

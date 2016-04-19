@@ -32,19 +32,19 @@ describe bool_spec("Some Tests", $ {
 
     explain("0 is", _ {
         it("between -1 and 1 (exclusive)", _ {
-            expect(0).to_be_between(-1, 1, Matchers::RangeMode::exclusive);
+            expect(0).to_be_between(-1, 1).exclusive();
           });
         it("between -0 and 0 (inclusive)", _ {
-            expect(0).to_be_between(-0,0, Matchers::RangeMode::inclusive);
+            expect(0).to_be_between(-0,0).inclusive();
           });
         it("not between -0 and 0 (exclusive)", _ {
-            expect(0).not_().to_be_between(-0,0, Matchers::RangeMode::exclusive);
+            expect(0).not_().to_be_between(-0,0).exclusive();
           });
-        it("not between 1 and -1", _ {
-            expect(0).not_().to_be_between(1,-1);
+        it("not between 1 and -1 (inclusive)", _ {
+            expect(0).not_().to_be_between(1,-1).inclusive();
           });
         it("between -1.0 and 1.0 (exclusive)", _ {
-            expect(0).to_be_between(-1.0, 1.0, Matchers::RangeMode::exclusive);
+            expect(0).to_be_between(-1.0, 1.0).exclusive();
           });
       });
 
@@ -162,7 +162,7 @@ describe_a <std::vector<int>> vector_spec({1,2,3,4}, $ {
 int _count = 0;
 describe let_spec("let", $ {
   let(count, [&]{ return ++_count ;});
-    
+
   it("memoizes the value", _ {
     expect(count).to_equal(1);
     expect(count).to_equal(1);

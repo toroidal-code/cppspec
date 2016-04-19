@@ -11,28 +11,29 @@ namespace Matchers {
  */
 template <typename A, typename E, typename U>
 class IncludeBase : public BaseMatcher<A, E> {
+  A actual;
+
  public:
-  virtual bool matches(A actual) = 0;
-  virtual bool does_not_match(A actual) = 0;
-  virtual std::string description();
-  virtual std::string failure_message();
-  virtual std::string failure_message_when_negated();
+  virtual std::string description() override;
+  virtual std::string failure_message() override;
+  virtual std::string failure_message_when_negated() override;
   virtual bool diffable() { return true; }
 
  protected:
   bool actual_collection_includes(U expected_item);
-  IncludeBase(Expectations::Expectation<A> expectation,
+  IncludeBase(Expectations::Expectation<A> &expectation,
               std::initializer_list<U> expected)
-      : BaseMatcher<A, std::vector<U>>(expectation, std::vector<U>(expected)){};
-  IncludeBase(Expectations::Expectation<A> expectation, U expected)
-      : BaseMatcher<A, U>(expectation, expected){};
+      : BaseMatcher<A, std::vector<U>>(expectation, std::vector<U>(expected)),
+        actual(this->get_actual()){};
+  IncludeBase(Expectations::Expectation<A> &expectation, U expected)
+      : BaseMatcher<A, U>(expectation, expected), actual(this->get_actual()){};
 };
 
 template <typename A, typename E, typename U>
 std::string IncludeBase<A, E, U>::description() {
   // std::vector<E> described_items;
-  return Pretty::improve_hash_formatting("include" +
-                                         Pretty::to_sentance(this->expected));
+  return Pretty::improve_hash_formatting(
+      "include" + Pretty::to_sentance(this->get_expected()));
 }
 
 template <typename A, typename E, typename U>
@@ -48,12 +49,12 @@ std::string IncludeBase<A, E, U>::failure_message_when_negated() {
 
 template <typename A, typename E, typename U>
 bool IncludeBase<A, E, U>::actual_collection_includes(U expected_item) {
-  auto last = *(this->actual.begin());
+  auto actual = this->get_actual();
+  auto last = *(actual.begin());
   static_assert(
       Util::verbose_assert<std::is_same<decltype(last), U>>::value,
       "Expected item is not the same type as what is inside container.");
-  return std::find(this->actual.begin(), this->actual.end(), expected_item) !=
-         this->actual.end();
+  return std::find(actual.begin(), actual.end(), expected_item) != actual.end();
 }
 
 /**
@@ -65,9 +66,9 @@ class Include : public IncludeBase<A, E, U> {
   enum class Predicate { any, all, none };
 
  public:
-  virtual bool matches(A actual);
-  virtual bool does_not_match(A actual);
-  Include(Expectations::Expectation<A> expectation,
+  bool match() override;
+  bool negated_match() override;
+  Include(Expectations::Expectation<A> &expectation,
           std::initializer_list<U> expected)
       : IncludeBase<A, E, U>(expectation, expected){};
 
@@ -76,14 +77,12 @@ class Include : public IncludeBase<A, E, U> {
 };
 
 template <typename A, typename E, typename U>
-bool Include<A, E, U>::matches(A actual) {
-  this->actual = actual;
+bool Include<A, E, U>::match() {
   return perform_match(Predicate::all, Predicate::all);
 }
 
 template <typename A, typename E, typename U>
-bool Include<A, E, U>::does_not_match(A actual) {
-  this->actual = actual;
+bool Include<A, E, U>::negated_match() {
   return perform_match(Predicate::none, Predicate::any);
 }
 
@@ -92,30 +91,32 @@ template <typename A, typename E, typename U>
 bool Include<A, E, U>::perform_match(Predicate predicate,
                                      Predicate /*hash_subset_predicate*/) {
   bool retval = true;  // start off true
-  for (U expected_item : this->expected) {
+  for (U expected_item : this->get_expected()) {
     retval = retval && this->actual_collection_includes(expected_item);
 
     // Based on our main predicate
     switch (predicate) {
       case Predicate::all:
-        if (retval) {
-          continue;  // continue the loop
-        } else {
-          goto exit_loop;  // *GASP* code jumping!
+        if (retval) {    // if the collection includes the item,
+          continue;      // continue the loop
+        } else {         // otherwise
+          return false;  // immediately return false
         }
       case Predicate::none:
-        if (retval) {
-          goto exit_loop;
-        } else {
-          continue;
+        if (retval) {    // if the collection includes the item
+          return false;  // immediately return false
+        } else {         // otherwise
+          continue;      // continue the loop
         }
       case Predicate::any:
-        retval = false;
-        goto exit_loop;
+        if (retval) {   // if the collection includes the item
+          return true;  // immediately return true
+        } else {        // otherwise
+          continue;     // continue the loop
+        }
     }
   }
-exit_loop:;  // Wheeeeeee
-  return retval;
+  return true;
 }
 
 /**
@@ -125,22 +126,15 @@ exit_loop:;  // Wheeeeeee
 template <typename A, typename U>
 class Include<A, U, U> : public IncludeBase<A, U, U> {
  public:
-  Include(Expectations::Expectation<A> expectation, U expected)
+  Include(Expectations::Expectation<A> &expectation, U expected)
       : IncludeBase<A, U, U>(expectation, expected){};
 
-  virtual bool matches(A actual);
-  virtual bool does_not_match(A actual);
+  bool match() override;
 };
 
 template <typename A, typename U>
-bool Include<A, U, U>::matches(A actual) {
-  this->actual = actual;
-  return this->actual_collection_includes(this->expected);
-}
-
-template <typename A, typename U>
-bool Include<A, U, U>::does_not_match(A actual) {
-  return !matches(actual);
+bool Include<A, U, U>::match() {
+  return this->actual_collection_includes(this->get_expected());
 }
 }
 

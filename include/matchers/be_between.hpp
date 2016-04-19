@@ -4,32 +4,24 @@
 #include "basematcher.hpp"
 
 namespace Matchers {
-enum class RangeMode { exclusive, inclusive };
-
 template <typename A, typename E>
 class BeBetween : public BaseMatcher<A, E> {
+  enum class RangeMode { exclusive, inclusive };
   E min;
   E max;
-  RangeMode mode;
+  RangeMode mode = RangeMode::inclusive;
   enum class LtOp { lt, lt_eq } lt_op;
   enum class GtOp { gt, gt_eq } gt_op;
-  BeBetween &inclusive();
-  BeBetween &exclusive();
 
  public:
-  BeBetween(Expectations::Expectation<A> &expectation, E min, E max,
-            RangeMode m)
-      : BaseMatcher<A, E>(expectation), min(min), max(max), mode(m) {
-    if (mode == RangeMode::inclusive) {
-      this->inclusive();
-    } else if (mode == RangeMode::exclusive) {
-      this->exclusive();
-    }
-  }
+  BeBetween(Expectations::Expectation<A> &expectation, E min, E max)
+      : BaseMatcher<A, E>(expectation), min(min), max(max) {}
 
-  // operator BaseMatcher<A,E>() { BaseMatcher<A,E> *bm = this; return *bm; }
-  virtual bool matches(A actual);
-  virtual std::string description();
+  bool inclusive();
+  bool exclusive();
+
+  bool match() override;
+  std::string description() override;
 };
 
 /**
@@ -42,11 +34,11 @@ class BeBetween : public BaseMatcher<A, E> {
  *       provides a way to be more explicit about it.
  */
 template <typename A, typename E>
-BeBetween<A, E> &BeBetween<A, E>::inclusive() {
+bool BeBetween<A, E>::inclusive() {
   lt_op = LtOp::lt_eq;
   gt_op = GtOp::gt_eq;
   mode = RangeMode::inclusive;
-  return *this;
+  return this->run();
 }
 
 /**
@@ -56,16 +48,16 @@ BeBetween<A, E> &BeBetween<A, E>::inclusive() {
  *   expect(4).to(be_between(2,3).exclusive())
  */
 template <typename A, typename E>
-BeBetween<A, E> &BeBetween<A, E>::exclusive() {
+bool BeBetween<A, E>::exclusive() {
   lt_op = LtOp::lt;
   gt_op = GtOp::gt;
   mode = RangeMode::exclusive;
-  return *this;
+  return this->run();
 }
 
 template <typename A, typename E>
-bool BeBetween<A, E>::matches(A actual) {
-  this->actual = actual;
+bool BeBetween<A, E>::match() {
+  auto actual = this->get_actual();
   bool result1;
   switch (gt_op) {
     case GtOp::gt:

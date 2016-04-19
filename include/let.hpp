@@ -9,6 +9,7 @@ class LetBase : public Runnable {
 
  public:
   LetBase() : delivered(false){};
+  LetBase(const LetBase &copy) : Runnable(), delivered(copy.delivered){};
   void reset() { delivered = false; }
   bool has_result() { return delivered; }
   bool run() { return false; }
@@ -23,8 +24,7 @@ class Let : public LetBase {
   block_t body;
 
  public:
-  explicit Let(std::string name, block_t body)
-      : LetBase(), name(name), body(body){};
+  Let(std::string name, block_t body) : name(name), body(body){};
 
   T &get_result() {
     run();

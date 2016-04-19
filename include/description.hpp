@@ -23,8 +23,10 @@ class Description : public Runnable {
   std::deque<rule_block_t> after_eaches;
   std::unordered_map<std::string, Runnable *> lets;
 
-  explicit Description(){};
-  explicit Description(std::string descr) : descr(descr){};
+  Description(){};
+  Description(std::string descr) : descr(descr){};
+  Description(Child &parent, std::string descr, block_t body)
+      : Runnable(parent), body(body), descr(descr){};
 
  public:
   // Constructor
@@ -40,21 +42,22 @@ class Description : public Runnable {
   template <class T>
   bool context(T subject, std::function<void(ClassDescription<T> &)> body);
 
-  template <class T>
-  bool context(T &subject, std::function<void(ClassDescription<T> &)> body);
+  //  template <class T>
+  //  bool context(T &subject, std::function<void(ClassDescription<T> &)> body);
 
   template <class T, typename U>
   bool context(std::initializer_list<U> init_list,
                std::function<void(ClassDescription<T> &)> body);
 
-  template <class T>
-  ClassDescription<T> subject(T subject);
-
-  template <class T>
-  ClassDescription<T> subject(T &subject);
-
-  template <class T>
-  ClassDescription<std::vector<T>> subject(std::initializer_list<T> init_list);
+  //  template <class T>
+  //  ClassDescription<T> subject(T subject);
+  //
+  //  template <class T>
+  //  ClassDescription<T> subject(T &subject);
+  //
+  //  template <class T>
+  //  ClassDescription<std::vector<T>> subject(std::initializer_list<T>
+  //  init_list);
 
   void before_each(rule_block_t block);
   void before_all(rule_block_t block);
@@ -73,16 +76,14 @@ typedef Description Context;
 
 bool Description::context(std::string name,
                           std::function<void(Description &)> body) {
-  Context context(name, body);
-  context.set_parent(this);
+  Context context(*this, name, body);
   context.before_eaches = this->before_eaches;
   context.after_eaches = this->after_eaches;
   return context.run();
 }
 
 bool Description::it(std::string name, std::function<void(ItD &)> body) {
-  ItD it(name, body);
-  it.set_parent(this);
+  ItD it(*this, name, body);
   bool result = it.run();
   exec_after_eaches();
   exec_before_eaches();
@@ -90,35 +91,28 @@ bool Description::it(std::string name, std::function<void(ItD &)> body) {
 }
 
 bool Description::it(std::function<void(ItD &)> body) {
-  ItD it(body);
-  it.set_parent(this);
+  ItD it(*this, body);
   bool result = it.run();
   exec_after_eaches();
   exec_before_eaches();
   return result;
 }
 
-template <class U>
-ClassDescription<U> Description::subject(U subject) {
-  ClassDescription<U> cd(this);
-  cd->example = subject;
-  return cd;
-}
-
-template <class U>
-ClassDescription<U> Description::subject(U &subject) {
-  ClassDescription<U> cd(this);
-  cd->example = subject;
-  return cd;
-}
-
-template <class U>
-ClassDescription<std::vector<U>> Description::subject(
-    std::initializer_list<U> init_list) {
-  ClassDescription<U> cd(this);
-  cd->example = std::vector<U>(init_list);
-  return cd;
-}
+// template <class U>
+// ClassDescription<U> Description::subject(U subject) {
+//  return ClassDescription<U>(*this, subject);
+//}
+//
+// template <class U>
+// ClassDescription<U> Description::subject(U &subject) {
+//  return ClassDescription<U>(*this, subject);
+//}
+//
+// template <class U>
+// ClassDescription<std::vector<U>> Description::subject(
+//    std::initializer_list<U> init_list) {
+//  return ClassDescription<std::vector<U>>(*this, std::vector<U>(init_list));
+//}
 
 void Description::before_each(rule_block_t b) {
   before_eaches.push_back(b);
@@ -127,9 +121,8 @@ void Description::before_each(rule_block_t b) {
   // the environment by executing the before_each, so that when an 'it'
   // declaration's lambda captures that env, it has the correct values for the
   // variables. Truthfully, 'before_each' is a misnomer, as they are not
-  // getting
-  // executed directly before the lambda's execution as one might expect, but
-  // instead before the *next* lambda is declared.
+  // getting executed directly before the lambda's execution as one might
+  // expect, but instead before the *next* lambda is declared.
   b();
 }
 
@@ -191,8 +184,7 @@ Expectations::Expectation<T> ItExpBase::expect(Let<T> let) {
   auto parent = static_cast<Description *>(this->get_parent());
   Let<T> *actual_let = static_cast<Let<T> *>(parent->find_let(let.get_name()));
   T res = actual_let->get_result();
-  Expectations::Expectation<T> expectation(res);
-  expectation.set_parent(this);
+  Expectations::Expectation<T> expectation(*this, res);
   return expectation;
 }
 

@@ -16,20 +16,21 @@ class ItBase : public Runnable {
   std::string descr = "";
 
  public:
+  ItBase() = delete;
+
   /**
    * @brief Create an ItBase without an explicit description
    * @return the constructed ItBase
    */
-  ItBase(){};
+  explicit ItBase(Child &parent) : Runnable(parent){};
 
   /**
    * @brief Create an ItBase with an explicit description.
    * @param descr the description of the `it` statement
    * @return the constructed ItBase
    */
-  explicit ItBase(std::string descr) : descr(descr){};
-
-  bool run() { return false; };
+  explicit ItBase(Child &parent, std::string descr)
+      : Runnable(parent), descr(descr){};
 
   /**
    * @brief Get whether the object needs a description string

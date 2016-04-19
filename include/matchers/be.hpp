@@ -25,14 +25,14 @@ class Be : public BaseMatcher<A, bool>, BeHelpers<Be<A>> {
   std::function<bool(A)> test;
 
  public:
-  Be(Expectations::Expectation<A> expectation, std::function<bool(A)> test)
+  Be(Expectations::Expectation<A> &expectation, std::function<bool(A)> test)
       : BaseMatcher<A, bool>(expectation), test(test) {}
 
   std::string description() override;
   std::string failure_message() override;
   std::string failure_message_when_negated() override;
 
-  bool match(bool, A actual) override;
+  bool match() override;
 };
 
 template <typename A>
@@ -59,20 +59,20 @@ std::string Be<A>::failure_message_when_negated() {
 }
 
 template <typename A>
-bool Be<A>::match(bool, A actual) {
-  return test(actual);
+bool Be<A>::match() {
+  return test(this->get_actual());
 }
 
 template <class A>
 class BeNullptr : BaseMatcher<A, std::nullptr_t> {
  public:
-  BeNullptr(Expectations::Expectation<A> expectation)
+  BeNullptr(Expectations::Expectation<A> &expectation)
       : BaseMatcher<A, std::nullptr_t>(expectation) {}
 
   std::string failure_message() override;
   std::string failure_message_when_negated() override;
 
-  bool match(std::nullptr_t expected, A actual) override;
+  bool match() override;
 };
 
 template <class T>
@@ -86,8 +86,8 @@ std::string BeNullptr<T>::failure_message_when_negated() {
 }
 
 template <class A>
-bool BeNullptr<A>::match(std::nullptr_t, A actual) {
-  return actual == nullptr;
+bool BeNullptr<A>::match() {
+  return this->get_actual() == nullptr;
 }
 }
 

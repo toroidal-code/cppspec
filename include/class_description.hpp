@@ -20,7 +20,7 @@ class ClassDescription : public Description {
   bool first;
 
  public:
-  T subject;  // subject field exposed for usage in `expect([self.]subject)`
+  T subject;  // subject field public for usage in `expect([self.]subject)`
 
   // Constructor
   // if there's no explicit subject given, then use
@@ -50,7 +50,7 @@ class ClassDescription : public Description {
 
   template <typename U>
   ClassDescription(std::initializer_list<U> init_list, block_t body)
-      : Description(), body(body), subject(T(init_list)) {
+      : body(body), subject(T(init_list)) {
     this->descr = Pretty::to_word_type(subject);
   };
 
@@ -150,8 +150,7 @@ bool Description::context(std::initializer_list<U> init_list,
 template <class T>
 bool ClassDescription<T>::it(std::string name,
                              std::function<void(ItCd<T>&)> body) {
-  ItCd<T> it(this->subject, name, body);
-  it.set_parent(this);
+  ItCd<T> it(*this, this->subject, name, body);
   bool result = it.run();
   exec_after_eaches();
   exec_before_eaches();
@@ -181,8 +180,7 @@ bool ClassDescription<T>::it(std::string name,
  */
 template <class T>
 bool ClassDescription<T>::it(std::function<void(ItCd<T>&)> body) {
-  ItCd<T> it(this->subject, body);
-  it.set_parent(this);
+  ItCd<T> it(*this, this->subject, body);
   bool result = it.run();
   exec_after_eaches();
   exec_before_eaches();
@@ -200,8 +198,7 @@ bool ClassDescription<T>::run() {
 template <class T>
 Expectations::Expectation<T> ItCd<T>::is_expected() {
   auto cd = static_cast<ClassDescription<T>*>(this->get_parent());
-  Expectations::Expectation<T> expectation(cd->subject);
-  expectation.set_parent(this);
+  Expectations::Expectation<T> expectation(*this, cd->subject);
   return expectation;
 }
 

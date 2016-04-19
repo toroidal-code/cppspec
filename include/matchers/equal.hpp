@@ -14,19 +14,19 @@ namespace Matchers {
 template <typename A, typename E>
 class Equal : public BaseMatcher<A, E> {
  public:
-  Equal(Expectations::Expectation<A> expectation)
+  Equal(Expectations::Expectation<A> &expectation)
       : BaseMatcher<A, E>(expectation) {}
 
-  Equal(Expectations::Expectation<A> expectation, E expected)
+  Equal(Expectations::Expectation<A> &expectation, E expected)
       : BaseMatcher<A, E>(expectation, expected) {}
 
-  virtual std::string description();
-  std::string failure_message();
-  std::string failure_message_when_negated();
+  std::string description() override;
+  std::string failure_message() override;
+  std::string failure_message_when_negated() override;
   bool diffable();
 
  protected:
-  bool match(E expected, A actual);
+  bool match() override;
   bool expected_is_a_literal();
   std::string actual_inspected();
   std::string simple_failure_message();
@@ -81,9 +81,9 @@ bool Equal<A, E>::diffable() {
 
 // TODO: match should pass by reference
 template <typename A, typename E>
-bool Equal<A, E>::match(E expected, A actual) {
+bool Equal<A, E>::match() {
   // TODO: compare pointers too
-  return expected == actual;
+  return this->get_expected() == this->get_actual();
 }
 
 template <typename A, typename E>

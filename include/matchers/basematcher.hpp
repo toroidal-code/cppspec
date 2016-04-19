@@ -14,52 +14,51 @@ using namespace Expectations;
 
 namespace Matchers {
 template <typename Actual, typename Expected>
-class BaseMatcher : public Child, public Pretty {
+class BaseMatcher : public Runnable, public Pretty {
+  std::string message = "";
+
  protected:
-  Actual actual;
   Expected expected;
   Expectation<Actual> expectation;
 
  public:
-  BaseMatcher(Expectation<Actual> &expectation) : expectation(expectation) {
-    // static_assert(std::is_same<Expected,Actual>::value,
-    //               "Error: Expected value's and actual value's and types are
-    //               different");
-  }
-  BaseMatcher(Expectation<Actual> &expectation, Expected expected)
-      : expected(expected), expectation(expectation) {
-    // static_assert(std::is_same<Expected,Actual>::value,
-    //               "Error: Expected value's and actual value's and types are
-    //               different");
-  }
+  BaseMatcher(Expectation<Actual> &expectation)
+      : Runnable(*expectation.get_parent()),  // We want the parent of the
+                                              // matcher to be the `it` block,
+                                              // not the
+                                              // Expectation.
+        expectation(expectation) {}
 
-  virtual bool matches(Actual actual);
+  BaseMatcher(Expectation<Actual> &expectation, Expected expected)
+      : Runnable(*expectation.get_parent()),
+        expected(expected),
+        expectation(expectation) {}
+
+  virtual bool match() = 0;
+  virtual bool negated_match() { return !match(); }
   virtual std::string failure_message();
   virtual std::string failure_message_when_negated();
   virtual std::string description();
-  Actual &get_actual() { return actual; }
+  Actual &get_actual() { return expectation.get_target(); }
   Expected &get_expected() { return expected; }
-  virtual bool match(Expected, Actual) { return false; }
-  bool operator()(std::string message = "");
+  virtual BaseMatcher &set_message(std::string message) {
+    this->message = message;
+    return *this;
+  }
+  bool run() override;
 };
-
-template <typename A, typename E>
-bool BaseMatcher<A, E>::matches(A actual) {
-  this->actual = actual;
-  return match(expected, actual);
-}
 
 template <typename A, typename E>
 std::string BaseMatcher<A, E>::failure_message() {
   std::stringstream ss;
-  ss << "expected " << actual << " to " << description();
+  ss << "expected " << get_actual() << " to " << description();
   return ss.str();
 }
 
 template <typename A, typename E>
 std::string BaseMatcher<A, E>::failure_message_when_negated() {
   std::stringstream ss;
-  ss << "expected " << actual << " to " << description();
+  ss << "expected " << get_actual() << " to not " << description();
   return ss.str();
 }
 
@@ -71,9 +70,9 @@ std::string BaseMatcher<A, E>::description() {
 }
 
 template <typename A, typename E>
-bool BaseMatcher<A, E>::operator()(std::string message) {
+bool BaseMatcher<A, E>::run() {
   bool matched;
-  auto par = static_cast<ItBase *>(this->get_parent());
+  ItBase *par = static_cast<ItBase *>(this->get_parent());
 
   if (par->needs_descr()) {
     std::cout << par->padding() << "should "
@@ -82,11 +81,11 @@ bool BaseMatcher<A, E>::operator()(std::string message) {
   }
 
   if (expectation.get_sign()) {
-    matched = PositiveExpectationHandler::handle_matcher<A>(
-        expectation.get_target(), *this, message);
+    matched =
+        PositiveExpectationHandler::handle_matcher<A>(*this, this->message);
   } else {
-    matched = NegativeExpectationHandler::handle_matcher<A>(
-        expectation.get_target(), *this, message);
+    matched =
+        NegativeExpectationHandler::handle_matcher<A>(*this, this->message);
   }
 
   // if our items didn't match, we obviously failed.

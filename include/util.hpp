@@ -117,8 +117,14 @@ constexpr bool is_container_v = is_container<T>::value;
  * @brief Functions for testing if a class can be streamed
  */
 namespace is_streamable_imp {
-template <class C>
+template <typename C>
 auto test(void *) -> std::is_same<
+    // check for operator<< in std::ostream first (fundamental types)
+    decltype(std::declval<std::ostream>().operator<<(std::declval<C>())),
+    std::ostream &>;
+
+template <class C>
+auto test(int) -> std::is_same<
     // check for an operator<< via SFINAE
     decltype(operator<<(std::declval<std::ostream &>(),
                         std::declval<C const &>())),
