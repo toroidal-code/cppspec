@@ -34,6 +34,7 @@ class Child {
  public:
   Child(){};
   explicit Child(Child* parent) : parent(parent){};
+  explicit Child(const Child* parent) : parent(const_cast<Child*>(parent)){};
   explicit Child(Child& parent) : parent(&parent){};
 
   /**
@@ -44,6 +45,7 @@ class Child {
 
   /** @brief Get the Child's parent. */
   Child* get_parent() { return parent; }
+  const Child* get_parent() const { return const_cast<Child*>(parent); }
 
   /** @brief Set the Child's parent */
   void set_parent(Child* parent) { this->parent = parent; }
@@ -79,6 +81,8 @@ class Runnable : public Child {
  public:
   Runnable(){};
   explicit Runnable(Child& parent) : Child(parent){};
+  explicit Runnable(Child* parent) : Child(parent){};
+  explicit Runnable(const Child* parent) : Child(parent){};
   virtual bool run() = 0;
 };
 

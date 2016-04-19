@@ -38,7 +38,7 @@ class Expectation : public Child {
 
  public:
   Expectation(Expectation const &copy)
-      :  // Child(((Expectation)copy).get_parent())
+      : Child(copy.get_parent()),
         target(copy.target),
         block(copy.block),
         has_block(copy.has_block),

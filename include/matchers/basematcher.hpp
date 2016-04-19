@@ -22,6 +22,12 @@ class BaseMatcher : public Runnable, public Pretty {
   Expectation<Actual> expectation;
 
  public:
+  BaseMatcher(BaseMatcher<Actual, Expected> const &copy)
+      : Runnable(copy.get_parent()),
+        message(copy.message),
+        expected(copy.expected),
+        expectation(copy.expectation){};
+
   BaseMatcher(Expectation<Actual> &expectation)
       : Runnable(*expectation.get_parent()),  // We want the parent of the
                                               // matcher to be the `it` block,
