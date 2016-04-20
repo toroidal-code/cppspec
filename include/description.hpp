@@ -35,19 +35,19 @@ class Description : public Runnable {
   const bool has_subject = false;
 
   // Spec functions
-  bool it(std::string descr, std::function<void(ItD &)> body);
-  bool it(std::function<void(ItD &)> body);
-  bool context(std::string descr, block_t body);
+  Result it(std::string descr, std::function<void(ItD &)> body);
+  Result it(std::function<void(ItD &)> body);
+  Result context(std::string descr, block_t body);
 
   template <class T>
-  bool context(T subject, std::function<void(ClassDescription<T> &)> body);
+  Result context(T subject, std::function<void(ClassDescription<T> &)> body);
 
   //  template <class T>
   //  bool context(T &subject, std::function<void(ClassDescription<T> &)> body);
 
   template <class T, typename U>
-  bool context(std::initializer_list<U> init_list,
-               std::function<void(ClassDescription<T> &)> body);
+  Result context(std::initializer_list<U> init_list,
+                 std::function<void(ClassDescription<T> &)> body);
 
   //  template <class T>
   //  ClassDescription<T> subject(T subject);
@@ -67,14 +67,14 @@ class Description : public Runnable {
   void exec_after_eaches();
 
   void let(std::string, Runnable &body);
-  bool run();
+  Result run() override;
   void reset_lets();
   Runnable *find_let(std::string);
 };
 
 typedef Description Context;
 
-bool Description::context(std::string name,
+Result Description::context(std::string name,
                           std::function<void(Description &)> body) {
   Context context(*this, name, body);
   context.before_eaches = this->before_eaches;
@@ -82,17 +82,17 @@ bool Description::context(std::string name,
   return context.run();
 }
 
-bool Description::it(std::string name, std::function<void(ItD &)> body) {
+Result Description::it(std::string name, std::function<void(ItD &)> body) {
   ItD it(*this, name, body);
-  bool result = it.run();
+  Result result = it.run();
   exec_after_eaches();
   exec_before_eaches();
   return result;
 }
 
-bool Description::it(std::function<void(ItD &)> body) {
+Result Description::it(std::function<void(ItD &)> body) {
   ItD it(*this, body);
-  bool result = it.run();
+  Result result = it.run();
   exec_after_eaches();
   exec_before_eaches();
   return result;
@@ -144,12 +144,12 @@ void Description::let(std::string name, Runnable &body) {
   lets.insert({name, &body});
 }
 
-bool Description::run() {
+Result Description::run() {
   std::cout << padding() << descr << std::endl;
   body(*this);
   for (auto a : after_alls) a();
   std::cout << std::endl;
-  return this->get_status();
+  return Result(this->get_status());
 }
 
 void Description::reset_lets() {
@@ -188,7 +188,7 @@ Expectations::Expectation<T> ItExpBase::expect(Let<T> let) {
   return expectation;
 }
 
-bool ItD::run() {
+Result ItD::run() {
   if (!this->needs_descr()) {
     std::cout << padding() << get_descr() << std::endl;
   }
@@ -197,7 +197,7 @@ bool ItD::run() {
   auto parent = static_cast<Description *>(this->get_parent());
   parent->reset_lets();
 
-  return this->get_status();
+  return Result(this->get_status());
 }
 
 #endif /* DESCRIPTION_H */

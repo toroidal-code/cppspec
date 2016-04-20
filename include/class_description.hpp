@@ -63,20 +63,20 @@ class ClassDescription : public Description {
 
   const bool has_subject = true;
 
-  bool it(std::string descr, std::function<void(ItCd<T>&)> body);
-  bool it(std::function<void(ItCd<T>&)> body);
-  bool context(T subject, block_t body);
-  bool context(T& subject, block_t body);
-  bool context(block_t body);
-  bool run();
+  Result it(std::string descr, std::function<void(ItCd<T>&)> body);
+  Result it(std::function<void(ItCd<T>&)> body);
+  Result context(T subject, block_t body);
+  Result context(T& subject, block_t body);
+  Result context(block_t body);
+  Result run() override;
 };
 
 template <class T>
 using ClassContext = ClassDescription<T>;
 
 template <class T>
-bool ClassDescription<T>::context(T subject,
-                                  std::function<void(ClassDescription&)> body) {
+Result ClassDescription<T>::context(T subject,
+                                    std::function<void(ClassDescription&)> body) {
   ClassContext<T> context(subject, body);
   context.set_parent(this);
   context.before_eaches = this->before_eaches;
@@ -85,13 +85,13 @@ bool ClassDescription<T>::context(T subject,
 }
 
 template <class T>
-bool ClassDescription<T>::context(T& subject,
+Result ClassDescription<T>::context(T& subject,
                                   std::function<void(ClassDescription&)> body) {
   return context(subject, body);
 }
 
 template <class T>
-bool ClassDescription<T>::context(std::function<void(ClassDescription&)> body) {
+Result ClassDescription<T>::context(std::function<void(ClassDescription&)> body) {
   ClassContext<T> context(body);
   context.set_parent(this);
   context.before_eaches = this->before_eaches;
@@ -100,8 +100,8 @@ bool ClassDescription<T>::context(std::function<void(ClassDescription&)> body) {
 }
 
 template <class T>
-bool Description::context(T subject,
-                          std::function<void(ClassDescription<T>&)> body) {
+Result Description::context(T subject,
+                            std::function<void(ClassDescription<T>&)> body) {
   ClassContext<T> context(body);
   context.subject = subject;
   context.set_parent(this);
@@ -117,7 +117,7 @@ bool Description::context(T subject,
 // }
 
 template <class T, typename U>
-bool Description::context(std::initializer_list<U> init_list,
+Result Description::context(std::initializer_list<U> init_list,
                           std::function<void(ClassDescription<T>&)> body) {
   ClassContext<T> context(T(init_list), body);
   context.set_parent(this);
@@ -148,10 +148,10 @@ bool Description::context(std::initializer_list<U> init_list,
  * @return the result of the test
  */
 template <class T>
-bool ClassDescription<T>::it(std::string name,
+Result ClassDescription<T>::it(std::string name,
                              std::function<void(ItCd<T>&)> body) {
   ItCd<T> it(*this, this->subject, name, body);
-  bool result = it.run();
+  Result result = it.run();
   exec_after_eaches();
   exec_before_eaches();
   return result;
@@ -179,20 +179,20 @@ bool ClassDescription<T>::it(std::string name,
  * @return the result of the test
  */
 template <class T>
-bool ClassDescription<T>::it(std::function<void(ItCd<T>&)> body) {
+Result ClassDescription<T>::it(std::function<void(ItCd<T>&)> body) {
   ItCd<T> it(*this, this->subject, body);
-  bool result = it.run();
+  Result result = it.run();
   exec_after_eaches();
   exec_before_eaches();
   return result;
 }
 
 template <class T>
-bool ClassDescription<T>::run() {
+Result ClassDescription<T>::run() {
   std::cout << padding() << descr << std::endl;
   body(*this);
   std::cout << std::endl;
-  return this->get_status();
+  return Result(this->get_status());
 }
 
 template <class T>
@@ -203,14 +203,14 @@ Expectations::Expectation<T> ItCd<T>::is_expected() {
 }
 
 template <class T>
-bool ItCd<T>::run() {
+Result ItCd<T>::run() {
   if (!this->needs_descr()) {
     std::cout << padding() << get_descr() << std::endl;
   }
   body(*this);
   auto cd = static_cast<ClassDescription<T>*>(this->get_parent());
   cd->reset_lets();
-  return this->get_status();
+  return Result(this->get_status());
 }
 
 #endif /* CLASS_DESCRIPTION_H */

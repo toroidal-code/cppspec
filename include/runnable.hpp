@@ -74,6 +74,21 @@ class Child {
   }
 };
 
+struct Result {
+  bool value = false;
+  std::string failure_message = "";
+  Result(){};
+  Result(bool value, std::string failure_message = "")
+      : value(value), failure_message(failure_message){};
+
+  operator bool() const { return value; }
+
+  static Result success() { return Result(true); }
+  static Result failure(std::string failure_message = "") {
+    return Result(false, failure_message);
+  }
+};
+
 /**
  * @brief Abstract base class for executable objects
  */
@@ -83,7 +98,7 @@ class Runnable : public Child {
   explicit Runnable(Child& parent) : Child(parent){};
   explicit Runnable(Child* parent) : Child(parent){};
   explicit Runnable(const Child* parent) : Child(parent){};
-  virtual bool run() = 0;
+  virtual Result run() = 0;
 };
 
 #endif /* RUNNABLE_H */

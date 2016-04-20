@@ -1,7 +1,6 @@
 #ifndef EQUAL_H
 #define EQUAL_H
 #include "basematcher.hpp"
-#include "util.hpp"
 
 namespace Matchers {
 
@@ -14,9 +13,6 @@ namespace Matchers {
 template <typename A, typename E>
 class Equal : public BaseMatcher<A, E> {
  public:
-  Equal(Expectations::Expectation<A> &expectation)
-      : BaseMatcher<A, E>(expectation) {}
-
   Equal(Expectations::Expectation<A> &expectation, E expected)
       : BaseMatcher<A, E>(expectation, expected) {}
 
@@ -54,23 +50,22 @@ template <typename A, typename E>
 std::string Equal<A, E>::failure_message_when_negated() {
   std::stringstream ss;
   ss << "\n"
-        "expected not "
-     << Util::inspect_object(BaseMatcher<A, E>::get_actual()) << "\n"
-                                                                 "         got "
-     << Util::inspect_object(BaseMatcher<A, E>::get_expected())
+     << "expected not "
+     << Util::inspect_object(BaseMatcher<A, E>::get_expected()) << "\n"
+     << "         got " << actual_inspected() << "\n"
      << "\n"
-        "\n"
-        "Compared using `==`.\n\n";
+     << "Compared using `==`.\n\n";
   return ss.str();
 }
 
 template <typename A, typename E>
 std::string Equal<A, E>::simple_failure_message() {
   std::stringstream ss;
-  ss << "\nexpected " << Util::inspect_object(BaseMatcher<A, E>::get_expected())
+  ss << "\n"
+     << "expected " << Util::inspect_object(BaseMatcher<A, E>::get_expected())
      << "\n"
-        "     got "
-     << actual_inspected() << "\n";
+     << "     got " << actual_inspected() << "\n"
+     << "Compared using `==`.\n\n";
   return ss.str();
 }
 
@@ -79,7 +74,6 @@ bool Equal<A, E>::diffable() {
   return !expected_is_a_literal();
 }
 
-// TODO: match should pass by reference
 template <typename A, typename E>
 bool Equal<A, E>::match() {
   // TODO: compare pointers too

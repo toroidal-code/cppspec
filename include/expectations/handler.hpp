@@ -17,54 +17,56 @@ void handle_failure_common(M & /*matcher*/, std::string message) {
 }
 
 template <typename Matcher>
-void handle_failure(Matcher &matcher, std::string message) {
+Result handle_failure(Matcher &matcher, std::string message) {
   if (message.empty()) {
     message = matcher.failure_message();
   }
   handle_failure_common(matcher, message);
+  return Result::failure(message);
 }
 
 template <typename Matcher>
-void handle_negated_failure(Matcher &matcher, std::string message) {
+Result handle_negated_failure(Matcher &matcher, std::string message) {
   if (message.empty()) {
     message = matcher.failure_message_when_negated();
   }
   handle_failure_common(matcher, message);
+  return Result::failure(message);
 }
 }
 
 struct PositiveExpectationHandler {
   template <typename A, class Matcher>
-  static bool handle_matcher(Matcher &matcher, std::string message);
+  static Result handle_matcher(Matcher &matcher, std::string message);
   static std::string verb() { return "should"; }
 };
 
 struct NegativeExpectationHandler {
   template <typename A, class Matcher>
-  static bool handle_matcher(Matcher &matcher, std::string message);
+  static Result handle_matcher(Matcher &matcher, std::string message);
   static std::string verb() { return "should not"; }
 };
 
 template <typename A, class Matcher>
-bool PositiveExpectationHandler::handle_matcher(Matcher &matcher,
-                                                std::string message) {
+Result PositiveExpectationHandler::handle_matcher(Matcher &matcher,
+                                                  std::string message) {
   // TODO: handle expectation failure here
   bool matched = matcher.match();
   if (!matched) {
-    ExpectationHelper::handle_failure(matcher, message);
+    return ExpectationHelper::handle_failure(matcher, message);
   }
-  return matched;
+  return Result::success();
 }
 
 template <typename A, class Matcher>
-bool NegativeExpectationHandler::handle_matcher(Matcher &matcher,
-                                                std::string message) {
+Result NegativeExpectationHandler::handle_matcher(Matcher &matcher,
+                                                  std::string message) {
   // TODO: handle expectation failure here
   bool matched = matcher.negated_match();
   if (!matched) {
-    ExpectationHelper::handle_negated_failure(matcher, message);
+    return ExpectationHelper::handle_negated_failure(matcher, message);
   }
-  return matched;
+  return Result::success();
 }
 }  // Expectations
 

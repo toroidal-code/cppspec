@@ -52,7 +52,7 @@ class BaseMatcher : public Runnable, public Pretty {
     this->message = message;
     return *this;
   }
-  bool run() override;
+  Result run() override;
 
   typedef Expected expected_t;
 };
@@ -81,11 +81,13 @@ std::string BaseMatcher<A, E>::description() {
 }
 
 template <typename A, typename E>
-bool BaseMatcher<A, E>::run() {
-  bool matched;
+Result BaseMatcher<A, E>::run() {
+  Result matched;
   ItBase *par = static_cast<ItBase *>(this->get_parent());
 
-  if (par->needs_descr()) {
+  // If we need a description for our test, generate it
+  // unless we're ignoring the output.
+  if (par->needs_descr() && !expectation.get_ignore_failure()) {
     std::cout << par->padding() << "should "
               << (expectation.get_sign() ? "" : "not ") << this->description()
               << std::endl;
@@ -99,8 +101,9 @@ bool BaseMatcher<A, E>::run() {
         NegativeExpectationHandler::handle_matcher<A>(*this, this->message);
   }
 
-  // if our items didn't match, we obviously failed.
-  if (!matched) this->failed();
+  // If our items didn't match, we obviously failed.
+  // Only report the failure if we aren't actively ignoring it.
+  if (!matched && !expectation.get_ignore_failure()) this->failed();
 
   return matched;
 }

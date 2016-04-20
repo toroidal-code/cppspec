@@ -158,6 +158,41 @@ constexpr bool is_streamable_v = is_streamable<T>::value;
 #endif
 
 /**
+ * @brief Functions for testing if a class can be streamed
+ */
+namespace is_functional_imp {
+
+// The C++ reference says that all "functions" (not FunctionObjects) respond to
+// std::is_function<T>
+template <typename C>
+auto test(void *) -> std::is_function<C>;
+
+// It also says that something qualifies as a FunctionObject iff
+// std::is_object<T> is true and the object responds to the call operator()
+// however, we pass it over in favor of the next option.
+// template <class C>
+// auto test(int) -> decltype(std::is_object<C>{}, void(std::declval<C>()()),
+//                           std::true_type{});
+
+// An alternative from Stack Overflow question 18107368. Anything that could
+// possibly be "functional" should be able to be cast to std::function<void()>
+template <class C>
+auto test(int) -> std::is_convertible<C, std::function<void()>>;
+
+template <class>
+auto test(...) -> std::false_type;  // fallthrough
+}
+
+template <class T>
+struct is_functional : public decltype(is_functional_imp::test<T>(0)) {};
+
+/** @brief Helper variable template for is_container. */
+#ifdef HAS_VARIABLE_TEMPLATES
+template <class T>
+constexpr bool is_functional_v = is_functional<T>::value;
+#endif
+
+/**
  * @brief Generate a string of the class and data of an object
  *
  * @param o the object to inspect

@@ -7,10 +7,14 @@ class ItExpBase : public ItBase {
   ItExpBase(Child &parent) : ItBase(parent){};
   ItExpBase(Child &parent, std::string descr) : ItBase(parent, descr){};
   template <class U>
-  Expectations::Expectation<U> expect(U value);
+  typename std::enable_if<not Util::is_functional<U>::value,
+                          Expectations::Expectation<U>>::type
+  expect(U value);
 
-  // template <class U>
-  // Expectations::Expectation<U> expect(U &value);
+  template <typename U>
+  auto expect(U block) -> typename std::enable_if<
+      Util::is_functional<U>::value,
+      Expectations::Expectation<decltype(block())>>::type;
 
   template <class U>
   Expectations::Expectation<std::vector<U>> expect(
@@ -30,7 +34,7 @@ class ItD : public ItExpBase {
   ItD(Child &parent, std::function<void(ItD &)> body)
       : ItExpBase(parent), body(body) {}
 
-  bool run();
+  Result run() override;
 };
 
 // This is cannot be instantiated.
@@ -50,7 +54,7 @@ class ItCd : public ItExpBase {
       : ItExpBase(parent), body(body), subject(subject) {}
 
   Expectations::Expectation<T> is_expected();
-  bool run();
+  Result run() override;
 };
 
 /**
@@ -63,9 +67,19 @@ class ItCd : public ItExpBase {
  * @endcode
  */
 template <class T>
-Expectations::Expectation<T> ItExpBase::expect(T value) {
-  Expectations::Expectation<T> expectation(*this, value);
-  return expectation;
+typename std::enable_if<not Util::is_functional<T>::value,
+                        Expectations::Expectation<T>>::type
+ItExpBase::expect(T value) {
+  return Expectations::Expectation<T>(*this, value);
+}
+
+template <typename T>
+auto ItExpBase::expect(T block) ->
+    typename std::enable_if<Util::is_functional<T>::value,
+                            Expectations::Expectation<decltype(block())>>::type
+
+{
+  return expect(block());
 }
 
 // template <class T>

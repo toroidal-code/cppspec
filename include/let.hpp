@@ -1,7 +1,7 @@
 #ifndef LET_H
 #define LET_H
-#include <functional>
 #include "runnable.hpp"
+#include "optional/optional.hpp"
 
 class LetBase : public Runnable {
  protected:
@@ -9,16 +9,16 @@ class LetBase : public Runnable {
 
  public:
   LetBase() : delivered(false){};
-  LetBase(const LetBase &copy) : Runnable(), delivered(copy.delivered){};
+  LetBase(const LetBase& copy) : Runnable(), delivered(copy.delivered){};
   void reset() { delivered = false; }
   bool has_result() { return delivered; }
-  bool run() { return false; }
+  Result run() { return false; }
 };
 
 template <typename T>
 class Let : public LetBase {
   typedef std::function<T()> block_t;
-  T result;
+  std::experimental::optional<T> result;
 
   std::string name;
   block_t body;
@@ -26,23 +26,29 @@ class Let : public LetBase {
  public:
   Let(std::string name, block_t body) : name(name), body(body){};
 
-  T &get_result() {
-    run();
-    return result;
+  T* operator->() {
+    if (!delivered) run();
+    return result.operator->();
   }
 
+  T& operator*() & {
+    if (!delivered) run();
+    return result.operator*();
+  }
+
+  T& get_result() & { return this->operator*(); }
   std::string get_name() { return name; }
 
-  bool run();
+  Result run() override;
 };
 
 template <typename T>
-bool Let<T>::run() {
+Result Let<T>::run() {
   if (!delivered) {
     result = body();
     delivered = true;
   }
-  return true;
+  return Result::success();
 }
 
 /**
