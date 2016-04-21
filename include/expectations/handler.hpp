@@ -22,7 +22,7 @@ Result handle_failure(Matcher &matcher, std::string message) {
     message = matcher.failure_message();
   }
   handle_failure_common(matcher, message);
-  return Result::failure(message);
+  return Result::failure_with(message);
 }
 
 template <typename Matcher>
@@ -31,7 +31,7 @@ Result handle_negated_failure(Matcher &matcher, std::string message) {
     message = matcher.failure_message_when_negated();
   }
   handle_failure_common(matcher, message);
-  return Result::failure(message);
+  return Result::failure_with(message);
 }
 }
 
@@ -52,10 +52,9 @@ Result PositiveExpectationHandler::handle_matcher(Matcher &matcher,
                                                   std::string message) {
   // TODO: handle expectation failure here
   bool matched = matcher.match();
-  if (!matched) {
-    return ExpectationHelper::handle_failure(matcher, message);
-  }
-  return Result::success();
+
+  return !matched ? ExpectationHelper::handle_failure(matcher, message)
+                  : Result::success;
 }
 
 template <typename A, class Matcher>
@@ -63,10 +62,8 @@ Result NegativeExpectationHandler::handle_matcher(Matcher &matcher,
                                                   std::string message) {
   // TODO: handle expectation failure here
   bool matched = matcher.negated_match();
-  if (!matched) {
-    return ExpectationHelper::handle_negated_failure(matcher, message);
-  }
-  return Result::success();
+  return !matched ? ExpectationHelper::handle_negated_failure(matcher, message)
+                  : Result::success;
 }
 }  // Expectations
 

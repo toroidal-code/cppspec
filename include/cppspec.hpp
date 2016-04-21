@@ -4,7 +4,7 @@
  */
 #include "class_description.hpp"
 
-#define _ [=](auto &self)
+#define _ [=](auto &self) mutable
 #define $ [](auto &self)
 #define it self.it
 #define context self.template context

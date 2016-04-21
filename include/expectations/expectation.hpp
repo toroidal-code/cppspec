@@ -135,6 +135,7 @@ Expectation<A> &Expectation<A>::not_() {
  */
 template <typename A>
 Expectation<A> &Expectation<A>::ignore() {
+  std::cout << "IGNORE: ";
   this->ignore_failure = true;
   return *this;
 }
@@ -174,7 +175,7 @@ Result Expectation<A>::to_be_null(std::string msg) {
  */
 template <typename A>
 Result Expectation<A>::to_be_true(std::string msg) {
-  return to_be([](A t) -> bool { return true; }, msg);
+  return to_be([](A t) { return static_cast<bool>(t); }, msg);
 }
 
 /**
@@ -186,7 +187,7 @@ Result Expectation<A>::to_be_true(std::string msg) {
  */
 template <typename A>
 Result Expectation<A>::to_be_false(std::string msg) {
-  return to_be([](A t) -> bool { return true; }, msg);
+  return not_().to_be_true(msg);
 }
 
 /**

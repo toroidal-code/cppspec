@@ -17,6 +17,7 @@ class ItBase : public Runnable {
 
  public:
   ItBase() = delete;
+  ItBase(ItBase const &copy) : Runnable(copy.get_parent()), descr(copy.descr){};
 
   /**
    * @brief Create an ItBase without an explicit description

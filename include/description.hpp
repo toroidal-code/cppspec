@@ -75,7 +75,7 @@ class Description : public Runnable {
 typedef Description Context;
 
 Result Description::context(std::string name,
-                          std::function<void(Description &)> body) {
+                            std::function<void(Description &)> body) {
   Context context(*this, name, body);
   context.before_eaches = this->before_eaches;
   context.after_eaches = this->after_eaches;
@@ -149,7 +149,7 @@ Result Description::run() {
   body(*this);
   for (auto a : after_alls) a();
   std::cout << std::endl;
-  return Result(this->get_status());
+  return this->get_status() ? Result::success : Result::failure;
 }
 
 void Description::reset_lets() {
@@ -197,7 +197,7 @@ Result ItD::run() {
   auto parent = static_cast<Description *>(this->get_parent());
   parent->reset_lets();
 
-  return Result(this->get_status());
+  return this->get_status() ? Result::success : Result::failure;
 }
 
 #endif /* DESCRIPTION_H */

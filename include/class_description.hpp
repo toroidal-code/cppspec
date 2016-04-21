@@ -75,8 +75,8 @@ template <class T>
 using ClassContext = ClassDescription<T>;
 
 template <class T>
-Result ClassDescription<T>::context(T subject,
-                                    std::function<void(ClassDescription&)> body) {
+Result ClassDescription<T>::context(
+    T subject, std::function<void(ClassDescription&)> body) {
   ClassContext<T> context(subject, body);
   context.set_parent(this);
   context.before_eaches = this->before_eaches;
@@ -85,13 +85,14 @@ Result ClassDescription<T>::context(T subject,
 }
 
 template <class T>
-Result ClassDescription<T>::context(T& subject,
-                                  std::function<void(ClassDescription&)> body) {
+Result ClassDescription<T>::context(
+    T& subject, std::function<void(ClassDescription&)> body) {
   return context(subject, body);
 }
 
 template <class T>
-Result ClassDescription<T>::context(std::function<void(ClassDescription&)> body) {
+Result ClassDescription<T>::context(
+    std::function<void(ClassDescription&)> body) {
   ClassContext<T> context(body);
   context.set_parent(this);
   context.before_eaches = this->before_eaches;
@@ -118,7 +119,7 @@ Result Description::context(T subject,
 
 template <class T, typename U>
 Result Description::context(std::initializer_list<U> init_list,
-                          std::function<void(ClassDescription<T>&)> body) {
+                            std::function<void(ClassDescription<T>&)> body) {
   ClassContext<T> context(T(init_list), body);
   context.set_parent(this);
   context.before_eaches = this->before_eaches;
@@ -149,7 +150,7 @@ Result Description::context(std::initializer_list<U> init_list,
  */
 template <class T>
 Result ClassDescription<T>::it(std::string name,
-                             std::function<void(ItCd<T>&)> body) {
+                               std::function<void(ItCd<T>&)> body) {
   ItCd<T> it(*this, this->subject, name, body);
   Result result = it.run();
   exec_after_eaches();
@@ -192,7 +193,7 @@ Result ClassDescription<T>::run() {
   std::cout << padding() << descr << std::endl;
   body(*this);
   std::cout << std::endl;
-  return Result(this->get_status());
+  return this->get_status() ? Result::success : Result::failure;
 }
 
 template <class T>
@@ -210,7 +211,7 @@ Result ItCd<T>::run() {
   body(*this);
   auto cd = static_cast<ClassDescription<T>*>(this->get_parent());
   cd->reset_lets();
-  return Result(this->get_status());
+  return this->get_status() ? Result::success : Result::failure;
 }
 
 #endif /* CLASS_DESCRIPTION_H */

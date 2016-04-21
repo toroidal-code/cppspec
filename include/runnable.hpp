@@ -74,20 +74,29 @@ class Child {
   }
 };
 
-struct Result {
-  bool value = false;
+class Result {
+  bool value;
   std::string failure_message = "";
   Result(){};
   Result(bool value, std::string failure_message = "")
       : value(value), failure_message(failure_message){};
 
+ public:
+  Result(Result const& copy)
+      : value(copy.value), failure_message(copy.failure_message) {}
   operator bool() const { return value; }
-
-  static Result success() { return Result(true); }
-  static Result failure(std::string failure_message = "") {
+  static Result success;
+  static Result failure;
+  static Result failure_with(std::string failure_message) {
     return Result(false, failure_message);
   }
+
+  std::string get_message() { return failure_message; }
+  bool get_status() { return value; }
 };
+
+Result Result::success = Result(true);
+Result Result::failure = Result(false);
 
 /**
  * @brief Abstract base class for executable objects

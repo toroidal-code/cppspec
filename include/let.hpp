@@ -12,7 +12,6 @@ class LetBase : public Runnable {
   LetBase(const LetBase& copy) : Runnable(), delivered(copy.delivered){};
   void reset() { delivered = false; }
   bool has_result() { return delivered; }
-  Result run() { return false; }
 };
 
 template <typename T>
@@ -48,7 +47,7 @@ Result Let<T>::run() {
     result = body();
     delivered = true;
   }
-  return Result::success();
+  return Result::success;
 }
 
 /**

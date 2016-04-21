@@ -82,7 +82,6 @@ std::string BaseMatcher<A, E>::description() {
 
 template <typename A, typename E>
 Result BaseMatcher<A, E>::run() {
-  Result matched;
   ItBase *par = static_cast<ItBase *>(this->get_parent());
 
   // If we need a description for our test, generate it
@@ -93,13 +92,10 @@ Result BaseMatcher<A, E>::run() {
               << std::endl;
   }
 
-  if (expectation.get_sign()) {
-    matched =
-        PositiveExpectationHandler::handle_matcher<A>(*this, this->message);
-  } else {
-    matched =
-        NegativeExpectationHandler::handle_matcher<A>(*this, this->message);
-  }
+  Result matched =
+      expectation.get_sign()
+          ? PositiveExpectationHandler::handle_matcher<A>(*this, this->message)
+          : NegativeExpectationHandler::handle_matcher<A>(*this, this->message);
 
   // If our items didn't match, we obviously failed.
   // Only report the failure if we aren't actively ignoring it.

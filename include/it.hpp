@@ -4,6 +4,7 @@
 
 class ItExpBase : public ItBase {
  public:
+  ItExpBase(ItExpBase const &copy) : ItBase(copy){};
   ItExpBase(Child &parent) : ItBase(parent){};
   ItExpBase(Child &parent, std::string descr) : ItBase(parent, descr){};
   template <class U>
