@@ -35,6 +35,43 @@ describe expectation_spec("Expectation", $ {
     });
   });
 
+  context(".to_fail", _ {
+    it("is true when Result is false", _ {
+      expect(Result::failure).to_fail();
+    });
+
+    it("is false when Result is true", _ {
+      expect(expect(Result::success).ignore().to_fail().get_status()).to_be_false();
+      expect(expect(Result::success).ignore().to_fail()).to_fail();
+    });
+  });
+
+  context(".to_fail_with", _ {
+    it("is true when Result is false and messages match", _ {
+      expect(Result::failure_with("failure")).to_fail_with("failure");
+    });
+
+    context("is false when Result", _ {
+      it("is false and messages don't match", _ {
+        expect(
+          expect(Result::failure_with("fail")).ignore().to_fail_with("failure").get_status()
+        ).to_be_false();
+      });
+
+      it("is true and messages match", _ {
+        expect(
+            expect(Result::success_with("failure")).ignore().to_fail_with("failure").get_status()
+        ).to_be_false();
+      });
+
+      it("is true and messages don't match", _ {
+        expect(
+            expect(Result::success_with("fail")).ignore().to_fail_with("failure").get_status()
+        ).to_be_false();
+      });
+    });
+  });
+
   context(".ignore()", [=] (Description &self) {
     ItD i(self, _ {});
 #undef expect

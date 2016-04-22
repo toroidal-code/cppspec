@@ -10,6 +10,7 @@
 #include "matchers/be_within.hpp"
 #include "matchers/include.hpp"
 #include "matchers/equal.hpp"
+#include "matchers/fail.hpp"
 
 namespace Expectations {
 
@@ -102,6 +103,8 @@ class Expectation : public Child {
   Result to_be_null(std::string msg = "");
   Result to_be_true(std::string msg = "");
   Result to_be_false(std::string msg = "");
+  Result to_fail(std::string msg = "");
+  Result to_fail_with(std::string failure_message, std::string msg = "");
 
   template <typename U>
   Result to_include(std::initializer_list<U> expected, std::string msg = "");
@@ -270,6 +273,39 @@ Matchers::BeWithin<A, E> Expectation<A>::to_be_within(E expected,
   matcher.set_message(msg);
   return matcher;
 }
+
+template <typename A>
+Result Expectation<A>::to_fail(std::string msg) {
+  static_assert(std::is_same<A, Result>::value,
+                "Error: to_fail must me used on an expression that "
+                "returns a Result.");
+  return Matchers::Fail<Result>(*this).set_message(msg).run();
+}
+
+// template <typename A>
+// Result Expectation<A>::to_fail(std::string) {
+//  static_assert(
+//      false,
+//      "Error: to_fail must me used on an expression that returns a Result");
+//  return Result::failure;
+//}
+
+template <typename A>
+Result Expectation<A>::to_fail_with(std::string failure_message,
+                                    std::string msg) {
+  static_assert(std::is_same<A, Result>::value,
+                "Error: to_fail_with must be used on an expression that "
+                "returns a Result.");
+  return Matchers::FailWith<A>(*this, failure_message).set_message(msg).run();
+}
+//
+// template <typename A>
+// Result Expectation<A>::to_fail_with(std::string, std::string) {
+//  static_assert(
+//      false,
+//      "Error: to_fail must me used on an expression that returns a Result");
+//  return Result::failure;
+//}
 
 template <typename A>
 template <class M>

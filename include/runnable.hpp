@@ -76,27 +76,49 @@ class Child {
 
 class Result {
   bool value;
-  std::string failure_message = "";
+  std::string message = "";
   Result(){};
   Result(bool value, std::string failure_message = "")
-      : value(value), failure_message(failure_message){};
+      : value(value), message(failure_message){};
 
  public:
-  Result(Result const& copy)
-      : value(copy.value), failure_message(copy.failure_message) {}
+  Result(Result const& copy) : value(copy.value), message(copy.message) {}
   operator bool() const { return value; }
   static Result success;
+  static Result success_with(std::string success_message) {
+    return Result(true, success_message);
+  }
   static Result failure;
   static Result failure_with(std::string failure_message) {
     return Result(false, failure_message);
   }
 
-  std::string get_message() { return failure_message; }
+  std::string get_message() { return message; }
+  const std::string get_message() const { return message; }
+  Result& set_message(std::string message) {
+    message = message;
+    return *this;
+  }
   bool get_status() { return value; }
+
+  friend std::ostream& operator<<(std::ostream& os, const Result& res);
 };
 
 Result Result::success = Result(true);
 Result Result::failure = Result(false);
+std::ostream& operator<<(std::ostream& os, const Result& res) {
+  std::string str;
+  if (res) {
+    str = "Result::success" + (not res.get_message().empty()
+                                   ? "(\"" + res.get_message() + "\")"
+                                   : "");
+  } else {
+    str = "Result::failure" + (not res.get_message().empty()
+                                   ? "(\"" + res.get_message() + "\")"
+                                   : "");
+  }
+  return os << str;
+}
 
 /**
  * @brief Abstract base class for executable objects
