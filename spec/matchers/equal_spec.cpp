@@ -23,4 +23,4 @@ describe equal_spec("Equal", $ {
   //});
 });
 
-int main() { return equal_spec.run() ? EXIT_SUCCESS : EXIT_FAILURE; }
+int main() { return equal_spec.run(Printer::terse) ? EXIT_SUCCESS : EXIT_FAILURE; }

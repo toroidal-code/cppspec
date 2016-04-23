@@ -1,69 +1,32 @@
 #ifndef HANDLER_H
 #define HANDLER_H
-#include "fail_with.hpp"
-//#include "matchers/negativebasematcher.hpp"
+#include "printer_base.hpp"
 
 namespace Expectations {
 
-namespace ExpectationHelper {
-
-template <class M>
-void handle_failure_common(M & /*matcher*/, std::string message) {
-  // if (matcher.diffable()) {
-  //   Expectations::fail_with(message, matcher.get_expected(),
-  //   matcher.get_actual());
-  // }
-  Expectations::fail_with(message);
-}
-
-template <typename Matcher>
-Result handle_failure(Matcher &matcher, std::string message) {
-  if (message.empty()) {
-    message = matcher.failure_message();
-  }
-  handle_failure_common(matcher, message);
-  return Result::failure_with(message);
-}
-
-template <typename Matcher>
-Result handle_negated_failure(Matcher &matcher, std::string message) {
-  if (message.empty()) {
-    message = matcher.failure_message_when_negated();
-  }
-  handle_failure_common(matcher, message);
-  return Result::failure_with(message);
-}
-}
-
 struct PositiveExpectationHandler {
   template <typename A, class Matcher>
-  static Result handle_matcher(Matcher &matcher, std::string message);
+  static Result handle_matcher(Matcher &matcher);
   static std::string verb() { return "should"; }
 };
 
 struct NegativeExpectationHandler {
   template <typename A, class Matcher>
-  static Result handle_matcher(Matcher &matcher, std::string message);
+  static Result handle_matcher(Matcher &matcher);
   static std::string verb() { return "should not"; }
 };
 
 template <typename A, class Matcher>
-Result PositiveExpectationHandler::handle_matcher(Matcher &matcher,
-                                                  std::string message) {
+Result PositiveExpectationHandler::handle_matcher(Matcher &matcher) {
   // TODO: handle expectation failure here
-  bool matched = matcher.match();
-
-  return !matched ? ExpectationHelper::handle_failure(matcher, message)
-                  : Result::success;
+  return !matcher.match() ? Result::failure_with(matcher.failure_message()) : Result::success;
 }
 
 template <typename A, class Matcher>
-Result NegativeExpectationHandler::handle_matcher(Matcher &matcher,
-                                                  std::string message) {
+Result NegativeExpectationHandler::handle_matcher(Matcher &matcher) {
   // TODO: handle expectation failure here
-  bool matched = matcher.negated_match();
-  return !matched ? ExpectationHelper::handle_negated_failure(matcher, message)
-                  : Result::success;
+  return !matcher.negated_match() ? Result::failure_with(matcher.failure_message_when_negated())
+                                  : Result::success;
 }
 }  // Expectations
 

@@ -13,7 +13,6 @@ describe bool_spec("Some Tests", $ {
     it("true", _ {
       expect(true).to_equal(true);
     });
-
   });
 
   int i = 4;
@@ -192,18 +191,12 @@ describe list_spec("A list spec", $ {
 /* Here is the declaration of fabs description defined in an other file (fabs_spec.c in this sample)*/
 int main(){
   bool r = true;
-  r &= bool_spec.run();
-  r &= abs_spec.run();
-  r &= strcmp_spec.run();
-  r &= vector_spec.run();
-  r &= let_spec.run();
-// #undef expect
-// #undef it
-//  Description d("halp", _ {});
-//  It i =  d.it("me", _ {});
-//  auto expectation =  i.expect(2);
-//  auto be_between = expectation.to_be_between(1,3);
-//  be_between();
-  //strcmp_spec.run();
+  PrettyPrinter printer = Printer::verbose;
+  r &= bool_spec.run(printer);
+  r &= abs_spec.run(printer);
+  r &= strcmp_spec.run(printer);
+  r &= vector_spec.run(printer);
+  r &= let_spec.run(printer);
+  r &= list_spec.run(printer);
   return r ? EXIT_SUCCESS : EXIT_FAILURE;
 }

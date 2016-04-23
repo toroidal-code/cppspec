@@ -2,6 +2,9 @@
 #define RUNNABLE_H
 #include <memory>
 #include <string>
+#include "printer_base.hpp"
+
+struct BasePrinter;
 
 /**
  * @brief Base class for all objects in the execution tree.
@@ -30,6 +33,8 @@ class Child {
   // A Child is healthy if and only if all of its children are healthy.
   // All instances of Child start out healthy.
   bool status = true;
+
+  BasePrinter *printer = nullptr;
 
  public:
   Child(){};
@@ -72,6 +77,22 @@ class Child {
   std::string padding() {
     return has_parent() ? get_parent()->padding() + "  " : "";
   }
+
+  void set_printer(BasePrinter& printer) {
+    this->printer = &printer;  // std::unique_ptr<BasePrinter>(&printer);
+  }
+
+  BasePrinter& get_printer() {
+    if (this->printer != nullptr) return *printer;
+    if (parent == nullptr) throw "Couldn't get printer!";  // base case;
+    return parent->get_printer();
+  }
+
+  bool has_printer() {
+    if (this->printer != nullptr) return true;
+    if (parent == nullptr) return false;  // base case;
+    return parent->has_printer();
+  }
 };
 
 class Result {
@@ -106,6 +127,7 @@ class Result {
 
 Result Result::success = Result(true);
 Result Result::failure = Result(false);
+
 std::ostream& operator<<(std::ostream& os, const Result& res) {
   std::string str;
   if (res) {
@@ -129,7 +151,7 @@ class Runnable : public Child {
   explicit Runnable(Child& parent) : Child(parent){};
   explicit Runnable(Child* parent) : Child(parent){};
   explicit Runnable(const Child* parent) : Child(parent){};
-  virtual Result run() = 0;
+  virtual Result run(BasePrinter& printer) = 0;
 };
 
 #endif /* RUNNABLE_H */

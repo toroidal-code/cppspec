@@ -15,7 +15,7 @@ using namespace Expectations;
 namespace Matchers {
 template <typename Actual, typename Expected>
 class BaseMatcher : public Runnable, public Pretty {
-  std::string message = "";
+  std::string custom_failure_message = "";
 
  protected:
   Expected expected;
@@ -24,7 +24,7 @@ class BaseMatcher : public Runnable, public Pretty {
  public:
   BaseMatcher(BaseMatcher<Actual, Expected> const &copy)
       : Runnable(copy.get_parent()),
-        message(copy.message),
+        custom_failure_message(copy.custom_failure_message),
         expected(copy.expected),
         expectation(copy.expectation){};
 
@@ -48,27 +48,37 @@ class BaseMatcher : public Runnable, public Pretty {
   Actual &get_actual() { return expectation.get_target(); }
   Expected &get_expected() { return expected; }
   Expectation<Actual> &get_expectation() { return expectation; }
-  virtual BaseMatcher &set_message(std::string message) {
-    this->message = message;
-    return *this;
-  }
-  Result run() override;
-
+  virtual BaseMatcher &set_message(std::string message);
+  Result run(BasePrinter &printer) override;
   typedef Expected expected_t;
 };
 
 template <typename A, typename E>
+BaseMatcher<A,E> &BaseMatcher<A,E>::set_message(std::string message) {
+  this->custom_failure_message = message;
+  return *this;
+}
+
+template <typename A, typename E>
 std::string BaseMatcher<A, E>::failure_message() {
-  std::stringstream ss;
-  ss << "expected " << get_actual() << " to " << description();
-  return ss.str();
+  if (not custom_failure_message.empty()) {
+    return this->custom_failure_message;
+  } else {
+    std::stringstream ss;
+    ss << "expected " << get_actual() << " to " << description();
+    return ss.str();
+  }
 }
 
 template <typename A, typename E>
 std::string BaseMatcher<A, E>::failure_message_when_negated() {
-  std::stringstream ss;
-  ss << "expected " << get_actual() << " to not " << description();
-  return ss.str();
+  if (not custom_failure_message.empty()) {
+    return this->custom_failure_message;
+  } else {
+    std::stringstream ss;
+    ss << "expected " << get_actual() << " to not " << description();
+    return ss.str();
+  }
 }
 
 template <typename A, typename E>
@@ -81,26 +91,39 @@ std::string BaseMatcher<A, E>::description() {
 }
 
 template <typename A, typename E>
-Result BaseMatcher<A, E>::run() {
+Result BaseMatcher<A, E>::run(BasePrinter &printer) {
   ItBase *par = static_cast<ItBase *>(this->get_parent());
-
   // If we need a description for our test, generate it
   // unless we're ignoring the output.
   if (par->needs_descr() && !expectation.get_ignore_failure()) {
-    std::cout << par->padding() << "should "
-              << (expectation.get_sign() ? "" : "not ") << this->description()
-              << std::endl;
+    std::stringstream ss;
+    ss << (printer.mode == BasePrinter::Mode::verbose ? par->padding() : "")
+       << (expectation.get_sign() ? PositiveExpectationHandler::verb()
+                                  : NegativeExpectationHandler::verb())
+       << " " << this->description();
+    std::string ss_str = ss.str();
+    if (printer.mode == BasePrinter::Mode::verbose)
+      printer.print(ss_str);
+    else par->set_descr(ss_str);
   }
 
-  Result matched =
-      expectation.get_sign()
-          ? PositiveExpectationHandler::handle_matcher<A>(*this, this->message)
-          : NegativeExpectationHandler::handle_matcher<A>(*this, this->message);
+  Result matched = expectation.get_sign()
+                       ? PositiveExpectationHandler::handle_matcher<A>(*this)
+                       : NegativeExpectationHandler::handle_matcher<A>(*this);
 
   // If our items didn't match, we obviously failed.
   // Only report the failure if we aren't actively ignoring it.
-  if (!matched && !expectation.get_ignore_failure()) this->failed();
-
+  if (!matched && !expectation.get_ignore_failure()) {
+    this->failed();
+    std::string message = matched.get_message();
+    if (message.empty()) {
+      printer.print_failure("Failure message is empty. Does your matcher define the "
+          "appropriate failure_message[_when_negated] method to "
+          "return a string?");
+    } else {
+      printer.print_failure(matched.get_message());
+    }
+  }
   return matched;
 }
 }

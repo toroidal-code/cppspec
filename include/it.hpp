@@ -35,7 +35,7 @@ class ItD : public ItExpBase {
   ItD(Child &parent, std::function<void(ItD &)> body)
       : ItExpBase(parent), body(body) {}
 
-  Result run() override;
+  Result run(BasePrinter &printer) override;
 };
 
 // This is cannot be instantiated.
@@ -55,7 +55,7 @@ class ItCd : public ItExpBase {
       : ItExpBase(parent), body(body), subject(subject) {}
 
   Expectations::Expectation<T> is_expected();
-  Result run() override;
+  Result run(BasePrinter &printer) override;
 };
 
 /**

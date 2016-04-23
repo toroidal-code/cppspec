@@ -30,7 +30,7 @@ bool BeWithin<A, E>::of(E expected) {
   this->expected = expected;
   this->tolerance = this->delta;
   this->unit = "";
-  return this->run();
+  return this->run(this->get_printer());
 }
 
 template <typename A, typename E>
@@ -38,14 +38,16 @@ bool BeWithin<A, E>::percent_of(E expected) {
   this->expected = expected;
   this->tolerance = this->delta;
   this->unit = "%";
-  return this->run();
+  return this->run(this->get_printer());
 }
 
 template <typename A, typename E>
 bool BeWithin<A, E>::match() {
   if (!this->expected) {
-    std::cout << RED << "You must set an expected value using #of: be_within("
-              << this->delta << ").of(expected_value)" << RESET << std::endl;
+    std::stringstream ss;
+    ss << "You must set an expected value using #of: be_within("
+        << this->delta << ").of(expected_value)";
+
     return false;
   }
   return std::abs(this->get_actual() - this->expected) <= this->tolerance;

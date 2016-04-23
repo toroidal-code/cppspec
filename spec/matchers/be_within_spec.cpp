@@ -132,4 +132,4 @@ describe be_within_spec("expect(actual).to_be_within(delta).of(expected)", $  {
   });
 });
 
-int main() { return be_within_spec.run() ? EXIT_SUCCESS : EXIT_FAILURE; }
+int main() { return be_within_spec.run(Printer::terse) ? EXIT_SUCCESS : EXIT_FAILURE; }

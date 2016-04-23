@@ -66,10 +66,14 @@ class Description : public Runnable {
   void exec_before_eaches();
   void exec_after_eaches();
 
-  void let(std::string, Runnable &body);
-  Result run() override;
+  template <typename T>
+  auto make_let(std::string name, T body) -> Let<decltype(body())>;
+  void let(std::string name, Runnable &body);
+  virtual Result run(BasePrinter &printer) override;
   void reset_lets();
   Runnable *find_let(std::string);
+  virtual std::string get_descr() { return descr; }
+  virtual const std::string get_descr() const { return descr; }
 };
 
 typedef Description Context;
@@ -79,12 +83,12 @@ Result Description::context(std::string name,
   Context context(*this, name, body);
   context.before_eaches = this->before_eaches;
   context.after_eaches = this->after_eaches;
-  return context.run();
+  return context.run(this->get_printer());
 }
 
 Result Description::it(std::string name, std::function<void(ItD &)> body) {
   ItD it(*this, name, body);
-  Result result = it.run();
+  Result result = it.run(this->get_printer());
   exec_after_eaches();
   exec_before_eaches();
   return result;
@@ -92,7 +96,7 @@ Result Description::it(std::string name, std::function<void(ItD &)> body) {
 
 Result Description::it(std::function<void(ItD &)> body) {
   ItD it(*this, body);
-  Result result = it.run();
+  Result result = it.run(this->get_printer());
   exec_after_eaches();
   exec_before_eaches();
   return result;
@@ -140,15 +144,21 @@ void Description::exec_after_eaches() {
   for (rule_block_t b : after_eaches) b();
 }
 
+template <typename T>
+auto Description::make_let(std::string name, T body) -> Let<decltype(body())> {
+  return Let<decltype(body())>(*this, name, body);
+}
+
 void Description::let(std::string name, Runnable &body) {
   lets.insert({name, &body});
 }
 
-Result Description::run() {
-  std::cout << padding() << descr << std::endl;
+Result Description::run(BasePrinter &printer) {
+  if (not this->has_printer()) this->set_printer(printer);
+  printer.print(*this);
   body(*this);
   for (auto a : after_alls) a();
-  std::cout << std::endl;
+  if (this->get_parent() == nullptr) printer.flush();
   return this->get_status() ? Result::success : Result::failure;
 }
 
@@ -188,11 +198,17 @@ Expectations::Expectation<T> ItExpBase::expect(Let<T> let) {
   return expectation;
 }
 
-Result ItD::run() {
-  if (!this->needs_descr()) {
-    std::cout << padding() << get_descr() << std::endl;
+Result ItD::run(BasePrinter &printer) {
+  if (!this->needs_descr() && printer.mode == BasePrinter::Mode::verbose) {
+    printer.print(*this);
   }
+
   body(*this);
+
+  if (printer.mode == BasePrinter::Mode::TAP ||
+      printer.mode == BasePrinter::Mode::terse) {
+    printer.print(*this);
+  }
 
   auto parent = static_cast<Description *>(this->get_parent());
   parent->reset_lets();

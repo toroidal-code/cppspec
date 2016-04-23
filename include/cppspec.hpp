@@ -2,7 +2,7 @@
  * @file
  * @brief The core header file for Cppspec
  */
-#include "class_description.hpp"
+#include "printer.hpp"
 
 #define _ [=](auto &self) mutable
 #define $ [](auto &self)
@@ -18,7 +18,7 @@
 #define after_all self.after_all
 #define after_each self.after_each
 #define let(name, body)              \
-  auto name = make_let(#name, body); \
+  auto name = self.make_let(#name, body); \
   self.let(#name, name);
 
 typedef Description describe;

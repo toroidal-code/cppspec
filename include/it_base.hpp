@@ -44,6 +44,13 @@ class ItBase : public Runnable {
    * @return the description string
    */
   std::string get_descr() { return descr; }
+  const std::string get_descr() const { return descr; }
+  ItBase &set_descr(std::string descr);
 };
+
+ItBase &ItBase::set_descr(std::string descr) {
+  this->descr = descr;
+  return *this;
+}
 
 #endif /* IT_BASE_H */

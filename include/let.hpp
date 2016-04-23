@@ -8,7 +8,7 @@ class LetBase : public Runnable {
   bool delivered;
 
  public:
-  LetBase() : delivered(false){};
+  LetBase(Child &parent) : Runnable(parent), delivered(false){};
   LetBase(const LetBase& copy) : Runnable(), delivered(copy.delivered){};
   void reset() { delivered = false; }
   bool has_result() { return delivered; }
@@ -23,26 +23,26 @@ class Let : public LetBase {
   block_t body;
 
  public:
-  Let(std::string name, block_t body) : name(name), body(body){};
+  Let(Child &parent, std::string name, block_t body) : LetBase(parent), name(name), body(body){};
 
   T* operator->() {
-    if (!delivered) run();
+    if (!delivered) run(this->get_printer());
     return result.operator->();
   }
 
   T& operator*() & {
-    if (!delivered) run();
+    if (!delivered) run(this->get_printer());
     return result.operator*();
   }
 
   T& get_result() & { return this->operator*(); }
   std::string get_name() { return name; }
 
-  Result run() override;
+  Result run(BasePrinter &) override;
 };
 
 template <typename T>
-Result Let<T>::run() {
+Result Let<T>::run(BasePrinter&) {
   if (!delivered) {
     result = body();
     delivered = true;
@@ -57,9 +57,5 @@ Result Let<T>::run() {
  *
  * @return a new Let object
  */
-template <typename T>
-auto make_let(std::string name, T body) -> Let<decltype(body())> {
-  return Let<decltype(body())>(name, body);
-}
 
 #endif /* LET_H */

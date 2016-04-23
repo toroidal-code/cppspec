@@ -11,7 +11,7 @@ describe describe_statements_spec("Description has", $ {
 
 int main() {
   bool r = true;
-  r &= base_describe_spec.run();
-  r &= describe_statements_spec.run();
+  r &= base_describe_spec.run(Printer::terse);
+  r &= describe_statements_spec.run(Printer::terse);
   return r ? EXIT_SUCCESS : EXIT_FAILURE;
 }

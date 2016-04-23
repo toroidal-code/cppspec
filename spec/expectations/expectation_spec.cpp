@@ -101,4 +101,4 @@ describe expectation_spec("Expectation", $ {
   });
 });
 
-int main() { return expectation_spec.run() ? EXIT_SUCCESS : EXIT_FAILURE; }
+int main() { return expectation_spec.run(Printer::terse) ? EXIT_SUCCESS : EXIT_FAILURE; }
