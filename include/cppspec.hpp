@@ -2,8 +2,9 @@
  * @file
  * @brief The core header file for Cppspec
  */
-
-#include "printer.hpp"
+#ifndef CPPSPEC_HPP
+#define CPPSPEC_HPP
+#include "runner.hpp"
 
 #define _ [=](auto &self) mutable
 #define $ [](auto &self)
@@ -18,11 +19,13 @@
 #define before_each self.before_each
 #define after_all self.after_all
 #define after_each self.after_each
-#define let(name, body)              \
+#define let(name, body)                   \
   auto name = self.make_let(#name, body); \
-  self.let(#name, name);
+  self.add_let(#name, name);
 
 typedef CppSpec::Description describe;
 
 template <class T>
 using describe_a = CppSpec::ClassDescription<T>;
+
+#endif  // CPPSPEC_HPP

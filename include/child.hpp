@@ -4,7 +4,7 @@
 
 namespace CppSpec {
 
-struct BasePrinter;
+struct BasePrinter;  // Forward declaration to allow reference
 
 /**
  * @brief Base class for all objects in the execution tree.

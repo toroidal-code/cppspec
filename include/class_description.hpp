@@ -254,5 +254,5 @@ Result ItCd<T>::run(BasePrinter &printer) {
   return this->get_status() ? Result::success : Result::failure;
 }
 
-} // ::CppSpec
-#endif // CPPSPEC_CLASS_DESCRIPTION_HPP
+}  // ::CppSpec
+#endif  // CPPSPEC_CLASS_DESCRIPTION_HPP

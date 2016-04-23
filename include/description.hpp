@@ -70,7 +70,7 @@ class Description : public Runnable {
 
   template <typename T>
   auto make_let(std::string name, T body) -> Let<decltype(body())>;
-  void let(std::string name, Runnable &body);
+  void add_let(std::string name, Runnable &body);
   virtual Result run(BasePrinter &printer) override;
   void reset_lets();
   Runnable *find_let(std::string);
@@ -158,7 +158,7 @@ auto Description::make_let(std::string name, T body) -> Let<decltype(body())> {
   return Let<decltype(body())>(*this, name, body);
 }
 
-void Description::let(std::string name, Runnable &body) {
+void Description::add_let(std::string name, Runnable &body) {
   lets.insert({name, &body});
 }
 

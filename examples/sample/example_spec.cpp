@@ -53,7 +53,7 @@ describe bool_spec("Some Tests", $ {
       expect({1,2,3}).to_include({1});
     });
     it("includes [1,2,3]", _ {
-      expect({1,2,3}).to_include({1,2,3});
+      expect({1,2,3}).to_include({1,2,8});
     });
     it("does not include 4", _ {
       expect({1,2,3}).not_().to_include({4});
@@ -109,7 +109,7 @@ describe abs_spec("abs", $ {
   });
 
   before_all([]{ std::srand(std::time(0)); });
-  
+
   int n = 0;
   before_each([&]{ n = std::rand(); });
 
@@ -189,13 +189,12 @@ describe list_spec("A list spec", $ {
 
 /* Here is the declaration of fabs description defined in an other file (fabs_spec.c in this sample)*/
 int main(){
-  bool r = true;
-  auto printer = CppSpec::Printer::verbose;
-  r &= bool_spec.run(printer);
-  r &= abs_spec.run(printer);
-  r &= strcmp_spec.run(printer);
-  r &= vector_spec.run(printer);
-  r &= let_spec.run(printer);
-  r &= list_spec.run(printer);
-  return r ? EXIT_SUCCESS : EXIT_FAILURE;
+  return CppSpec::Runner()
+             .add_spec(bool_spec)
+             .add_spec(abs_spec)
+             .add_spec(strcmp_spec)
+             .add_spec(vector_spec)
+             .add_spec(let_spec)
+             .add_spec(list_spec)
+             .exec() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

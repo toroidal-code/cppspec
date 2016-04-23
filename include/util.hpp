@@ -235,6 +235,17 @@ std::string inspect_object<std::string>(std::string &o) {
   return ss.str();
 }
 
+template <typename Range>
+std::string join(Range &iterable, const std::string &sep) {
+  std::ostringstream oss;
+  typename Range::const_iterator it;
+  for (it = iterable.cbegin(); it != iterable.cend(); it++) {
+    oss << *it;
+    if (it != --iterable.cend()) oss << sep;
+  }
+  return oss.str();
+}
+
 }  // ::Util
 }  // ::CppSpec
-#endif // CPPSPEC_UTIL_HPP
+#endif  // CPPSPEC_UTIL_HPP

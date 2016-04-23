@@ -6,8 +6,9 @@ namespace CppSpec {
 
 class Result {
   const bool value;
-  std::string message = "";
-  Result(bool value) : value(value) { };
+  std::string message;
+  Result(bool value, std::string message = "")
+      : value(value), message(message){};
 
  public:
   // Default destructor
@@ -51,12 +52,12 @@ inline Result &Result::set_message(std::string message) {
 
 Result Result::success = Result(true);
 inline Result Result::success_with(std::string success_message) {
-  return success.set_message(success_message);
+  return Result(true, success_message);
 }
 
 Result Result::failure = Result(false);
 inline Result Result::failure_with(std::string failure_message) {
-  return failure.set_message(failure_message);
+  return Result(false, failure_message);
 }
 
 std::ostream &operator<<(std::ostream &os, const Result &res) {
@@ -70,5 +71,5 @@ std::ostream &operator<<(std::ostream &os, const Result &res) {
   return os << ss.str();
 }
 
-} //::CppSpec
+}  //::CppSpec
 #endif  // CPPSPEC_RESULT_HPP
