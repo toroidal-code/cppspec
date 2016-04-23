@@ -2,8 +2,8 @@
  * @file
  * @brief Utility functions and classes
  */
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef CPPSPEC_UTIL_HPP
+#define CPPSPEC_UTIL_HPP
 
 #ifdef __GNUG__
 #include <cxxabi.h>
@@ -13,6 +13,7 @@
 #include <sstream>
 #include <memory>
 
+namespace CppSpec {
 namespace Util {
 
 /**
@@ -233,6 +234,7 @@ std::string inspect_object<std::string>(std::string &o) {
   ss << "(std::string) => " << '"' << o << '"';
   return ss.str();
 }
-}
 
-#endif /* UTIL_H */
+}  // ::Util
+}  // ::CppSpec
+#endif // CPPSPEC_UTIL_HPP

@@ -1,4 +1,7 @@
 #include "cppspec.hpp"
+
+using namespace CppSpec;
+
 /**
  * @file
  *

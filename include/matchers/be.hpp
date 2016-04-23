@@ -1,7 +1,8 @@
-#ifndef BE_H
-#define BE_H
-#include "basematcher.hpp"
+#ifndef CPPSPEC_MATCHERS_BE_HPP
+#define CPPSPEC_MATCHERS_BE_HPP
+#include "matcher_base.hpp"
 
+namespace CppSpec {
 namespace Matchers {
 
 template <class D>
@@ -89,6 +90,7 @@ template <class A>
 bool BeNullptr<A>::match() {
   return this->get_actual() == nullptr;
 }
-}
 
-#endif /* BE_H */
+}  // ::Matchers
+}  // ::CppSpec
+#endif  // CPPSPEC_MATCHERS_BE_HPP

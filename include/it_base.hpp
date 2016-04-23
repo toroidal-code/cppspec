@@ -1,6 +1,8 @@
-#ifndef IT_BASE_H
-#define IT_BASE_H
+#ifndef CPPSPEC_IT_BASE_HPP
+#define CPPSPEC_IT_BASE_HPP
 #include "runnable.hpp"
+
+namespace CppSpec {
 
 /**
  * @brief Most base class for `it` expressions.
@@ -12,25 +14,25 @@
  * Matchers and execute them. This class is the least common denominator of the
  * `it` classes, and thus is used to resolve the dependency cycle.
  */
-class ItBase : public Runnable {
+class BaseIt : public Runnable {
   std::string descr = "";
 
  public:
-  ItBase() = delete;
-  ItBase(ItBase const &copy) : Runnable(copy.get_parent()), descr(copy.descr){};
+  BaseIt() = delete;
+  BaseIt(BaseIt const &copy) : Runnable(copy.get_parent()), descr(copy.descr){};
 
   /**
-   * @brief Create an ItBase without an explicit description
-   * @return the constructed ItBase
+   * @brief Create an BaseIt without an explicit description
+   * @return the constructed BaseIt
    */
-  explicit ItBase(Child &parent) : Runnable(parent){};
+  explicit BaseIt(Child &parent) : Runnable(parent){};
 
   /**
-   * @brief Create an ItBase with an explicit description.
+   * @brief Create an BaseIt with an explicit description.
    * @param descr the description of the `it` statement
-   * @return the constructed ItBase
+   * @return the constructed BaseIt
    */
-  explicit ItBase(Child &parent, std::string descr)
+  explicit BaseIt(Child &parent, std::string descr)
       : Runnable(parent), descr(descr){};
 
   /**
@@ -45,12 +47,13 @@ class ItBase : public Runnable {
    */
   std::string get_descr() { return descr; }
   const std::string get_descr() const { return descr; }
-  ItBase &set_descr(std::string descr);
+  BaseIt &set_descr(std::string descr);
 };
 
-ItBase &ItBase::set_descr(std::string descr) {
+BaseIt &BaseIt::set_descr(std::string descr) {
   this->descr = descr;
   return *this;
 }
 
-#endif /* IT_BASE_H */
+}  // ::CppSpec
+#endif  // CPPSPEC_IT_BASE_HPP

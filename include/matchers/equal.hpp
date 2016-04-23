@@ -1,7 +1,8 @@
-#ifndef EQUAL_H
-#define EQUAL_H
-#include "basematcher.hpp"
+#ifndef CPPSPEC_MATCHERS_EQUAL_HPP
+#define CPPSPEC_MATCHERS_EQUAL_HPP
+#include "matcher_base.hpp"
 
+namespace CppSpec {
 namespace Matchers {
 
 /**
@@ -113,6 +114,7 @@ std::string Equal<A, E>::actual_inspected() {
 //       "> => " << std::boolalpha <<  o;
 //   return ss.str();
 // }
-}
 
-#endif /* EQUAL_H */
+}  // ::Matchers
+}  // ::CppSpec
+#endif // CPPSPEC_MATCHERS_EQUAL_HPP

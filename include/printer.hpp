@@ -18,10 +18,10 @@
 #define BOLDMAGENTA "\033[1m\033[35m" /* Bold Magenta */
 #define BOLDCYAN "\033[1m\033[36m"    /* Bold Cyan */
 #define BOLDWHITE "\033[1m\033[37m"   /* Bold White */
-
 #include <iostream>
-#include "printer_base.hpp"
 #include "class_description.hpp"
+
+namespace CppSpec {
 
 class PrettyPrinter : public BasePrinter {
   int test_counter = 1;
@@ -40,7 +40,7 @@ class PrettyPrinter : public BasePrinter {
   // template <class C>
   // void print(ClassDescription<C> &runnable);
   void print(Description &runnable) override;
-  void print(ItBase &it) override;
+  void print(BaseIt &it) override;
   void print(std::string message) override;
   void print_failure(std::string message) override;
   void flush() override;
@@ -63,7 +63,7 @@ void PrettyPrinter::print(Description &runnable) {
   }
   if (first) this->first = false;
 }
-void PrettyPrinter::print(ItBase &it) {
+void PrettyPrinter::print(BaseIt &it) {
   std::string descr;
   switch (mode) {
     case Mode::verbose:
@@ -103,7 +103,8 @@ void PrettyPrinter::print_failure(std::string message) {
     case Mode::verbose:
       std::cout << RED << message << RESET << std::endl;
     case Mode::terse:
-      buffer << std::endl << RED << "Test number " << test_counter << " failed:" << std::endl
+      buffer << std::endl
+             << RED << "Test number " << test_counter << " failed:" << std::endl
              << message << RESET;
     default:
       break;
@@ -115,8 +116,7 @@ void PrettyPrinter::flush() {
   std::stringstream ss;
   switch (mode) {
     case Mode::terse:
-      if (not str.empty())
-        std::cout << std::endl << str << std::endl;
+      if (not str.empty()) std::cout << std::endl << str << std::endl;
       break;
     case Mode::TAP:
       if (str[0] == '\n') {
@@ -140,4 +140,5 @@ static PrettyPrinter terse = PrettyPrinter(PrettyPrinter::Mode::terse);
 static PrettyPrinter TAP = PrettyPrinter(PrettyPrinter::Mode::TAP);
 }
 
-#endif  // CPP_SPEC_RUNNER_HPP
+}  // ::CppSpec
+#endif  // CPP_SPEC_PRINTER_HPP

@@ -1,9 +1,10 @@
-#ifndef BE_BETWEEN_H
-#define BE_BETWEEN_H
+#ifndef CPPSPEC_MATCHERS_BE_BETWEEN_HPP
+#define CPPSPEC_MATCHERS_BE_BETWEEN_HPP
+#include "matcher_base.hpp"
 
-#include "basematcher.hpp"
-
+namespace CppSpec {
 namespace Matchers {
+
 enum class RangeMode { exclusive, inclusive };
 
 template <typename A, typename E>
@@ -68,5 +69,7 @@ std::string BeBetween<A, E>::description() {
      << (mode == RangeMode::exclusive ? "exclusive" : "inclusive") << ")";
   return ss.str();
 }
-}
-#endif /* BE_BETWEEN_H */
+
+}  // ::Matchers
+}  // ::CppSpec
+#endif // CPPSPEC_MATCHERS_BE_BETWEEN_HPP

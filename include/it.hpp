@@ -1,12 +1,14 @@
-#ifndef IT_H
-#define IT_H
+#ifndef CPPSPEC_IT_HPP
+#define CPPSPEC_IT_HPP
 #include "expectations/expectation.hpp"
 
-class ItExpBase : public ItBase {
+namespace CppSpec {
+
+class ItExpBase : public BaseIt {
  public:
-  ItExpBase(ItExpBase const &copy) : ItBase(copy){};
-  ItExpBase(Child &parent) : ItBase(parent){};
-  ItExpBase(Child &parent, std::string descr) : ItBase(parent, descr){};
+  ItExpBase(ItExpBase const &copy) : BaseIt(copy){};
+  ItExpBase(Child &parent) : BaseIt(parent){};
+  ItExpBase(Child &parent, std::string descr) : BaseIt(parent, descr){};
   template <class U>
   typename std::enable_if<not Util::is_functional<U>::value,
                           Expectations::Expectation<U>>::type
@@ -104,4 +106,5 @@ Expectations::Expectation<std::vector<T>> ItExpBase::expect(
   return expectation;
 }
 
-#endif /* IT_H */
+} // ::CppSpec
+#endif // CPPSPEC_IT_HPP

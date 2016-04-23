@@ -1,7 +1,8 @@
-#ifndef INCLUDE_H
-#define INCLUDE_H
-#include "basematcher.hpp"
+#ifndef CPPSPEC_MATCHERS_INCLUDE_HPP
+#define CPPSPEC_MATCHERS_INCLUDE_HPP
+#include "matcher_base.hpp"
 
+namespace CppSpec {
 namespace Matchers {
 
 /**
@@ -135,6 +136,7 @@ template <typename A, typename U>
 bool Include<A, U, U>::match() {
   return this->actual_collection_includes(this->get_expected());
 }
-}
 
-#endif /* INCLUDE_H */
+}  // ::Matchers
+}  // ::CppSpec
+#endif  // CPPSPEC_MATCHERS_INCLUDE_HPP

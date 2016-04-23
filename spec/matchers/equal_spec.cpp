@@ -1,5 +1,7 @@
 #include "cppspec.hpp"
 
+using namespace CppSpec;
+
 describe equal_spec("Equal", $ {
   it("matches when actual == expected", _ {
     expect(1).to_equal(1);

@@ -1,5 +1,7 @@
 #include "cppspec.hpp"
 
+using namespace CppSpec;
+
 struct TestClass {
   std::string field1;
   std::string field2;

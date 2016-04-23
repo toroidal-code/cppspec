@@ -1,5 +1,7 @@
 #include "cppspec.hpp"
 
+using namespace CppSpec;
+
 describe base_describe_spec("Base description", $ { });
 
 describe describe_statements_spec("Description has", $ {

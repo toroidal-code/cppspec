@@ -2,8 +2,8 @@
  * @file
  * @brief Defines the Expectations::Expectation class and associated functions
  */
-#ifndef EXPECTATION_H
-#define EXPECTATION_H
+#ifndef CPPSPEC_EXPECTATIONS_EXPECTATION_HPP
+#define CPPSPEC_EXPECTATIONS_EXPECTATION_HPP
 #include "let.hpp"
 #include "matchers/be.hpp"
 #include "matchers/be_between.hpp"
@@ -12,6 +12,7 @@
 #include "matchers/equal.hpp"
 #include "matchers/fail.hpp"
 
+namespace CppSpec {
 namespace Expectations {
 
 /**
@@ -54,7 +55,7 @@ class Expectation : public Child {
    *
    * @return The constructed Expectation.
    */
-  Expectation(ItBase &it, A value) : Child(it), target(value) {}
+  Expectation(BaseIt &it, A value) : Child(it), target(value) {}
 
   /**
    * @brief Create an Expectation using a function.
@@ -69,7 +70,7 @@ class Expectation : public Child {
    */
   // TODO: create a "lazy" parameter for differentiating between delayed and
   // immediate execution
-  //  Expectation(ItBase &it, std::function<A()> block)
+  //  Expectation(BaseIt &it, std::function<A()> block)
   //      : Child(it), target(block()){};  // block(block), has_block(true) {}
 
   /**
@@ -80,7 +81,7 @@ class Expectation : public Child {
    * @return The constructed Expectation.
    */
   template <typename U>
-  Expectation(ItBase &it, std::initializer_list<U> init_list)
+  Expectation(BaseIt &it, std::initializer_list<U> init_list)
       : Child(it), target(std::vector<U>(init_list)) {}
 
   /** @brief Get the target of the expectation. */
@@ -138,7 +139,7 @@ Expectation<A> &Expectation<A>::not_() {
  */
 template <typename A>
 Expectation<A> &Expectation<A>::ignore() {
-  //std::cout << "IGNORE: ";
+  // std::cout << "IGNORE: ";
   this->ignore_failure = true;
   return *this;
 }
@@ -166,7 +167,8 @@ Result Expectation<A>::to_be(std::function<bool(A)> test, std::string msg) {
  */
 template <typename A>
 Result Expectation<A>::to_be_null(std::string msg) {
-  return Matchers::BeNullptr<A>(*this).set_message(msg).run(this->get_printer());
+  return Matchers::BeNullptr<A>(*this).set_message(msg).run(
+      this->get_printer());
 }
 
 /**
@@ -240,7 +242,9 @@ Result Expectation<A>::to_include(std::initializer_list<U> expected,
 template <typename A>
 template <typename E>
 Result Expectation<A>::to_include(E expected, std::string msg) {
-  return Matchers::Include<A, E, E>(*this, expected).set_message(msg).run(this->get_printer());
+  return Matchers::Include<A, E, E>(*this, expected)
+      .set_message(msg)
+      .run(this->get_printer());
 }
 
 /**
@@ -254,7 +258,9 @@ Result Expectation<A>::to_include(E expected, std::string msg) {
 template <typename A>
 template <typename E>
 Result Expectation<A>::to_equal(E expected, std::string msg) {
-  return Matchers::Equal<A, E>(*this, expected).set_message(msg).run(this->get_printer());
+  return Matchers::Equal<A, E>(*this, expected)
+      .set_message(msg)
+      .run(this->get_printer());
 }
 
 /**
@@ -279,7 +285,8 @@ Result Expectation<A>::to_fail(std::string msg) {
   static_assert(std::is_same<A, Result>::value,
                 "Error: to_fail must me used on an expression that "
                 "returns a Result.");
-  return Matchers::Fail<Result>(*this).set_message(msg).run(this->get_printer());
+  return Matchers::Fail<Result>(*this).set_message(msg).run(
+      this->get_printer());
 }
 
 // template <typename A>
@@ -296,7 +303,9 @@ Result Expectation<A>::to_fail_with(std::string failure_message,
   static_assert(std::is_same<A, Result>::value,
                 "Error: to_fail_with must be used on an expression that "
                 "returns a Result.");
-  return Matchers::FailWith<A>(*this, failure_message).set_message(msg).run(this->get_printer());
+  return Matchers::FailWith<A>(*this, failure_message)
+      .set_message(msg)
+      .run(this->get_printer());
 }
 //
 // template <typename A>
@@ -318,6 +327,7 @@ Result Expectation<A>::to(M matcher, std::string msg) {
   // M::expected_t>>(matcher);
   return matcher.set_message(msg).run(this->get_printer());
 }
-}
 
-#endif /* EXPECTATION_H */
+}  // ::Expectations
+}  // ::CppSpec
+#endif  // CPPSPEC_EXPECTATIONS_EXPECTATION_HPP

@@ -1,5 +1,7 @@
 #include "cppspec.hpp"
 
+using namespace CppSpec;
+
 // Very simple int<=>int custom matcher
 struct CustomMatcher : public Matchers::BaseMatcher<int, int> {
   CustomMatcher(Expectations::Expectation<int> &expectation, int expected)

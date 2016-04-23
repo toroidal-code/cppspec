@@ -2,6 +2,7 @@
  * @file
  * @brief The core header file for Cppspec
  */
+
 #include "printer.hpp"
 
 #define _ [=](auto &self) mutable
@@ -21,7 +22,7 @@
   auto name = self.make_let(#name, body); \
   self.let(#name, name);
 
-typedef Description describe;
+typedef CppSpec::Description describe;
 
 template <class T>
-using describe_a = ClassDescription<T>;
+using describe_a = CppSpec::ClassDescription<T>;

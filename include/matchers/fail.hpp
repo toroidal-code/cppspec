@@ -1,8 +1,10 @@
-#ifndef CPPSPEC_FAIL_HPP
-#define CPPSPEC_FAIL_HPP
-#include "basematcher.hpp"
+#ifndef CPPSPEC_MATCHERS_FAIL_HPP
+#define CPPSPEC_MATCHERS_FAIL_HPP
+#include "matcher_base.hpp"
 
+namespace CppSpec {
 namespace Matchers {
+
 template <typename A>
 class Fail : public BaseMatcher<A, void *> {
  public:
@@ -31,6 +33,7 @@ FailWith<A>::match() {
   return (not this->get_actual().get_status()) &&
          this->get_actual().get_message() == this->get_expected();
 }
-}
 
-#endif  // CPP_SPEC_FAIL_HPP
+}  // ::Matchers
+}  // ::CppSpec
+#endif  // CPPSPEC_FAIL_HPP

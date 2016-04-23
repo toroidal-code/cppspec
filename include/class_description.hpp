@@ -1,6 +1,8 @@
-#ifndef CLASS_DESCRIPTION_H
-#define CLASS_DESCRIPTION_H
+#ifndef CPPSPEC_CLASS_DESCRIPTION_HPP
+#define CPPSPEC_CLASS_DESCRIPTION_HPP
 #include "description.hpp"
+
+namespace CppSpec {
 
 /**
  * @brief A Description with a defined subject
@@ -15,7 +17,7 @@
  */
 template <class T>
 class ClassDescription : public Description {
-  typedef std::function<void(ClassDescription<T>&)> block_t;
+  typedef std::function<void(ClassDescription<T> &)> block_t;
   block_t body;
   bool first;
   std::string type = "";
@@ -46,13 +48,13 @@ class ClassDescription : public Description {
   ClassDescription(std::string descr, T subject, block_t body)
       : Description(descr), body(body), subject(subject){};
 
-  ClassDescription(T& subject, block_t body)
+  ClassDescription(T &subject, block_t body)
       : Description(Pretty::to_word(subject)),
         body(body),
         type(" : " + Util::demangle(typeid(T).name())),
         subject(subject){};
 
-  ClassDescription(std::string descr, T& subject, block_t body)
+  ClassDescription(std::string descr, T &subject, block_t body)
       : Description(descr), body(body), subject(subject){};
 
   template <typename U>
@@ -68,16 +70,16 @@ class ClassDescription : public Description {
                    block_t body)
       : Description(descr), body(body), subject(T(init_list)){};
 
-  ClassDescription<T>(Description& d) : Description(d){};
+  ClassDescription<T>(Description &d) : Description(d){};
 
   const bool has_subject = true;
 
-  Result it(std::string descr, std::function<void(ItCd<T>&)> body);
-  Result it(std::function<void(ItCd<T>&)> body);
+  Result it(std::string descr, std::function<void(ItCd<T> &)> body);
+  Result it(std::function<void(ItCd<T> &)> body);
   Result context(T subject, block_t body);
-  Result context(T& subject, block_t body);
+  Result context(T &subject, block_t body);
   Result context(block_t body);
-  Result run(BasePrinter& printer) override;
+  Result run(BasePrinter &printer) override;
   virtual std::string get_descr() override;
   virtual const std::string get_descr() const override;
 };
@@ -87,7 +89,7 @@ using ClassContext = ClassDescription<T>;
 
 template <class T>
 Result ClassDescription<T>::context(
-    T subject, std::function<void(ClassDescription&)> body) {
+    T subject, std::function<void(ClassDescription &)> body) {
   ClassContext<T> context(subject, body);
   context.set_parent(this);
   context.before_eaches = this->before_eaches;
@@ -97,13 +99,13 @@ Result ClassDescription<T>::context(
 
 template <class T>
 Result ClassDescription<T>::context(
-    T& subject, std::function<void(ClassDescription&)> body) {
+    T &subject, std::function<void(ClassDescription &)> body) {
   return context(subject, body);
 }
 
 template <class T>
 Result ClassDescription<T>::context(
-    std::function<void(ClassDescription&)> body) {
+    std::function<void(ClassDescription &)> body) {
   ClassContext<T> context(body);
   context.set_parent(this);
   context.before_eaches = this->before_eaches;
@@ -113,7 +115,7 @@ Result ClassDescription<T>::context(
 
 template <class T>
 Result Description::context(T subject,
-                            std::function<void(ClassDescription<T>&)> body) {
+                            std::function<void(ClassDescription<T> &)> body) {
   ClassContext<T> context(body);
   context.subject = subject;
   context.set_parent(this);
@@ -130,7 +132,7 @@ Result Description::context(T subject,
 
 template <class T, typename U>
 Result Description::context(std::initializer_list<U> init_list,
-                            std::function<void(ClassDescription<T>&)> body) {
+                            std::function<void(ClassDescription<T> &)> body) {
   ClassContext<T> context(T(init_list), body);
   context.set_parent(this);
   context.before_eaches = this->before_eaches;
@@ -161,7 +163,7 @@ Result Description::context(std::initializer_list<U> init_list,
  */
 template <class T>
 Result ClassDescription<T>::it(std::string name,
-                               std::function<void(ItCd<T>&)> body) {
+                               std::function<void(ItCd<T> &)> body) {
   ItCd<T> it(*this, this->subject, name, body);
   Result result = it.run(this->get_printer());
   exec_after_eaches();
@@ -191,7 +193,7 @@ Result ClassDescription<T>::it(std::string name,
  * @return the result of the test
  */
 template <class T>
-Result ClassDescription<T>::it(std::function<void(ItCd<T>&)> body) {
+Result ClassDescription<T>::it(std::function<void(ItCd<T> &)> body) {
   ItCd<T> it(*this, this->subject, body);
   Result result = it.run(this->get_printer());
   exec_after_eaches();
@@ -200,7 +202,7 @@ Result ClassDescription<T>::it(std::function<void(ItCd<T>&)> body) {
 }
 
 template <class T>
-Result ClassDescription<T>::run(BasePrinter& printer) {
+Result ClassDescription<T>::run(BasePrinter &printer) {
   if (not this->has_printer()) this->set_printer(printer);
   printer.print(*this);
   body(*this);
@@ -219,7 +221,7 @@ std::string ClassDescription<T>::get_descr() {
 
 template <class T>
 const std::string ClassDescription<T>::get_descr() const {
-  if (const_cast<ClassDescription<T>*>(this)->get_printer().mode ==
+  if (const_cast<ClassDescription<T> *>(this)->get_printer().mode ==
       BasePrinter::Mode::TAP) {
     return descr;
   } else {
@@ -229,13 +231,13 @@ const std::string ClassDescription<T>::get_descr() const {
 
 template <class T>
 Expectations::Expectation<T> ItCd<T>::is_expected() {
-  auto cd = static_cast<ClassDescription<T>*>(this->get_parent());
+  auto cd = static_cast<ClassDescription<T> *>(this->get_parent());
   Expectations::Expectation<T> expectation(*this, cd->subject);
   return expectation;
 }
 
 template <class T>
-Result ItCd<T>::run(BasePrinter& printer) {
+Result ItCd<T>::run(BasePrinter &printer) {
   if (!this->needs_descr() && printer.mode == BasePrinter::Mode::verbose) {
     printer.print(*this);
   }
@@ -247,9 +249,10 @@ Result ItCd<T>::run(BasePrinter& printer) {
     printer.print(*this);
   }
 
-  auto cd = static_cast<ClassDescription<T>*>(this->get_parent());
+  auto cd = static_cast<ClassDescription<T> *>(this->get_parent());
   cd->reset_lets();
   return this->get_status() ? Result::success : Result::failure;
 }
 
-#endif /* CLASS_DESCRIPTION_H */
+} // ::CppSpec
+#endif // CPPSPEC_CLASS_DESCRIPTION_HPP

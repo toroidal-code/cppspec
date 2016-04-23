@@ -1,25 +1,26 @@
-#ifndef BASEMATCHER_H
-#define BASEMATCHER_H
+#ifndef CPPSPEC_MATCHERS_MATCHER_BASE_HPP
+#define CPPSPEC_MATCHERS_MATCHER_BASE_HPP
 
 #include "pretty_matchers.hpp"
 #include "expectations/handler.hpp"
 #include "it_base.hpp"
+
+namespace CppSpec {
 
 namespace Expectations {
 template <class T>
 class Expectation;
 }
 
-using namespace Expectations;
-
 namespace Matchers {
+
 template <typename Actual, typename Expected>
 class BaseMatcher : public Runnable, public Pretty {
   std::string custom_failure_message = "";
 
  protected:
   Expected expected;
-  Expectation<Actual> expectation;
+  Expectations::Expectation<Actual> expectation;
 
  public:
   BaseMatcher(BaseMatcher<Actual, Expected> const &copy)
@@ -28,14 +29,14 @@ class BaseMatcher : public Runnable, public Pretty {
         expected(copy.expected),
         expectation(copy.expectation){};
 
-  BaseMatcher(Expectation<Actual> &expectation)
+  BaseMatcher(Expectations::Expectation<Actual> &expectation)
       : Runnable(*expectation.get_parent()),  // We want the parent of the
                                               // matcher to be the `it` block,
                                               // not the
                                               // Expectation.
         expectation(expectation) {}
 
-  BaseMatcher(Expectation<Actual> &expectation, Expected expected)
+  BaseMatcher(Expectations::Expectation<Actual> &expectation, Expected expected)
       : Runnable(*expectation.get_parent()),
         expected(expected),
         expectation(expectation) {}
@@ -47,14 +48,14 @@ class BaseMatcher : public Runnable, public Pretty {
   virtual std::string description();
   Actual &get_actual() { return expectation.get_target(); }
   Expected &get_expected() { return expected; }
-  Expectation<Actual> &get_expectation() { return expectation; }
+  Expectations::Expectation<Actual> &get_expectation() { return expectation; }
   virtual BaseMatcher &set_message(std::string message);
   Result run(BasePrinter &printer) override;
   typedef Expected expected_t;
 };
 
 template <typename A, typename E>
-BaseMatcher<A,E> &BaseMatcher<A,E>::set_message(std::string message) {
+BaseMatcher<A, E> &BaseMatcher<A, E>::set_message(std::string message) {
   this->custom_failure_message = message;
   return *this;
 }
@@ -92,24 +93,27 @@ std::string BaseMatcher<A, E>::description() {
 
 template <typename A, typename E>
 Result BaseMatcher<A, E>::run(BasePrinter &printer) {
-  ItBase *par = static_cast<ItBase *>(this->get_parent());
+  BaseIt *par = static_cast<BaseIt *>(this->get_parent());
   // If we need a description for our test, generate it
   // unless we're ignoring the output.
   if (par->needs_descr() && !expectation.get_ignore_failure()) {
     std::stringstream ss;
     ss << (printer.mode == BasePrinter::Mode::verbose ? par->padding() : "")
-       << (expectation.get_sign() ? PositiveExpectationHandler::verb()
-                                  : NegativeExpectationHandler::verb())
+       << (expectation.get_sign()
+               ? Expectations::PositiveExpectationHandler::verb()
+               : Expectations::NegativeExpectationHandler::verb())
        << " " << this->description();
     std::string ss_str = ss.str();
     if (printer.mode == BasePrinter::Mode::verbose)
       printer.print(ss_str);
-    else par->set_descr(ss_str);
+    else
+      par->set_descr(ss_str);
   }
 
-  Result matched = expectation.get_sign()
-                       ? PositiveExpectationHandler::handle_matcher<A>(*this)
-                       : NegativeExpectationHandler::handle_matcher<A>(*this);
+  Result matched =
+      expectation.get_sign()
+          ? Expectations::PositiveExpectationHandler::handle_matcher<A>(*this)
+          : Expectations::NegativeExpectationHandler::handle_matcher<A>(*this);
 
   // If our items didn't match, we obviously failed.
   // Only report the failure if we aren't actively ignoring it.
@@ -117,7 +121,8 @@ Result BaseMatcher<A, E>::run(BasePrinter &printer) {
     this->failed();
     std::string message = matched.get_message();
     if (message.empty()) {
-      printer.print_failure("Failure message is empty. Does your matcher define the "
+      printer.print_failure(
+          "Failure message is empty. Does your matcher define the "
           "appropriate failure_message[_when_negated] method to "
           "return a string?");
     } else {
@@ -126,6 +131,7 @@ Result BaseMatcher<A, E>::run(BasePrinter &printer) {
   }
   return matched;
 }
-}
 
-#endif /* BASEMATCHER_H */
+}  // ::Matchers
+}  // ::CppSpec
+#endif // CPPSPEC_MATCHERS_MATCHER_BASE_HPP

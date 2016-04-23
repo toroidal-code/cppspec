@@ -1,8 +1,9 @@
-#ifndef BE_WITHIN_H
-#define BE_WITHIN_H
+#ifndef CPPSPEC_MATCHERS_BE_WITHIN_HPP
+#define CPPSPEC_MATCHERS_BE_WITHIN_HPP
 #include <complex>
-#include "basematcher.hpp"
+#include "matcher_base.hpp"
 
+namespace CppSpec {
 namespace Matchers {
 
 template <typename A, typename E>
@@ -45,8 +46,8 @@ template <typename A, typename E>
 bool BeWithin<A, E>::match() {
   if (!this->expected) {
     std::stringstream ss;
-    ss << "You must set an expected value using #of: be_within("
-        << this->delta << ").of(expected_value)";
+    ss << "You must set an expected value using #of: be_within(" << this->delta
+       << ").of(expected_value)";
 
     return false;
   }
@@ -73,6 +74,7 @@ std::string BeWithin<A, E>::description() {
   ss << "be within " << this->delta << this->unit << " of " << this->expected;
   return ss.str();
 }
-}
 
-#endif /* BE_WITHIN_H */
+}  // ::Matchers
+}  // ::CppSpec
+#endif // CPPSPEC_MATCHERS_BE_WITHIN_HPP

@@ -3,7 +3,6 @@
 #include <list>
 #include "cppspec.hpp"
 
-
 describe bool_spec("Some Tests", $ {
   context("true is", _ {
     it("true", _ {
@@ -30,7 +29,7 @@ describe bool_spec("Some Tests", $ {
   });
 
   explain("0 is", _ {
-    using namespace Matchers;
+    using namespace CppSpec::Matchers;
     it("between -1 and 1 (exclusive)", _ {
       expect(0).to_be_between(-1, 1, RangeMode::exclusive);
     });
@@ -191,7 +190,7 @@ describe list_spec("A list spec", $ {
 /* Here is the declaration of fabs description defined in an other file (fabs_spec.c in this sample)*/
 int main(){
   bool r = true;
-  PrettyPrinter printer = Printer::verbose;
+  auto printer = CppSpec::Printer::verbose;
   r &= bool_spec.run(printer);
   r &= abs_spec.run(printer);
   r &= strcmp_spec.run(printer);

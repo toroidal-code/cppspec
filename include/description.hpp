@@ -2,11 +2,13 @@
  * @file
  * @brief Defines the Description class and associated functions
  */
-#ifndef DESCRIPTION_H
-#define DESCRIPTION_H
+#ifndef CPPSPEC_DESCRIPTION_HPP
+#define CPPSPEC_DESCRIPTION_HPP
 #include <queue>
 #include <unordered_map>
 #include "it.hpp"
+
+namespace CppSpec {
 
 template <class T>
 class ClassDescription;
@@ -144,6 +146,13 @@ void Description::exec_after_eaches() {
   for (rule_block_t b : after_eaches) b();
 }
 
+/**
+ * @brief Object generator for Let.
+ *
+ * @param body the body of the let statement
+ *
+ * @return a new Let object
+ */
 template <typename T>
 auto Description::make_let(std::string name, T body) -> Let<decltype(body())> {
   return Let<decltype(body())>(*this, name, body);
@@ -216,4 +225,5 @@ Result ItD::run(BasePrinter &printer) {
   return this->get_status() ? Result::success : Result::failure;
 }
 
-#endif /* DESCRIPTION_H */
+} // ::CppSpec
+#endif // CPPSPEC_DESCRIPTION_HPP
