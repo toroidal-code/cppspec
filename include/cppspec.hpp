@@ -4,10 +4,13 @@
  */
 #ifndef CPPSPEC_HPP
 #define CPPSPEC_HPP
-#include "formatters/tap.hpp"
-#include "formatters/verbose.hpp"
-#include "formatters/progress.hpp"
+
+#ifndef CPPSPEC_DEBUG
+#define CPPSPEC_DEBUG false
+#endif
 #include "runner.hpp"
+
+/*>>>>>>>>>>>>>>>>>>>> MACROS <<<<<<<<<<<<<<<<<<<<<<*/
 
 #define _ [=](auto &self) mutable
 #define $ [](auto &self)
@@ -22,13 +25,16 @@
 #define before_each self.before_each
 #define after_all self.after_all
 #define after_each self.after_each
-#define let(name, body)                   \
-  auto name = self.make_let(#name, body); \
-  self.add_let(#name, name);
+#define let(name, body) auto name = self.let(body);
+
+/*>>>>>>>>>>>>>>>>>>> TYPEDEFS <<<<<<<<<<<<<<<<<<<<<*/
 
 typedef CppSpec::Description describe;
 
 template <class T>
 using describe_a = CppSpec::ClassDescription<T>;
+
+template <class T>
+using describe_an = CppSpec::ClassDescription<T>;
 
 #endif  // CPPSPEC_HPP

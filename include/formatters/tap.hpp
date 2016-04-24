@@ -1,9 +1,9 @@
+/** @file */
 #ifndef CPPSPEC_FORMATTERS_TAP_HPP
 #define CPPSPEC_FORMATTERS_TAP_HPP
-#include <sstream>
 #include <list>
 #include "formatters_base.hpp"
-#include "description.hpp"
+#include "class_description.hpp"
 
 namespace CppSpec {
 namespace Formatters {

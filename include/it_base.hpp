@@ -1,11 +1,19 @@
+/** @file */
 #ifndef CPPSPEC_IT_BASE_HPP
 #define CPPSPEC_IT_BASE_HPP
+#include <vector>
 #include "runnable.hpp"
-
+#include "let.hpp"
+#include "util.hpp"
 namespace CppSpec {
 
+namespace Expectations {
+template <typename T>
+class Expectation;
+}
+
 /**
- * @brief Most base class for `it` expressions.
+ * @brief Most-base class for `it` expressions.
  *
  * This class is needed to prevent a circular dependency between it.hpp and
  * basematcher.hpp. Matchers need to know whether or not an `it` has an explicit
@@ -48,6 +56,23 @@ class BaseIt : public Runnable {
   std::string get_descr() { return descr; }
   const std::string get_descr() const { return descr; }
   BaseIt &set_descr(std::string descr);
+
+  template <class U>
+  typename std::enable_if<not Util::is_functional<U>::value,
+                          Expectations::Expectation<U>>::type
+      expect(U value);
+
+  template <typename U>
+  auto expect(U block) -> typename std::enable_if<
+      Util::is_functional<U>::value,
+      Expectations::Expectation<decltype(block())>>::type;
+
+  template <class U>
+  Expectations::Expectation<std::vector<U>> expect(
+      std::initializer_list<U> init_list);
+
+  template <class U>
+  Expectations::Expectation<U> expect(Let<U> &let);
 };
 
 BaseIt &BaseIt::set_descr(std::string descr) {

@@ -1,6 +1,6 @@
+/** @file */
 #ifndef CPPSPEC_MATCHERS_BE_WITHIN_HPP
 #define CPPSPEC_MATCHERS_BE_WITHIN_HPP
-#include <complex>
 #include "matcher_base.hpp"
 
 namespace CppSpec {

@@ -1,11 +1,8 @@
+/** @file */
 #ifndef CPPSPEC_FORMATTERS_PROGRESS_HPP
 #define CPPSPEC_FORMATTERS_PROGRESS_HPP
-#include <list>
-#include <memory>
 #include <forward_list>
-#include "util.hpp"
-#include "formatters_base.hpp"
-#include "it_base.hpp"
+#include "verbose.hpp"
 
 namespace CppSpec {
 namespace Formatters {

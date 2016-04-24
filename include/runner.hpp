@@ -1,9 +1,9 @@
+/** @file */
 #ifndef CPPSPEC_RUNNER_HPP
 #define CPPSPEC_RUNNER_HPP
-#include <list>
-#include "result.hpp"
-#include "formatters/formatters_base.hpp"
-#include "class_description.hpp"
+#include "formatters/verbose.hpp"
+#include "formatters/progress.hpp"
+#include "formatters/tap.hpp"
 
 namespace CppSpec {
 

@@ -1,48 +1,25 @@
+/** @file */
 #ifndef CPPSPEC_IT_HPP
 #define CPPSPEC_IT_HPP
 #include "expectations/expectation.hpp"
 
 namespace CppSpec {
 
-class ItExpBase : public BaseIt {
- public:
-  ItExpBase(ItExpBase const &copy) : BaseIt(copy){};
-  ItExpBase(Child &parent) : BaseIt(parent){};
-  ItExpBase(Child &parent, std::string descr) : BaseIt(parent, descr){};
-  template <class U>
-  typename std::enable_if<not Util::is_functional<U>::value,
-                          Expectations::Expectation<U>>::type
-  expect(U value);
-
-  template <typename U>
-  auto expect(U block) -> typename std::enable_if<
-      Util::is_functional<U>::value,
-      Expectations::Expectation<decltype(block())>>::type;
-
-  template <class U>
-  Expectations::Expectation<std::vector<U>> expect(
-      std::initializer_list<U> init_list);
-
-  template <class U>
-  Expectations::Expectation<U> expect(Let<U> let);
-};
-
-class ItD : public ItExpBase {
+class ItD : public BaseIt {
   std::function<void(ItD &)> body;
 
  public:
   ItD(Child &parent, std::string descr, std::function<void(ItD &)> body)
-      : ItExpBase(parent, descr), body(body) {}
+      : BaseIt(parent, descr), body(body) {}
 
   ItD(Child &parent, std::function<void(ItD &)> body)
-      : ItExpBase(parent), body(body) {}
+      : BaseIt(parent), body(body) {}
 
   Result run(Formatters::BaseFormatter &printer) override;
 };
 
-// This is cannot be instantiated.
 template <class T>
-class ItCd : public ItExpBase {
+class ItCd : public BaseIt {
   std::function<void(ItCd<T> &)> body;
 
  public:
@@ -51,10 +28,10 @@ class ItCd : public ItExpBase {
   // This is only ever instantiated by ClassDescription<T>
   ItCd(Child &parent, T &subject, std::string descr,
        std::function<void(ItCd<T> &)> body)
-      : ItExpBase(parent, descr), body(body), subject(subject) {}
+      : BaseIt(parent, descr), body(body), subject(subject) {}
 
   ItCd(Child &parent, T &subject, std::function<void(ItCd<T> &)> body)
-      : ItExpBase(parent), body(body), subject(subject) {}
+      : BaseIt(parent), body(body), subject(subject) {}
 
   Expectations::Expectation<T> is_expected();
   Result run(Formatters::BaseFormatter &printer) override;
@@ -72,12 +49,12 @@ class ItCd : public ItExpBase {
 template <class T>
 typename std::enable_if<not Util::is_functional<T>::value,
                         Expectations::Expectation<T>>::type
-ItExpBase::expect(T value) {
+BaseIt::expect(T value) {
   return Expectations::Expectation<T>(*this, value);
 }
 
 template <typename T>
-auto ItExpBase::expect(T block) ->
+auto BaseIt::expect(T block) ->
     typename std::enable_if<Util::is_functional<T>::value,
                             Expectations::Expectation<decltype(block())>>::type
 
@@ -92,6 +69,12 @@ auto ItExpBase::expect(T block) ->
 //   return expectation;
 // }
 
+
+template <typename T>
+Expectations::Expectation<T> BaseIt::expect(Let<T> &let) {
+  return Expectations::Expectation<T>(*this, let.value());
+}
+
 /**
  * @brief An expect for initializer_list subjects
  *
@@ -100,10 +83,9 @@ auto ItExpBase::expect(T block) ->
  * @endcode
  */
 template <class T>
-Expectations::Expectation<std::vector<T>> ItExpBase::expect(
+Expectations::Expectation<std::vector<T>> BaseIt::expect(
     std::initializer_list<T> init_list) {
-  Expectations::Expectation<std::vector<T>> expectation(*this, init_list);
-  return expectation;
+  return Expectations::Expectation<std::vector<T>>(*this, init_list);
 }
 
 } // ::CppSpec

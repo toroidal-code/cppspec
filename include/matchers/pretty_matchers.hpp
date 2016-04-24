@@ -1,7 +1,7 @@
+/** @file */
 #ifndef CPPSPEC_MATCHERS_PRETTY_MATCHERS_HPP
 #define CPPSPEC_MATCHERS_PRETTY_MATCHERS_HPP
 #include <regex>
-#include <algorithm>
 #include "cxx-prettyprint/prettyprint.hpp"
 #include "util.hpp"
 

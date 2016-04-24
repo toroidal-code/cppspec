@@ -1,3 +1,4 @@
+/** @file */
 #ifndef CPPSPEC_MATCHERS_EQUAL_HPP
 #define CPPSPEC_MATCHERS_EQUAL_HPP
 #include "matcher_base.hpp"

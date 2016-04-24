@@ -1,6 +1,8 @@
+/** @file */
 #ifndef CPPSPEC_CHILD_HPP
 #define CPPSPEC_CHILD_HPP
-#include <string>
+#include <iostream>
+#include <typeinfo>
 
 namespace CppSpec {
 
@@ -62,9 +64,12 @@ class Child {
   /** @brief Check to see if the Child has a parent. */
   const bool has_parent() { return parent != nullptr; }
 
+  // TODO: Look in to making these references instead of pointer returns
   /** @brief Get the Child's parent. */
   Child *get_parent() { return parent; }
   const Child *get_parent() const { return const_cast<Child *>(parent); }
+  template <class C>
+  C get_parent_as();
 
   /** @brief Set the Child's parent */
   void set_parent(Child *parent) { this->parent = parent; }
@@ -107,6 +112,19 @@ std::string Child::padding() {
   return has_parent() ? get_parent()->padding() + "  " : "";
 }
 
+template <class C>
+inline C Child::get_parent_as() {
+  // rejected branch should get optimized out at compile-time
+  if (CPPSPEC_DEBUG) {
+    if (C casted = dynamic_cast<C>(get_parent())) {
+      return casted;
+    } else
+      throw(std::bad_cast());
+  } else {
+    return static_cast<C>(get_parent());
+  }
+}
+
 const bool Child::has_formatter() {
   if (this->formatter != nullptr) return true;
   if (!this->has_parent()) return false;  // base case;
@@ -115,9 +133,11 @@ const bool Child::has_formatter() {
 
 Formatters::BaseFormatter &Child::get_formatter() {
   if (this->formatter != nullptr) return *formatter;
-  if (!this->has_parent())
+  if (!this->has_parent()) {
+    std::cout << "Couldn't get printer!" << std::endl;
     throw "Couldn't get printer!";  // base case. This should never *ever*
-                                    // happen.
+    // happen.
+  }
   return parent->get_formatter();
 }
 

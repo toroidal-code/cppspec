@@ -1,3 +1,4 @@
+/** @file */
 #ifndef CPPSPEC_CLASS_DESCRIPTION_HPP
 #define CPPSPEC_CLASS_DESCRIPTION_HPP
 #include "description.hpp"

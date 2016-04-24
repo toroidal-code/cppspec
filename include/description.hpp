@@ -5,7 +5,6 @@
 #ifndef CPPSPEC_DESCRIPTION_HPP
 #define CPPSPEC_DESCRIPTION_HPP
 #include <queue>
-#include <unordered_map>
 #include "it.hpp"
 
 namespace CppSpec {
@@ -23,7 +22,7 @@ class Description : public Runnable {
   std::deque<rule_block_t> after_alls;
   std::deque<rule_block_t> before_eaches;
   std::deque<rule_block_t> after_eaches;
-  std::unordered_map<std::string, Runnable *> lets;
+  std::unordered_set<LetBase *> lets;
 
   Description(){};
   Description(std::string descr) : descr(descr){};
@@ -69,11 +68,11 @@ class Description : public Runnable {
   void exec_after_eaches();
 
   template <typename T>
-  auto make_let(std::string name, T body) -> Let<decltype(body())>;
-  void add_let(std::string name, Runnable &body);
-  virtual Result run(Formatters::BaseFormatter &printer) override;
+  auto let(T body) -> Let<decltype(body())>;
   void reset_lets();
-  Runnable *find_let(std::string);
+
+  virtual Result run(Formatters::BaseFormatter &printer) override;
+
   virtual std::string get_descr() { return descr; }
   virtual const std::string get_descr() const { return descr; }
   virtual std::string get_subject_type() { return ""; }
@@ -156,12 +155,10 @@ void Description::exec_after_eaches() {
  * @return a new Let object
  */
 template <typename T>
-auto Description::make_let(std::string name, T body) -> Let<decltype(body())> {
-  return Let<decltype(body())>(*this, name, body);
-}
-
-void Description::add_let(std::string name, Runnable &body) {
-  lets.insert({name, &body});
+auto Description::let(T body) -> Let<decltype(body())> {
+  Let<decltype(body())> let(body);
+  lets.insert(&let);
+  return let;
 }
 
 Result Description::run(Formatters::BaseFormatter &printer) {
@@ -174,55 +171,16 @@ Result Description::run(Formatters::BaseFormatter &printer) {
 }
 
 void Description::reset_lets() {
-  for (auto &pair : lets) {
-    auto base = static_cast<LetBase *>(pair.second);  // downcast.
-    base->reset();
-  }
-
-  if (has_parent()) {
-    auto parent = static_cast<Description *>(get_parent());
-    parent->reset_lets();
-  }
-}
-
-Runnable *Description::find_let(std::string name) {
-  auto got = lets.find(name);
-
-  if (got == lets.end()) {
-    if (this->has_parent()) {
-      auto parent = static_cast<Description *>(get_parent());
-      return parent->find_let(name);
-    } else {  // this should never, *ever* happen.
-      throw(std::out_of_range("Could not find let '" + name + "'"));
-    }
-  } else {
-    return got->second;
-  }
-}
-
-template <class T>
-Expectations::Expectation<T> ItExpBase::expect(Let<T> let) {
-  auto parent = static_cast<Description *>(this->get_parent());
-  Let<T> *actual_let = static_cast<Let<T> *>(parent->find_let(let.get_name()));
-  T res = actual_let->get_result();
-  Expectations::Expectation<T> expectation(*this, res);
-  return expectation;
+  for (auto &let : lets) let->reset();
+  if (this->has_parent()) this->get_parent_as<Description *>()->reset_lets();
 }
 
 Result ItD::run(Formatters::BaseFormatter &printer) {
-//  if (!this->needs_descr() && printer.mode == BaseFormatter::Mode::verbose) {
-//    printer.format(*this);
-//  }
-
   body(*this);
-
   printer.format(*this);
-
-  auto parent = static_cast<Description *>(this->get_parent());
-  parent->reset_lets();
-
+  this->get_parent_as<Description *>()->reset_lets();
   return this->get_status() ? Result::success : Result::failure;
 }
 
-} // ::CppSpec
-#endif // CPPSPEC_DESCRIPTION_HPP
+}  // ::CppSpec
+#endif  // CPPSPEC_DESCRIPTION_HPP

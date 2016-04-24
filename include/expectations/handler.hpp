@@ -1,6 +1,7 @@
+/** @file */
 #ifndef CPPSPEC_EXPECTATIONS_HANDLER_HPP
 #define CPPSPEC_EXPECTATIONS_HANDLER_HPP
-#include "formatters/formatters_base.hpp"
+#include "result.hpp"
 
 namespace CppSpec {
 namespace Expectations {

@@ -7,11 +7,9 @@
 
 #ifdef __GNUG__
 #include <cxxabi.h>
-#endif
-
-#include <typeinfo>
-#include <sstream>
 #include <memory>
+#include <sstream>
+#endif
 
 namespace CppSpec {
 namespace Util {

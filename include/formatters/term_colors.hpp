@@ -1,3 +1,4 @@
+/** @file */
 #ifndef CPPSPEC_TERM_COLORS_HPP
 #define CPPSPEC_TERM_COLORS_HPP
 // the following are Unix/BASH ONLY terminal color codes.

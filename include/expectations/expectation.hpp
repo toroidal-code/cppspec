@@ -4,7 +4,6 @@
  */
 #ifndef CPPSPEC_EXPECTATIONS_EXPECTATION_HPP
 #define CPPSPEC_EXPECTATIONS_EXPECTATION_HPP
-#include "let.hpp"
 #include "matchers/be.hpp"
 #include "matchers/be_between.hpp"
 #include "matchers/be_within.hpp"

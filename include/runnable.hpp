@@ -1,8 +1,10 @@
+/**
+ * @file
+ */
 #ifndef CPPSPEC_RUNNABLE_HPP
 #define CPPSPEC_RUNNABLE_HPP
 #include "child.hpp"
 #include "result.hpp"
-#include "formatters/formatters_base.hpp"
 
 namespace CppSpec {
 

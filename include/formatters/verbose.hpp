@@ -1,3 +1,4 @@
+/** @file */
 #ifndef CPPSPEC_FORMATTERS_VERBOSE_HPP
 #define CPPSPEC_FORMATTERS_VERBOSE_HPP
 #include <list>
