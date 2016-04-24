@@ -1,6 +1,6 @@
 #ifndef CPPSPEC_EXPECTATIONS_HANDLER_HPP
 #define CPPSPEC_EXPECTATIONS_HANDLER_HPP
-#include "printer_base.hpp"
+#include "formatters/formatters_base.hpp"
 
 namespace CppSpec {
 namespace Expectations {

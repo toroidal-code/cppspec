@@ -79,9 +79,11 @@ class ClassDescription : public Description {
   Result context(T subject, block_t body);
   Result context(T &subject, block_t body);
   Result context(block_t body);
-  Result run(BasePrinter &printer) override;
-  virtual std::string get_descr() override;
-  virtual const std::string get_descr() const override;
+  Result run(Formatters::BaseFormatter &printer) override;
+  virtual std::string get_descr() override { return descr; }
+  virtual const std::string get_descr() const override { return descr; }
+  virtual std::string get_subject_type() override { return type; }
+  virtual const std::string get_subject_type() const override { return type; }
 };
 
 template <class T>
@@ -94,7 +96,7 @@ Result ClassDescription<T>::context(
   context.set_parent(this);
   context.before_eaches = this->before_eaches;
   context.after_eaches = this->after_eaches;
-  return context.run(this->get_printer());
+  return context.run(this->get_formatter());
 }
 
 template <class T>
@@ -110,7 +112,7 @@ Result ClassDescription<T>::context(
   context.set_parent(this);
   context.before_eaches = this->before_eaches;
   context.after_eaches = this->after_eaches;
-  return context.run(this->get_printer());
+  return context.run(this->get_formatter());
 }
 
 template <class T>
@@ -121,7 +123,7 @@ Result Description::context(T subject,
   context.set_parent(this);
   context.before_eaches = this->before_eaches;
   context.after_eaches = this->after_eaches;
-  return context.run(this->get_printer());
+  return context.run(this->get_formatter());
 }
 
 // template <class T>
@@ -137,7 +139,7 @@ Result Description::context(std::initializer_list<U> init_list,
   context.set_parent(this);
   context.before_eaches = this->before_eaches;
   context.after_eaches = this->after_eaches;
-  return context.run(this->get_printer());
+  return context.run(this->get_formatter());
 }
 
 /**
@@ -165,7 +167,7 @@ template <class T>
 Result ClassDescription<T>::it(std::string name,
                                std::function<void(ItCd<T> &)> body) {
   ItCd<T> it(*this, this->subject, name, body);
-  Result result = it.run(this->get_printer());
+  Result result = it.run(this->get_formatter());
   exec_after_eaches();
   exec_before_eaches();
   return result;
@@ -195,38 +197,20 @@ Result ClassDescription<T>::it(std::string name,
 template <class T>
 Result ClassDescription<T>::it(std::function<void(ItCd<T> &)> body) {
   ItCd<T> it(*this, this->subject, body);
-  Result result = it.run(this->get_printer());
+  Result result = it.run(this->get_formatter());
   exec_after_eaches();
   exec_before_eaches();
   return result;
 }
 
 template <class T>
-Result ClassDescription<T>::run(BasePrinter &printer) {
-  if (not this->has_printer()) this->set_printer(printer);
-  printer.print(*this);
+Result ClassDescription<T>::run(Formatters::BaseFormatter &printer) {
+  if (not this->has_formatter()) this->set_printer(printer);
+  printer.format(*this);
   body(*this);
   for (auto a : after_alls) a();
   if (this->get_parent() == nullptr) printer.flush();
   return this->get_status() ? Result::success : Result::failure;
-}
-template <class T>
-std::string ClassDescription<T>::get_descr() {
-  if (this->get_printer().mode == BasePrinter::Mode::TAP) {
-    return descr;
-  } else {
-    return descr + type;
-  }
-}
-
-template <class T>
-const std::string ClassDescription<T>::get_descr() const {
-  if (const_cast<ClassDescription<T> *>(this)->get_printer().mode ==
-      BasePrinter::Mode::TAP) {
-    return descr;
-  } else {
-    return descr + type;
-  }
 }
 
 template <class T>
@@ -237,17 +221,13 @@ Expectations::Expectation<T> ItCd<T>::is_expected() {
 }
 
 template <class T>
-Result ItCd<T>::run(BasePrinter &printer) {
-  if (!this->needs_descr() && printer.mode == BasePrinter::Mode::verbose) {
-    printer.print(*this);
-  }
+Result ItCd<T>::run(Formatters::BaseFormatter &printer) {
+//  if (!this->needs_descr() && printer.mode == BaseFormatter::Mode::verbose) {
+//    printer.format(*this);
+//  }
 
   body(*this);
-
-  if (printer.mode == BasePrinter::Mode::TAP ||
-      printer.mode == BasePrinter::Mode::terse) {
-    printer.print(*this);
-  }
+  printer.format(*this);
 
   auto cd = static_cast<ClassDescription<T> *>(this->get_parent());
   cd->reset_lets();

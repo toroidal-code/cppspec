@@ -71,11 +71,13 @@ class Description : public Runnable {
   template <typename T>
   auto make_let(std::string name, T body) -> Let<decltype(body())>;
   void add_let(std::string name, Runnable &body);
-  virtual Result run(BasePrinter &printer) override;
+  virtual Result run(Formatters::BaseFormatter &printer) override;
   void reset_lets();
   Runnable *find_let(std::string);
   virtual std::string get_descr() { return descr; }
   virtual const std::string get_descr() const { return descr; }
+  virtual std::string get_subject_type() { return ""; }
+  virtual const std::string get_subject_type() const { return ""; }
 };
 
 typedef Description Context;
@@ -85,12 +87,12 @@ Result Description::context(std::string name,
   Context context(*this, name, body);
   context.before_eaches = this->before_eaches;
   context.after_eaches = this->after_eaches;
-  return context.run(this->get_printer());
+  return context.run(this->get_formatter());
 }
 
 Result Description::it(std::string name, std::function<void(ItD &)> body) {
   ItD it(*this, name, body);
-  Result result = it.run(this->get_printer());
+  Result result = it.run(this->get_formatter());
   exec_after_eaches();
   exec_before_eaches();
   return result;
@@ -98,7 +100,7 @@ Result Description::it(std::string name, std::function<void(ItD &)> body) {
 
 Result Description::it(std::function<void(ItD &)> body) {
   ItD it(*this, body);
-  Result result = it.run(this->get_printer());
+  Result result = it.run(this->get_formatter());
   exec_after_eaches();
   exec_before_eaches();
   return result;
@@ -162,9 +164,9 @@ void Description::add_let(std::string name, Runnable &body) {
   lets.insert({name, &body});
 }
 
-Result Description::run(BasePrinter &printer) {
-  if (not this->has_printer()) this->set_printer(printer);
-  printer.print(*this);
+Result Description::run(Formatters::BaseFormatter &printer) {
+  if (not this->has_formatter()) this->set_printer(printer);
+  printer.format(*this);
   body(*this);
   for (auto a : after_alls) a();
   if (this->get_parent() == nullptr) printer.flush();
@@ -207,17 +209,14 @@ Expectations::Expectation<T> ItExpBase::expect(Let<T> let) {
   return expectation;
 }
 
-Result ItD::run(BasePrinter &printer) {
-  if (!this->needs_descr() && printer.mode == BasePrinter::Mode::verbose) {
-    printer.print(*this);
-  }
+Result ItD::run(Formatters::BaseFormatter &printer) {
+//  if (!this->needs_descr() && printer.mode == BaseFormatter::Mode::verbose) {
+//    printer.format(*this);
+//  }
 
   body(*this);
 
-  if (printer.mode == BasePrinter::Mode::TAP ||
-      printer.mode == BasePrinter::Mode::terse) {
-    printer.print(*this);
-  }
+  printer.format(*this);
 
   auto parent = static_cast<Description *>(this->get_parent());
   parent->reset_lets();

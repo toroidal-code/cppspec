@@ -17,8 +17,8 @@ describe_a <TestClass> describe_a_implicit_spec("Implicit subjects", $ {
   });
 });
 
-describe_a <TestClass> describe_a_explicit_spec ("Explicit subjects",
-                                                 TestClass("bar", "baz"), $ {
+describe_a <TestClass> describe_a_explicit_spec(
+    "Explicit subjects", TestClass("bar", "baz"), $ {
   it("Specified constructor should be called", _ {
     expect(subject.field1).to_equal("bar");
     expect(subject.field2).to_equal("baz");
@@ -26,8 +26,8 @@ describe_a <TestClass> describe_a_explicit_spec ("Explicit subjects",
 });
 
 int main() {
-  bool r = true;
-  r &= describe_a_implicit_spec.run(Printer::terse);
-  r &= describe_a_explicit_spec.run(Printer::terse);
-  return r ? EXIT_SUCCESS : EXIT_FAILURE;
+  return Runner()
+      .add_spec(describe_a_implicit_spec)
+      .add_spec(describe_a_explicit_spec)
+      .exec() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -55,8 +55,12 @@ struct is_false : public std::is_same<std::false_type, T> {};
  */
 namespace is_iterable_imp {
 template <class C>
-auto test(void *) -> decltype(void(std::declval<C>().begin()),
-                              void(std::declval<C>().end()), std::true_type{});
+auto test(void *) -> decltype(std::declval<C>().begin(),
+                              std::declval<C>().end(), std::true_type{});
+
+template <class C>
+auto test(int) -> decltype(std::declval<C>().cbegin(),
+                           std::declval<C>().cend(), std::true_type{});
 
 template <class>
 auto test(...) -> std::false_type;
@@ -86,8 +90,8 @@ constexpr bool is_iterable_v = is_iterable<T>::value;
 namespace is_container_imp {
 template <class C>
 auto test(void *)
-    -> decltype(void(std::declval<C>().max_size()),
-                void(std::declval<C>().empty()), is_iterable<C>{});
+    -> decltype(std::declval<C>().max_size(),
+                std::declval<C>().empty(), is_iterable<C>{});
 
 template <class>
 auto test(...) -> std::false_type;
@@ -235,13 +239,26 @@ std::string inspect_object<std::string>(std::string &o) {
   return ss.str();
 }
 
+/**
+ * @brief Implode a string
+ *
+ * @tparam Range the type of the iterable object. is_iterable<Range>::value
+ *         must evaluate to true.
+ * @param iterable an iterable object
+ * @param separator a user-defined separator to delimit elements
+ *
+ * @return the joined string
+ */
 template <typename Range>
-std::string join(Range &iterable, const std::string &sep) {
+std::string join(Range &iterable, const std::string &separator = "") {
   std::ostringstream oss;
   typename Range::const_iterator it;
-  for (it = iterable.cbegin(); it != iterable.cend(); it++) {
-    oss << *it;
-    if (it != --iterable.cend()) oss << sep;
+  for (it = iterable.cbegin(); it != iterable.cend();) {
+    oss << *it;  // use operator<< to convert and append
+
+    // Hacky way to get around forward_list singly-linked problem:
+    // increment the iterator here, compare and then continue.
+    if (++it != iterable.cend()) oss << separator;
   }
   return oss.str();
 }

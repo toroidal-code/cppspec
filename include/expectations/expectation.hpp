@@ -155,7 +155,9 @@ Expectation<A> &Expectation<A>::ignore() {
  */
 template <typename A>
 Result Expectation<A>::to_be(std::function<bool(A)> test, std::string msg) {
-  return Matchers::Be<A>(*this, test).set_message(msg).run(this->get_printer());
+  return Matchers::Be<A>(*this, test)
+      .set_message(msg)
+      .run(this->get_formatter());
 }
 
 /**
@@ -168,7 +170,7 @@ Result Expectation<A>::to_be(std::function<bool(A)> test, std::string msg) {
 template <typename A>
 Result Expectation<A>::to_be_null(std::string msg) {
   return Matchers::BeNullptr<A>(*this).set_message(msg).run(
-      this->get_printer());
+      this->get_formatter());
 }
 
 /**
@@ -211,7 +213,7 @@ Result Expectation<A>::to_be_between(E min, E max, Matchers::RangeMode mode,
                                      std::string msg) {
   return Matchers::BeBetween<A, E>(*this, min, max, mode)
       .set_message(msg)
-      .run(this->get_printer());
+      .run(this->get_formatter());
 }
 
 /**
@@ -228,7 +230,7 @@ Result Expectation<A>::to_include(std::initializer_list<U> expected,
                                   std::string msg) {
   return Matchers::Include<A, std::vector<U>, U>(*this, expected)
       .set_message(msg)
-      .run(this->get_printer());
+      .run(this->get_formatter());
 }
 
 /**
@@ -244,7 +246,7 @@ template <typename E>
 Result Expectation<A>::to_include(E expected, std::string msg) {
   return Matchers::Include<A, E, E>(*this, expected)
       .set_message(msg)
-      .run(this->get_printer());
+      .run(this->get_formatter());
 }
 
 /**
@@ -260,7 +262,7 @@ template <typename E>
 Result Expectation<A>::to_equal(E expected, std::string msg) {
   return Matchers::Equal<A, E>(*this, expected)
       .set_message(msg)
-      .run(this->get_printer());
+      .run(this->get_formatter());
 }
 
 /**
@@ -286,7 +288,7 @@ Result Expectation<A>::to_fail(std::string msg) {
                 "Error: to_fail must me used on an expression that "
                 "returns a Result.");
   return Matchers::Fail<Result>(*this).set_message(msg).run(
-      this->get_printer());
+      this->get_formatter());
 }
 
 // template <typename A>
@@ -305,7 +307,7 @@ Result Expectation<A>::to_fail_with(std::string failure_message,
                 "returns a Result.");
   return Matchers::FailWith<A>(*this, failure_message)
       .set_message(msg)
-      .run(this->get_printer());
+      .run(this->get_formatter());
 }
 //
 // template <typename A>
@@ -325,7 +327,7 @@ Result Expectation<A>::to(M matcher, std::string msg) {
       "Matcher is not a subclass of BaseMatcher.");
   // auto base_matcher = static_cast<Matchers::BaseMatcher<A,typename
   // M::expected_t>>(matcher);
-  return matcher.set_message(msg).run(this->get_printer());
+  return matcher.set_message(msg).run(this->get_formatter());
 }
 
 }  // ::Expectations

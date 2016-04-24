@@ -29,23 +29,23 @@ class Let : public LetBase {
       : LetBase(parent), name(name), body(body){};
 
   T *operator->() {
-    if (!delivered) run(this->get_printer());
+    if (!delivered) run(this->get_formatter());
     return result.operator->();
   }
 
   T &operator*() & {
-    if (!delivered) run(this->get_printer());
+    if (!delivered) run(this->get_formatter());
     return result.operator*();
   }
 
   T &get_result() & { return this->operator*(); }
   std::string get_name() { return name; }
 
-  Result run(BasePrinter &) override;
+  Result run(Formatters::BaseFormatter &) override;
 };
 
 template <typename T>
-Result Let<T>::run(BasePrinter &) {
+Result Let<T>::run(Formatters::BaseFormatter &) {
   if (!delivered) {
     result = body();
     delivered = true;

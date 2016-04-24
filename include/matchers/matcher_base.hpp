@@ -50,7 +50,7 @@ class BaseMatcher : public Runnable, public Pretty {
   Expected &get_expected() { return expected; }
   Expectations::Expectation<Actual> &get_expectation() { return expectation; }
   virtual BaseMatcher &set_message(std::string message);
-  Result run(BasePrinter &printer) override;
+  Result run(Formatters::BaseFormatter &printer) override;
   typedef Expected expected_t;
 };
 
@@ -92,22 +92,18 @@ std::string BaseMatcher<A, E>::description() {
 }
 
 template <typename A, typename E>
-Result BaseMatcher<A, E>::run(BasePrinter &printer) {
+Result BaseMatcher<A, E>::run(Formatters::BaseFormatter &printer) {
   BaseIt *par = static_cast<BaseIt *>(this->get_parent());
   // If we need a description for our test, generate it
   // unless we're ignoring the output.
   if (par->needs_descr() && !expectation.get_ignore_failure()) {
     std::stringstream ss;
-    ss << (printer.mode == BasePrinter::Mode::verbose ? par->padding() : "")
-       << (expectation.get_sign()
+    ss << (expectation.get_sign()
                ? Expectations::PositiveExpectationHandler::verb()
                : Expectations::NegativeExpectationHandler::verb())
        << " " << this->description();
     std::string ss_str = ss.str();
-    if (printer.mode == BasePrinter::Mode::verbose)
-      printer.print(ss_str);
-    else
-      par->set_descr(ss_str);
+    par->set_descr(ss_str);
   }
 
   Result matched =
@@ -121,12 +117,12 @@ Result BaseMatcher<A, E>::run(BasePrinter &printer) {
     this->failed();
     std::string message = matched.get_message();
     if (message.empty()) {
-      printer.print_failure(
+      printer.format_failure(
           "Failure message is empty. Does your matcher define the "
-          "appropriate failure_message[_when_negated] method to "
-          "return a string?");
+              "appropriate failure_message[_when_negated] method to "
+              "return a string?");
     } else {
-      printer.print_failure(matched.get_message());
+      printer.format_failure(matched.get_message());
     }
   }
   return matched;

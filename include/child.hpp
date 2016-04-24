@@ -4,7 +4,9 @@
 
 namespace CppSpec {
 
-struct BasePrinter;  // Forward declaration to allow reference
+namespace Formatters {
+class BaseFormatter;  // Forward declaration to allow reference
+}
 
 /**
  * @brief Base class for all objects in the execution tree.
@@ -21,12 +23,12 @@ class Child {
   // (`describe some_spec("a test", $ { ... });`). In order to use
   // a shared pointer, each object that is set as the parent must be
   // contained in a shared pointer. As tests are created by `describe ...`,
-  // it is not wrapped by a shared pointer. Attempting to create this shared
-  // pointer at some later time doesn't work, as it results in trying to delete
-  // the current object `this` once the pointer goes out of scope.
-  // Since children are always destroyed before their parents, this isn't a
-  // problem anyways. In addition, any structures that are children are
-  // allocated on the stack for speed reasons.
+  // the root object is not wrapped by a shared pointer. Attempting to create
+  // this shared pointer at some later time doesn't work, as it results in
+  // trying to delete the current object `this` once the pointer goes out of
+  // scope. Since children are always destroyed before their parents, this
+  // isn't a problem anyways. In addition, any structures that are children
+  // are allocated on the stack for speed reasons.
   Child *parent = nullptr;
 
   // Represents whether the Child is healthy (has not failed).
@@ -34,7 +36,8 @@ class Child {
   // All instances of Child start out healthy.
   bool status = true;
 
-  BasePrinter *printer = nullptr;
+  // TODO: Change this to a std::unique_ptr
+  Formatters::BaseFormatter *formatter = nullptr;
 
  public:
   // Default constructor/desctructor
@@ -57,7 +60,7 @@ class Child {
   /*--------- Parent helper functions -------------*/
 
   /** @brief Check to see if the Child has a parent. */
-  bool has_parent() { return parent != nullptr; }
+  const bool has_parent() { return parent != nullptr; }
 
   /** @brief Get the Child's parent. */
   Child *get_parent() { return parent; }
@@ -66,15 +69,17 @@ class Child {
   /** @brief Set the Child's parent */
   void set_parent(Child *parent) { this->parent = parent; }
 
-  /*--------- Printer helper functions -------------*/
-  const bool has_printer();    // Check to see if the tree has a printer
-  BasePrinter &get_printer();  // Get the printer from the tree
-  void set_printer(BasePrinter &printer) { this->printer = &printer; }
+  /*--------- Formatter helper functions -----------*/
+  const bool has_formatter();  // Check to see if the tree has a printer
+  Formatters::BaseFormatter &get_formatter();  // Get the printer from the tree
+  void set_printer(Formatters::BaseFormatter &formatter) {
+    this->formatter = &formatter;
+  }
 
   /*--------- Primary member functions -------------*/
 
   /** @brief Get the status of the object (success/failure) */
-  bool get_status() { return this->status; }
+  const bool get_status() { return this->status; }
 
   void failed();          // Report failure to the object.
   std::string padding();  // Calculate the padding for printing this object
@@ -95,23 +100,25 @@ void Child::failed() {
 }
 
 /**
- * @brief Get the padding (indentation) of the current object.
+ * @brief Generate padding (indentation) fore the current object.
  * @return A string of spaces for use in pretty-printing.
  */
 std::string Child::padding() {
   return has_parent() ? get_parent()->padding() + "  " : "";
 }
 
-const bool Child::has_printer() {
-  if (this->printer != nullptr) return true;
-  if (parent == nullptr) return false;  // base case;
-  return parent->has_printer();
+const bool Child::has_formatter() {
+  if (this->formatter != nullptr) return true;
+  if (!this->has_parent()) return false;  // base case;
+  return parent->has_formatter();
 }
 
-BasePrinter &Child::get_printer() {
-  if (this->printer != nullptr) return *printer;
-  if (parent == nullptr) throw "Couldn't get printer!";  // base case;
-  return parent->get_printer();
+Formatters::BaseFormatter &Child::get_formatter() {
+  if (this->formatter != nullptr) return *formatter;
+  if (!this->has_parent())
+    throw "Couldn't get printer!";  // base case. This should never *ever*
+                                    // happen.
+  return parent->get_formatter();
 }
 
 }  // ::CppSpec

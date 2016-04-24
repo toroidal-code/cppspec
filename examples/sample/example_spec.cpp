@@ -54,6 +54,7 @@ describe bool_spec("Some Tests", $ {
     });
     it("includes [1,2,3]", _ {
       expect({1,2,3}).to_include({1,2,8});
+      expect({1,2,3}).to_include({1,2,7});
     });
     it("does not include 4", _ {
       expect({1,2,3}).not_().to_include({4});
@@ -183,13 +184,13 @@ describe let_spec("let", $ {
 
 describe list_spec("A list spec", $ {
   explain <std::list<int>> ({1,2,3,4}, _ {
-    it( _ { is_expected().to_include(6); });
+    it( _ { is_expected().to_include(8); });
   });
 });
 
 /* Here is the declaration of fabs description defined in an other file (fabs_spec.c in this sample)*/
 int main(){
-  return CppSpec::Runner()
+  return CppSpec::Runner(CppSpec::Formatters::verbose)
              .add_spec(bool_spec)
              .add_spec(abs_spec)
              .add_spec(strcmp_spec)

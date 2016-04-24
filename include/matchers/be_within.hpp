@@ -31,7 +31,7 @@ bool BeWithin<A, E>::of(E expected) {
   this->expected = expected;
   this->tolerance = this->delta;
   this->unit = "";
-  return this->run(this->get_printer());
+  return this->run(this->get_formatter());
 }
 
 template <typename A, typename E>
@@ -39,7 +39,7 @@ bool BeWithin<A, E>::percent_of(E expected) {
   this->expected = expected;
   this->tolerance = this->delta;
   this->unit = "%";
-  return this->run(this->get_printer());
+  return this->run(this->get_formatter());
 }
 
 template <typename A, typename E>

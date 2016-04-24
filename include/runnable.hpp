@@ -2,7 +2,7 @@
 #define CPPSPEC_RUNNABLE_HPP
 #include "child.hpp"
 #include "result.hpp"
-#include "printer_base.hpp"
+#include "formatters/formatters_base.hpp"
 
 namespace CppSpec {
 
@@ -15,7 +15,7 @@ class Runnable: public Child {
   explicit Runnable(Child &parent) : Child(parent) { };
   explicit Runnable(Child *parent) : Child(parent) { };
   explicit Runnable(const Child *parent) : Child(parent) { };
-  virtual Result run(BasePrinter &printer) = 0;
+  virtual Result run(Formatters::BaseFormatter &printer) = 0;
 };
 
 } // ::CppSpec

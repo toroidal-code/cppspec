@@ -4,6 +4,9 @@
  */
 #ifndef CPPSPEC_HPP
 #define CPPSPEC_HPP
+#include "formatters/tap.hpp"
+#include "formatters/verbose.hpp"
+#include "formatters/progress.hpp"
 #include "runner.hpp"
 
 #define _ [=](auto &self) mutable
