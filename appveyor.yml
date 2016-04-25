@@ -1,0 +1,15 @@
+os: Visual Studio 2015
+
+platform: x86
+
+configuration: Release
+
+build_script:
+  - mkdir build
+  - cd build
+  - cmake .. -DBUILD_TESTS=YES
+  - cmake --build .
+
+test_script:
+  - ps: c:\projects\cppspec\spec\spec_runner.exe
+
