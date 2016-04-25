@@ -211,7 +211,7 @@ Result ClassDescription<T>::run(Formatters::BaseFormatter &printer) {
   body(*this);
   for (auto a : after_alls) a();
   if (this->get_parent() == nullptr) printer.flush();
-  return this->get_status() ? Result::success : Result::failure;
+  return this->get_status() ? Result::success() : Result::failure();
 }
 
 template <class T>
@@ -232,7 +232,7 @@ Result ItCd<T>::run(Formatters::BaseFormatter &printer) {
 
   auto cd = static_cast<ClassDescription<T> *>(this->get_parent());
   cd->reset_lets();
-  return this->get_status() ? Result::success : Result::failure;
+  return this->get_status() ? Result::success() : Result::failure();
 }
 
 }  // ::CppSpec

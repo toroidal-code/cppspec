@@ -21,14 +21,14 @@ struct NegativeExpectationHandler {
 template<typename A, class Matcher>
 Result PositiveExpectationHandler::handle_matcher(Matcher &matcher) {
   // TODO: handle expectation failure here
-  return !matcher.match() ? Result::failure_with(matcher.failure_message()) : Result::success;
+  return !matcher.match() ? Result::failure_with(matcher.failure_message()) : Result::success();
 }
 
 template<typename A, class Matcher>
 Result NegativeExpectationHandler::handle_matcher(Matcher &matcher) {
   // TODO: handle expectation failure here
   return !matcher.negated_match() ? Result::failure_with(matcher.failure_message_when_negated())
-                                  : Result::success;
+                                  : Result::success();
 }
 
 } // ::Expectations

@@ -98,7 +98,7 @@ class Child {
  * This is propogated up the parent/child tree, so that when a child object
  * fails, the parent object is immediately updated to reflect that as well.
  */
-void Child::failed() {
+inline void Child::failed() {
   this->status = false;
   // propogates the failure up the tree
   if (has_parent()) this->get_parent()->failed();
@@ -108,7 +108,7 @@ void Child::failed() {
  * @brief Generate padding (indentation) fore the current object.
  * @return A string of spaces for use in pretty-printing.
  */
-std::string Child::padding() {
+inline std::string Child::padding() {
   return has_parent() ? get_parent()->padding() + "  " : "";
 }
 
@@ -125,13 +125,13 @@ inline C Child::get_parent_as() {
   }
 }
 
-const bool Child::has_formatter() {
+inline const bool Child::has_formatter() {
   if (this->formatter != nullptr) return true;
   if (!this->has_parent()) return false;  // base case;
   return parent->has_formatter();
 }
 
-Formatters::BaseFormatter &Child::get_formatter() {
+inline Formatters::BaseFormatter &Child::get_formatter() {
   if (this->formatter != nullptr) return *formatter;
   if (!this->has_parent()) {
     std::cout << "Couldn't get printer!" << std::endl;

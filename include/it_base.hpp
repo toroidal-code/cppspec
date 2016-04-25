@@ -75,7 +75,7 @@ class BaseIt : public Runnable {
   Expectations::Expectation<U> expect(Let<U> &let);
 };
 
-BaseIt &BaseIt::set_descr(std::string descr) {
+inline BaseIt &BaseIt::set_descr(std::string descr) {
   this->descr = descr;
   return *this;
 }

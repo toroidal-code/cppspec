@@ -22,7 +22,7 @@ namespace Util {
  * @return a human-readable translation of the given symbol
  */
 #ifdef __GNUG__
-std::string demangle(const char *mangled) {
+inline std::string demangle(const char *mangled) {
   int status;
   std::unique_ptr<char[], void (*)(void *)> result{
       abi::__cxa_demangle(mangled, NULL, NULL, &status), std::free};
@@ -203,7 +203,7 @@ constexpr bool is_functional_v = is_functional<T>::value;
  * @return the generated string
  */
 template <typename O>
-std::string inspect_object(O &o) {
+inline std::string inspect_object(O &o) {
   std::stringstream ss;
   ss << "(" << Util::demangle(typeid(o).name()) << ") => " << o;
   return ss.str();
@@ -217,7 +217,7 @@ std::string inspect_object(O &o) {
  * @return the generated string
  */
 template <>
-std::string inspect_object<const char *>(const char *&o) {
+inline std::string inspect_object<const char *>(const char *&o) {
   std::stringstream ss;
   ss << "(const char *) => " << '"' << o << '"';
   return ss.str();
@@ -231,7 +231,7 @@ std::string inspect_object<const char *>(const char *&o) {
  * @return the generated string
  */
 template <>
-std::string inspect_object<std::string>(std::string &o) {
+inline std::string inspect_object<std::string>(std::string &o) {
   std::stringstream ss;
   ss << "(std::string) => " << '"' << o << '"';
   return ss.str();
@@ -248,7 +248,7 @@ std::string inspect_object<std::string>(std::string &o) {
  * @return the joined string
  */
 template <typename Range>
-std::string join(Range &iterable, const std::string &separator = "") {
+inline std::string join(Range &iterable, const std::string &separator = "") {
   std::ostringstream oss;
   typename Range::const_iterator it;
   for (it = iterable.cbegin(); it != iterable.cend();) {

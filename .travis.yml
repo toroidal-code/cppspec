@@ -18,7 +18,7 @@ before_script:
 
 script:
   - make
-  - make spec
+  - ./spec/spec_runner
 
 os:
   - linux

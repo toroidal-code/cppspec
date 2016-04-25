@@ -21,11 +21,11 @@ class TAP : public BaseFormatter {
   void format_failure(std::string message) override;
   void flush() override;
 };
-void TAP::format(Description &description) {
+inline void TAP::format(Description &description) {
   if (!first && description.get_parent() == nullptr) out_stream << std::endl;
   if (first) this->first = false;
 }
-void TAP::format(BaseIt &it) {
+inline void TAP::format(BaseIt &it) {
   std::string description = it.get_descr();
 
   // Build up the description for the test by ascending the
@@ -45,9 +45,9 @@ void TAP::format(BaseIt &it) {
     failure_messages.clear();
   }
 }
-void TAP::format(std::string message) { buffer << message << std::endl; }
+inline void TAP::format(std::string message) { buffer << message << std::endl; }
 
-void TAP::format_failure(std::string message) {
+inline void TAP::format_failure(std::string message) {
   std::ostringstream oss;
   std::istringstream iss(message);
   std::string line;
@@ -56,7 +56,7 @@ void TAP::format_failure(std::string message) {
   }
   failure_messages.push_back(oss.str());
 }
-void TAP::flush() {
+inline void TAP::flush() {
   std::string str = buffer.str();
   std::ostringstream oss;
   if (str[0] == '\n') {

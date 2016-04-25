@@ -45,11 +45,12 @@ class BaseFormatter {
   void reset_test_counter() { test_counter = 1; }
 };
 
-BaseFormatter &BaseFormatter::set_multiple(bool multiple) {
+inline BaseFormatter &BaseFormatter::set_multiple(bool multiple) {
   this->multiple = multiple;
   return *this;
 }
-BaseFormatter &BaseFormatter::set_color_output(bool value) {
+
+inline BaseFormatter &BaseFormatter::set_color_output(bool value) {
   this->color_output = value;
   return *this;
 }
