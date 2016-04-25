@@ -4,6 +4,9 @@ platform: x86
 
 configuration: Release
 
+install:
+  - git submodule update --init --recursive
+
 build_script:
   - mkdir build
   - cd build
