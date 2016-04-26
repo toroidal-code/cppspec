@@ -1,0 +1,6 @@
+include/cxx-prettyprint/* linguist-vendored
+include/optional/* linguist-vendored
+gh-pages/* linguist-vendored
+CMake/* linguist-vendored
+doxygen_extras/* linguist-vendored
+docs/* linguist-documentation
