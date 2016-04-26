@@ -11,7 +11,7 @@ html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abb
 .hidden { display: none; }
 
 /* Spacing */
-.post h1, h3, h4, h5, p, .post-body ul, #post-list li, pre {
+.post h1, h3, h4, h5, .post-body ul, #post-list li {
     margin-bottom: 20px;
 }
 
@@ -35,7 +35,14 @@ h1 {
 h2 {
     font: bold 21px/1.4em Helvetica, sans-serif;
     color: #333;
-    margin-bottom: 6px;
+    margin-bottom: 1em;
+    margin-top:1em;
+}
+
+#wrapper h2 {
+  margin-bottom: .75em;
+  margin-top: .5em;
+
 }
 
 .profile #wrapper {
@@ -47,7 +54,7 @@ h2 {
 .profile #header {
     border-bottom: 1px solid #eee;
     margin-bottom: 28px;
-    padding-bottom: 32px;
+    padding-bottom: 30px;
     text-align: center;
     position: relative;
 }
@@ -78,7 +85,7 @@ h2 {
 }
 
 nav.main-nav {
-    padding: 25px 20px 0;
+    padding: 0 20px 0;
 
     /*max-width: 600px;*/
     /*width:100%;*/
@@ -119,6 +126,10 @@ nav.main-nav a.cta {
     padding: 0px 40px 20px 40px;
 }
 
+#wrapper p {
+  padding-bottom: 1em;
+}
+
 .home #avatar {
     float: right;
     width: 40px;
@@ -151,8 +162,21 @@ a,
     transition: all 0.15s ease;
 }
 
-ul 	{ margin:0; padding:0; }
-li	{ list-style-type:circle; list-style-position:inside; }
+.home ul {
+  /*padding-top: 10px;*/
+  padding-left: 3em;
+  text-indent: -1em;
+  /*padding-bottom: 20px;*/
+}
+
+.home li	{
+  list-style-position:inside;
+  line-height: 1.7;
+}
+
+li p {
+  margin-left:10px;
+}
 
 /* Line Height */
 #post-body, p { line-height:1.7; }
@@ -308,7 +332,10 @@ pre {
     font-size: 13px;
     line-height: 1.5em;
     font-weight: 500;
-    color: #d0d4d7;
+}
+
+pre.highlight {
+  margin-bottom: 1em;
 }
 
 table {
