@@ -46,8 +46,8 @@ h2 {
 
 .profile #header {
     border-bottom: 1px solid #eee;
-    margin-bottom: 40px;
-    padding-bottom: 40px;
+    margin-bottom: 28px;
+    padding-bottom: 32px;
     text-align: center;
     position: relative;
 }
@@ -104,7 +104,7 @@ nav.main-nav a {
 nav.main-nav a.cta {
     background: #5badf0;
     color: #fff;
-    margin-left: 12px;
+    /*margin-left: 12px;*/
 }
 
 #wrapper {
@@ -229,9 +229,16 @@ em, i { font-style: italic; }
 
 .block {
     text-align: center;
+    padding-top: 8px;
+    padding-bottom: 8px;
 }
 
-.block a .main {
+.block ul li {
+    list-style: none;
+    padding: 12px 12px;
+}
+
+.block ul li a .main {
     padding: 2px 2px;
     margin-right: 12px;
     margin-bottom: 6px;
@@ -635,4 +642,23 @@ h2.month {
     .post h2.headline { font-size: 13px; }
     .post h1 { font-size:24px; }
     .post h2 { font-size:20px; }
+
+    .block ul li a.cta {
+        display: block;
+        width: 100%;
+    }
+    nav.main-nav a{
+        font-size: 18px;
+        padding-top: 14px;
+        padding-bottom: 14px;
+    }
+    .profile #wrapper {
+        padding: 60px 40px 0px;
+    }
+}
+
+@media screen and (min-width:540px) {
+    .block ul li {
+        display: inline;
+    }
 }

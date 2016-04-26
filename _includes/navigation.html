@@ -1,11 +1,15 @@
 <nav class="main-nav">
   <div class="block">
+    <ul>
     {% for link in site.links %}
-    <a target="{% if link.external %}_blank{% else %}_top{% endif %}"
-       class="main cta"
-       href="{% unless link.external %}{{ site.url }}{% endunless %}{{ link.url }}">
-      {{ link.name }}
-    </a>
+      <li>
+        <a target="{% if link.external %}_blank{% else %}_top{% endif %}"
+           class="main cta"
+           href="{% unless link.external %}{{ site.url }}{% endunless %}{{ link.url }}">
+          {{ link.name }}
+        </a>
+      </li>
     {% endfor %}
+    </ul>
   </div>
 </nav>
