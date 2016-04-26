@@ -1,6 +1,9 @@
 /** @file */
 #ifndef CPPSPEC_CHILD_HPP
 #define CPPSPEC_CHILD_HPP
+#pragma once
+
+#include <string>
 #include <iostream>
 #include <typeinfo>
 
@@ -51,13 +54,12 @@ class Child {
   Child &operator=(Child &&) = default;
 
   // Copy constructor/operator
-  Child(const Child &) = default;
   Child &operator=(const Child &) = default;
 
   // Custom constructors
-  Child(Child &parent) : parent(&parent){};
-  Child(Child *parent) : parent(parent){};
-  Child(const Child *parent) : parent(const_cast<Child *>(parent)){};
+  explicit Child(Child &parent) : parent(&parent) {}
+  explicit Child(Child *parent) : parent(parent) {}
+  explicit Child(const Child *parent) : parent(const_cast<Child *>(parent)) {}
 
   /*--------- Parent helper functions -------------*/
 
@@ -98,7 +100,7 @@ class Child {
  * This is propogated up the parent/child tree, so that when a child object
  * fails, the parent object is immediately updated to reflect that as well.
  */
-void Child::failed() {
+inline void Child::failed() {
   this->status = false;
   // propogates the failure up the tree
   if (has_parent()) this->get_parent()->failed();
@@ -108,7 +110,7 @@ void Child::failed() {
  * @brief Generate padding (indentation) fore the current object.
  * @return A string of spaces for use in pretty-printing.
  */
-std::string Child::padding() {
+inline std::string Child::padding() {
   return has_parent() ? get_parent()->padding() + "  " : "";
 }
 
@@ -116,30 +118,30 @@ template <class C>
 inline C Child::get_parent_as() {
   // rejected branch should get optimized out at compile-time
   if (CPPSPEC_DEBUG) {
-    if (C casted = dynamic_cast<C>(get_parent())) {
+    if (C casted = dynamic_cast<C>(get_parent()))
       return casted;
-    } else
+    else
       throw(std::bad_cast());
   } else {
     return static_cast<C>(get_parent());
   }
 }
 
-const bool Child::has_formatter() {
+inline const bool Child::has_formatter() {
   if (this->formatter != nullptr) return true;
   if (!this->has_parent()) return false;  // base case;
   return parent->has_formatter();
 }
 
-Formatters::BaseFormatter &Child::get_formatter() {
+inline Formatters::BaseFormatter &Child::get_formatter() {
   if (this->formatter != nullptr) return *formatter;
   if (!this->has_parent()) {
     std::cout << "Couldn't get printer!" << std::endl;
-    throw "Couldn't get printer!";  // base case. This should never *ever*
-    // happen.
+    // base case. This should never *ever* happen
+    throw "Couldn't get printer!";
   }
   return parent->get_formatter();
 }
 
-}  // ::CppSpec
+}  // namespace CppSpec
 #endif  // CPPSPEC_CHILD_HPP

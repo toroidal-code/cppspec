@@ -4,6 +4,7 @@
  */
 #ifndef CPPSPEC_HPP
 #define CPPSPEC_HPP
+#pragma once
 
 #ifndef CPPSPEC_DEBUG
 #define CPPSPEC_DEBUG false
@@ -12,12 +13,22 @@
 
 /*>>>>>>>>>>>>>>>>>>>> MACROS <<<<<<<<<<<<<<<<<<<<<<*/
 
-#define _ [=](auto &self) mutable
-#define $ [](auto &self)
+// For *some* reason, MSVC++ refuses to correctly deduce the types of
+// Description blocks unless the void return type is explicitly stated.
+// GCC and clang have no problem with it being omitted. Weird.
+#define $ [](auto &self) -> void
+#define _ [=](auto &self) mutable -> void
+
 #define it self.it
+#ifdef _MSC_VER  // Apparently MSVC++ doesn't conform to C++14 14.2/4. Annoying.
+#define context self.context
+#define expect self.expect
+#else
 #define context self.template context
-#define explain context  // piggybacks off of the `context` macro
 #define expect self.template expect
+#endif
+#define explain context  // Piggybacks off of the `context` macro
+
 #define is_expected self.is_expected
 #define subject self.subject
 

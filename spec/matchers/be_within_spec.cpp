@@ -135,4 +135,7 @@ describe be_within_spec("expect(actual).to_be_within(delta).of(expected)", $  {
   });
 });
 
-int main() { return be_within_spec.run(Formatters::progress) ? EXIT_SUCCESS : EXIT_FAILURE; }
+
+Runner::spec_group be_within_spec_group([](Runner &r){
+  r.add_spec(be_within_spec);
+});

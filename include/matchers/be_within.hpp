@@ -1,6 +1,8 @@
 /** @file */
 #ifndef CPPSPEC_MATCHERS_BE_WITHIN_HPP
 #define CPPSPEC_MATCHERS_BE_WITHIN_HPP
+#pragma once
+
 #include "matcher_base.hpp"
 
 namespace CppSpec {
@@ -75,6 +77,6 @@ std::string BeWithin<A, E>::description() {
   return ss.str();
 }
 
-}  // ::Matchers
-}  // ::CppSpec
+}  // namespace Matchers
+}  // namespace CppSpec
 #endif // CPPSPEC_MATCHERS_BE_WITHIN_HPP

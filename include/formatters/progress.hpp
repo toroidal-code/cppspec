@@ -1,6 +1,10 @@
 /** @file */
 #ifndef CPPSPEC_FORMATTERS_PROGRESS_HPP
 #define CPPSPEC_FORMATTERS_PROGRESS_HPP
+#pragma once
+
+#include <string>
+#include <list>
 #include <forward_list>
 #include "verbose.hpp"
 
@@ -25,7 +29,7 @@ class Progress : public BaseFormatter {
 };
 
 /** @brief An assistant function for prep_failure to reduce complexity */
-std::string Progress::prep_failure_helper(BaseIt &it) {
+inline std::string Progress::prep_failure_helper(BaseIt &it) {
   // a singly-linked list to act as a LIFO queue
   std::forward_list<std::string> list;
 
@@ -59,7 +63,7 @@ std::string Progress::prep_failure_helper(BaseIt &it) {
   return Util::join(list);  // squash the list of strings and return it.
 }
 
-void Progress::prep_failure(BaseIt &it) {
+inline void Progress::prep_failure(BaseIt &it) {
   std::ostringstream string_builder;  // oss is used as the local string builder
   if (color_output) string_builder << RED;  // if we're doing color, make it red
   string_builder << "Test number " << test_counter
@@ -74,7 +78,7 @@ void Progress::prep_failure(BaseIt &it) {
   baked_failure_messages.push_back(string_builder.str());
 }
 
-void Progress::format(BaseIt &it) {
+inline void Progress::format(BaseIt &it) {
   if (it.get_status()) {
     if (color_output) out_stream << GREEN;
     out_stream << ".";
@@ -88,11 +92,11 @@ void Progress::format(BaseIt &it) {
   get_and_increment_test_counter();
 }
 
-void Progress::format_failure(std::string message) {
+inline void Progress::format_failure(std::string message) {
   raw_failure_messages.push_back(message);
 }
 
-void Progress::flush() {
+inline void Progress::flush() {
   if (not multiple) {         // If we aren't executing through a runner
     out_stream << std::endl;  // always newline
     format_failure_messages();
@@ -100,7 +104,7 @@ void Progress::flush() {
   }
 }
 
-void Progress::cleanup() {
+inline void Progress::cleanup() {
   if (multiple) {
     out_stream << std::endl;
     format_failure_messages();
@@ -108,7 +112,7 @@ void Progress::cleanup() {
   // TODO: Fancy test reports here
 }
 
-void Progress::format_failure_messages() {
+inline void Progress::format_failure_messages() {
   if (not baked_failure_messages
               .empty()) {  // If we have any failures to format
     // if (color_output) out_stream << RED;      // make them red
@@ -122,6 +126,6 @@ void Progress::format_failure_messages() {
 
 static Progress progress;
 
-}  // ::Formatters
-}  // ::CppSpec
+}  // namespace Formatters
+}  // namespace CppSpec
 #endif  // CPPSPEC_FORMATTERS_PROGRESS_HPP

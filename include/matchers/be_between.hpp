@@ -1,6 +1,8 @@
 /** @file */
 #ifndef CPPSPEC_MATCHERS_BE_BETWEEN_HPP
 #define CPPSPEC_MATCHERS_BE_BETWEEN_HPP
+#pragma once
+
 #include "matcher_base.hpp"
 
 namespace CppSpec {
@@ -71,6 +73,6 @@ std::string BeBetween<A, E>::description() {
   return ss.str();
 }
 
-}  // ::Matchers
-}  // ::CppSpec
+}  // namespace Matchers
+}  // namespace CppSpec
 #endif // CPPSPEC_MATCHERS_BE_BETWEEN_HPP

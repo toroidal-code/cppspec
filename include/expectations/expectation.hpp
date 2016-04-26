@@ -4,6 +4,10 @@
  */
 #ifndef CPPSPEC_EXPECTATIONS_EXPECTATION_HPP
 #define CPPSPEC_EXPECTATIONS_EXPECTATION_HPP
+#pragma once
+
+#include <string>
+#include <vector>
 #include "matchers/be.hpp"
 #include "matchers/be_between.hpp"
 #include "matchers/be_within.hpp"
@@ -45,7 +49,7 @@ class Expectation : public Child {
         // block(copy.block),
         // has_block(copy.has_block),
         is_positive(copy.is_positive),
-        ignore_failure(copy.ignore_failure){};
+        ignore_failure(copy.ignore_failure) {}
 
   /**
    * @brief Create an Expectation using a value.
@@ -84,14 +88,14 @@ class Expectation : public Child {
       : Child(it), target(std::vector<U>(init_list)) {}
 
   /** @brief Get the target of the expectation. */
-  constexpr const A &get_target() const & { return target; }
-  constexpr A &get_target() & { return target; }
+  const A &get_target() const & { return target; }
+  A &get_target() & { return target; }
 
   /** @brief Get whether the expectation is normal or negated. */
-  constexpr const bool get_sign() const { return is_positive; }
-  constexpr bool get_sign() { return is_positive; }
-  constexpr const bool get_ignore_failure() const { return ignore_failure; }
-  constexpr bool get_ignore_failure() { return ignore_failure; }
+  const bool get_sign() const { return is_positive; }
+  bool get_sign() { return is_positive; }
+  const bool get_ignore_failure() const { return ignore_failure; }
+  bool get_ignore_failure() { return ignore_failure; }
 
   Expectation &not_();
   Expectation &ignore();
@@ -329,6 +333,6 @@ Result Expectation<A>::to(M matcher, std::string msg) {
   return matcher.set_message(msg).run(this->get_formatter());
 }
 
-}  // ::Expectations
-}  // ::CppSpec
+}  // namespace Expectations
+}  // namespace CppSpec
 #endif  // CPPSPEC_EXPECTATIONS_EXPECTATION_HPP

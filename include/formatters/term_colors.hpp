@@ -1,6 +1,8 @@
 /** @file */
 #ifndef CPPSPEC_TERM_COLORS_HPP
 #define CPPSPEC_TERM_COLORS_HPP
+#pragma once
+
 // the following are Unix/BASH ONLY terminal color codes.
 #define RESET std::string("\033[0m")
 #define BLACK std::string("\033[30m")              /* Black */
@@ -19,4 +21,5 @@
 #define BOLDMAGENTA std::string("\033[1m\033[35m") /* Bold Magenta */
 #define BOLDCYAN std::string("\033[1m\033[36m")    /* Bold Cyan */
 #define BOLDWHITE std::string("\033[1m\033[37m")   /* Bold White */
+
 #endif //CPPSPEC_TERM_COLORS_HPP

@@ -1,6 +1,10 @@
 /** @file */
 #ifndef CPPSPEC_IT_HPP
 #define CPPSPEC_IT_HPP
+#pragma once
+
+#include <string>
+#include <vector>
 #include "expectations/expectation.hpp"
 
 namespace CppSpec {
@@ -69,7 +73,6 @@ auto BaseIt::expect(T block) ->
 //   return expectation;
 // }
 
-
 template <typename T>
 Expectations::Expectation<T> BaseIt::expect(Let<T> &let) {
   return Expectations::Expectation<T>(*this, let.value());
@@ -88,5 +91,5 @@ Expectations::Expectation<std::vector<T>> BaseIt::expect(
   return Expectations::Expectation<std::vector<T>>(*this, init_list);
 }
 
-} // ::CppSpec
-#endif // CPPSPEC_IT_HPP
+}  // namespace CppSpec
+#endif  // CPPSPEC_IT_HPP

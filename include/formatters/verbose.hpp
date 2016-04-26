@@ -1,6 +1,9 @@
 /** @file */
 #ifndef CPPSPEC_FORMATTERS_VERBOSE_HPP
 #define CPPSPEC_FORMATTERS_VERBOSE_HPP
+#pragma once
+
+#include <string>
 #include <list>
 #include "formatters_base.hpp"
 #include "class_description.hpp"
@@ -14,10 +17,10 @@ class Verbose : public BaseFormatter {
 
  public:
   Verbose() = default;
-  Verbose(std::ostream &out_stream) : BaseFormatter(out_stream){};
+  explicit Verbose(std::ostream &out_stream) : BaseFormatter(out_stream) {}
   Verbose(const BaseFormatter &base, std::ostream &out_stream)
-      : BaseFormatter(base, out_stream){};
-  Verbose(const BaseFormatter &base) : BaseFormatter(base){};
+      : BaseFormatter(base, out_stream) {}
+  explicit Verbose(const BaseFormatter &base) : BaseFormatter(base) {}
 
   void format(Description &description) override;
   void format(BaseIt &description) override;
@@ -25,14 +28,14 @@ class Verbose : public BaseFormatter {
   void format_failure_messages();
 };
 
-void Verbose::format(Description &description) {
+inline void Verbose::format(Description &description) {
   if (!first && !description.has_parent()) out_stream << std::endl;
   out_stream << description.padding() << description.get_descr()
              << description.get_subject_type() << std::endl;
   if (first) this->first = false;
 }
 
-void Verbose::format(BaseIt &it) {
+inline void Verbose::format(BaseIt &it) {
   if (color_output) out_stream << (it.get_status() ? GREEN : RED);
   out_stream << it.padding() << it.get_descr() << std::endl;
   if (color_output) out_stream << RESET;
@@ -44,12 +47,12 @@ void Verbose::format(BaseIt &it) {
   get_and_increment_test_counter();
 }
 
-void Verbose::format_failure(std::string message) {
+inline void Verbose::format_failure(std::string message) {
   failure_messages.push_back(message);
 }
 
 // TODO: Compare this with Progress::format_failure_messages
-void Verbose::format_failure_messages() {
+inline void Verbose::format_failure_messages() {
   if (not failure_messages.empty()) {     // If we have any failures to format
     if (color_output) out_stream << RED;  // make them red
     out_stream << Util::join(failure_messages,
@@ -62,6 +65,6 @@ void Verbose::format_failure_messages() {
 
 static Verbose verbose;
 
-}  // ::Formatters
-}  // ::CppSpec
+}  // namespace Formatters
+}  // namespace CppSpec
 #endif  // CPPSPEC_FORMATTERS_VERBOSE_HPP

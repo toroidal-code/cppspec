@@ -103,4 +103,6 @@ describe expectation_spec("Expectation", $ {
   });
 });
 
-int main() { return expectation_spec.run(Formatters::progress) ? EXIT_SUCCESS : EXIT_FAILURE; }
+Runner::spec_group expectation_spec_group([](Runner &r){
+  r.add_spec(expectation_spec);
+});

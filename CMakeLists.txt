@@ -7,8 +7,12 @@ else ()
   cmake_minimum_required( VERSION 3.0 )
 endif ( IWYU )
 
-set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror" )
-set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -Wall -Werror")
+if ( NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
+  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -Wall -Werror")
+endif ()
+
+set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
+include(cotire)
 
 add_library( c++spec INTERFACE )
 target_include_directories( c++spec INTERFACE
@@ -18,7 +22,7 @@ target_include_directories( c++spec INTERFACE
 
 option ( BUILD_TESTS "Build tests." OFF )
 if ( BUILD_TESTS )
-  enable_testing()
+  # enable_testing()
 
   # Tests
   add_subdirectory( spec )

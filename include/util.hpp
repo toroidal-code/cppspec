@@ -4,11 +4,15 @@
  */
 #ifndef CPPSPEC_UTIL_HPP
 #define CPPSPEC_UTIL_HPP
+#pragma once
+
+#include <string>
+#include <sstream>
+#include <functional>
 
 #ifdef __GNUG__
 #include <cxxabi.h>
 #include <memory>
-#include <sstream>
 #endif
 
 namespace CppSpec {
@@ -22,7 +26,7 @@ namespace Util {
  * @return a human-readable translation of the given symbol
  */
 #ifdef __GNUG__
-std::string demangle(const char *mangled) {
+inline std::string demangle(const char *mangled) {
   int status;
   std::unique_ptr<char[], void (*)(void *)> result{
       abi::__cxa_demangle(mangled, NULL, NULL, &status), std::free};
@@ -30,7 +34,7 @@ std::string demangle(const char *mangled) {
   return (status == 0) ? result.get() : mangled;
 }
 #else
-std::string demangle(const char *name) { return name; }
+inline std::string demangle(const char *name) { return name; }
 #endif
 
 /**
@@ -57,12 +61,12 @@ auto test(void *) -> decltype(std::declval<C>().begin(),
                               std::declval<C>().end(), std::true_type{});
 
 template <class C>
-auto test(int) -> decltype(std::declval<C>().cbegin(),
-                           std::declval<C>().cend(), std::true_type{});
+auto test(int) -> decltype(std::declval<C>().cbegin(), std::declval<C>().cend(),
+                           std::true_type{});
 
 template <class>
 auto test(...) -> std::false_type;
-};
+}  // namespace is_iterable_imp
 
 /**
  * @brief Checks whether T is an iterable type.
@@ -87,13 +91,12 @@ constexpr bool is_iterable_v = is_iterable<T>::value;
  */
 namespace is_container_imp {
 template <class C>
-auto test(void *)
-    -> decltype(std::declval<C>().max_size(),
-                std::declval<C>().empty(), is_iterable<C>{});
+auto test(void *) -> decltype(std::declval<C>().max_size(),
+                              std::declval<C>().empty(), is_iterable<C>{});
 
 template <class>
 auto test(...) -> std::false_type;
-}
+}  // namespace is_container_imp
 
 /**
  * @brief Checks whether T is a container type.
@@ -137,7 +140,7 @@ auto test(int) -> std::is_same<
 
 template <class>
 auto test(...) -> std::false_type;  // fallthrough
-}
+}  // namespace is_streamable_imp
 
 /**
  * @brief Checks whether T can be streamed.
@@ -182,9 +185,9 @@ auto test(void *) -> std::is_function<C>;
 template <class C>
 auto test(int) -> std::is_convertible<C, std::function<void()>>;
 
-template <class>
+template <class C>
 auto test(...) -> std::false_type;  // fallthrough
-}
+}  // namespace is_functional_imp
 
 template <class T>
 struct is_functional : public decltype(is_functional_imp::test<T>(0)) {};
@@ -203,7 +206,7 @@ constexpr bool is_functional_v = is_functional<T>::value;
  * @return the generated string
  */
 template <typename O>
-std::string inspect_object(O &o) {
+inline std::string inspect_object(O &o) {
   std::stringstream ss;
   ss << "(" << Util::demangle(typeid(o).name()) << ") => " << o;
   return ss.str();
@@ -217,7 +220,7 @@ std::string inspect_object(O &o) {
  * @return the generated string
  */
 template <>
-std::string inspect_object<const char *>(const char *&o) {
+inline std::string inspect_object<const char *>(const char *&o) {
   std::stringstream ss;
   ss << "(const char *) => " << '"' << o << '"';
   return ss.str();
@@ -231,7 +234,7 @@ std::string inspect_object<const char *>(const char *&o) {
  * @return the generated string
  */
 template <>
-std::string inspect_object<std::string>(std::string &o) {
+inline std::string inspect_object<std::string>(std::string &o) {
   std::stringstream ss;
   ss << "(std::string) => " << '"' << o << '"';
   return ss.str();
@@ -248,7 +251,7 @@ std::string inspect_object<std::string>(std::string &o) {
  * @return the joined string
  */
 template <typename Range>
-std::string join(Range &iterable, const std::string &separator = "") {
+inline std::string join(Range &iterable, const std::string &separator = "") {
   std::ostringstream oss;
   typename Range::const_iterator it;
   for (it = iterable.cbegin(); it != iterable.cend();) {
@@ -261,6 +264,6 @@ std::string join(Range &iterable, const std::string &separator = "") {
   return oss.str();
 }
 
-}  // ::Util
-}  // ::CppSpec
+}  // namespace Util
+}  // namespace CppSpec
 #endif  // CPPSPEC_UTIL_HPP

@@ -1,6 +1,9 @@
 /** @file */
 #ifndef CPPSPEC_MATCHERS_BE_HPP
 #define CPPSPEC_MATCHERS_BE_HPP
+#pragma once
+
+#include <string>
 #include "matcher_base.hpp"
 
 namespace CppSpec {
@@ -68,7 +71,7 @@ bool Be<A>::match() {
 template <class A>
 class BeNullptr : BaseMatcher<A, std::nullptr_t> {
  public:
-  BeNullptr(Expectations::Expectation<A> &expectation)
+  explicit BeNullptr(Expectations::Expectation<A> &expectation)
       : BaseMatcher<A, std::nullptr_t>(expectation) {}
 
   std::string failure_message() override;
@@ -92,6 +95,6 @@ bool BeNullptr<A>::match() {
   return this->get_actual() == nullptr;
 }
 
-}  // ::Matchers
-}  // ::CppSpec
+}  // namespace Matchers
+}  // namespace CppSpec
 #endif  // CPPSPEC_MATCHERS_BE_HPP

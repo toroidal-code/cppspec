@@ -1,7 +1,9 @@
 /** @file */
 #ifndef CPPSPEC_MATCHERS_MATCHER_BASE_HPP
 #define CPPSPEC_MATCHERS_MATCHER_BASE_HPP
+#pragma once
 
+#include <string>
 #include "pretty_matchers.hpp"
 #include "expectations/handler.hpp"
 #include "it_base.hpp"
@@ -28,9 +30,9 @@ class BaseMatcher : public Runnable, public Pretty {
       : Runnable(copy.get_parent()),
         custom_failure_message(copy.custom_failure_message),
         expected(copy.expected),
-        expectation(copy.expectation){};
+        expectation(copy.expectation) {}
 
-  BaseMatcher(Expectations::Expectation<Actual> &expectation)
+  explicit BaseMatcher(Expectations::Expectation<Actual> &expectation)
       : Runnable(*expectation.get_parent()),  // We want the parent of the
                                               // matcher to be the `it` block,
                                               // not the
@@ -120,8 +122,8 @@ Result BaseMatcher<A, E>::run(Formatters::BaseFormatter &printer) {
     if (message.empty()) {
       printer.format_failure(
           "Failure message is empty. Does your matcher define the "
-              "appropriate failure_message[_when_negated] method to "
-              "return a string?");
+          "appropriate failure_message[_when_negated] method to "
+          "return a string?");
     } else {
       printer.format_failure(matched.get_message());
     }
@@ -129,6 +131,6 @@ Result BaseMatcher<A, E>::run(Formatters::BaseFormatter &printer) {
   return matched;
 }
 
-}  // ::Matchers
-}  // ::CppSpec
-#endif // CPPSPEC_MATCHERS_MATCHER_BASE_HPP
+}  // namespace Matchers
+}  // namespace CppSpec
+#endif  // CPPSPEC_MATCHERS_MATCHER_BASE_HPP

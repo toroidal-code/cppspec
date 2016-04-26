@@ -1,7 +1,10 @@
 /** @file */
 #ifndef CPPSPEC_FORMATTERS_FORMATTERS_BASE
 #define CPPSPEC_FORMATTERS_FORMATTERS_BASE
+#pragma once
+
 #include <iostream>
+#include <string>
 #include "term_colors.hpp"
 
 namespace CppSpec {
@@ -18,25 +21,26 @@ class BaseFormatter {
   bool color_output;
 
  public:
-  BaseFormatter(std::ostream &out_stream = std::cout, bool color = true)
-      : out_stream(out_stream), color_output(color){};
+  explicit BaseFormatter(std::ostream &out_stream = std::cout,
+                         bool color = true)
+      : out_stream(out_stream), color_output(color) {}
   BaseFormatter(const BaseFormatter &) = default;
   BaseFormatter(const BaseFormatter &copy, std::ostream &out_stream)
       : out_stream(out_stream),
         test_counter(copy.test_counter),
         multiple(copy.multiple),
-        color_output(copy.color_output){};
+        color_output(copy.color_output) {}
 
   virtual ~BaseFormatter() = default;
 
-  virtual void format(Description &description){};
-  virtual void format(BaseIt &it){};
+  virtual void format(Description &description) {}
+  virtual void format(BaseIt &it) {}
   virtual void format(std::string message) {
     out_stream << message << std::endl;
-  };
-  virtual void format_failure(std::string message){};
-  virtual void flush(){};
-  virtual void cleanup(){};
+  }
+  virtual void format_failure(std::string message) {}
+  virtual void flush() {}
+  virtual void cleanup() {}
 
   BaseFormatter &set_multiple(bool value);
   BaseFormatter &set_color_output(bool value);
@@ -45,15 +49,16 @@ class BaseFormatter {
   void reset_test_counter() { test_counter = 1; }
 };
 
-BaseFormatter &BaseFormatter::set_multiple(bool multiple) {
+inline BaseFormatter &BaseFormatter::set_multiple(bool multiple) {
   this->multiple = multiple;
   return *this;
 }
-BaseFormatter &BaseFormatter::set_color_output(bool value) {
+
+inline BaseFormatter &BaseFormatter::set_color_output(bool value) {
   this->color_output = value;
   return *this;
 }
 
-}  // ::Formatters
-}  // ::CppSpec
+}  // namespace Formatters
+}  // namespace CppSpec
 #endif  // CPPSPEC_FORMATTERS_FORMATTERS_BASE

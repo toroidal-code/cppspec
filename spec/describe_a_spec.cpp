@@ -25,9 +25,8 @@ describe_a <TestClass> describe_a_explicit_spec(
   });
 });
 
-int main() {
-  return Runner()
-      .add_spec(describe_a_implicit_spec)
-      .add_spec(describe_a_explicit_spec)
-      .exec() ? EXIT_SUCCESS : EXIT_FAILURE;
-}
+
+Runner::spec_group describe_a_spec_group([](Runner &r){
+  r.add_spec(describe_a_implicit_spec)
+   .add_spec(describe_a_explicit_spec);
+});

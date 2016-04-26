@@ -1,6 +1,8 @@
 /** @file */
 #ifndef CPPSPEC_LET_HPP
 #define CPPSPEC_LET_HPP
+#pragma once
+
 #include <functional>
 #include "optional/optional.hpp"
 
@@ -11,7 +13,7 @@ class LetBase {
   bool delivered;
 
  public:
-  LetBase() : delivered(false){};
+  LetBase() : delivered(false) {}
   LetBase(const LetBase &copy) = default;
   void reset() { delivered = false; }
   bool has_result() { return delivered; }
@@ -25,7 +27,7 @@ class Let : public LetBase {
   block_t body;
 
  public:
-  Let(block_t body) : LetBase(), body(body){};
+  explicit Let(block_t body) : LetBase(), body(body) {}
 
   T *operator->() {
     value();
@@ -51,5 +53,5 @@ T &Let<T>::value() & {
   return result.value();
 }
 
-}  // ::CppSpec
+}  // namespace CppSpec
 #endif  // CPPSPEC_LET_HPP

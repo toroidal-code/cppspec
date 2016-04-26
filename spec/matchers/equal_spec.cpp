@@ -25,4 +25,7 @@ describe equal_spec("Equal", $ {
   //});
 });
 
-int main() { return equal_spec.run(Formatters::progress) ? EXIT_SUCCESS : EXIT_FAILURE; }
+
+Runner::spec_group equal_spec_group([](Runner &r){
+  r.add_spec(equal_spec);
+});
