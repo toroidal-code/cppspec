@@ -51,7 +51,6 @@ class Child {
   Child &operator=(Child &&) = default;
 
   // Copy constructor/operator
-  Child(const Child &) = default;
   Child &operator=(const Child &) = default;
 
   // Custom constructors

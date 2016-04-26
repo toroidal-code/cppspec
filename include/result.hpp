@@ -2,6 +2,7 @@
 #ifndef CPPSPEC_RESULT_HPP
 #define CPPSPEC_RESULT_HPP
 #include <sstream>
+#include <ciso646>
 
 namespace CppSpec {
 
