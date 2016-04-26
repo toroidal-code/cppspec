@@ -2,8 +2,6 @@ os: Visual Studio 2015
 
 platform: x86
 
-configuration: Release
-
 install:
   - git submodule update --init --recursive
 
@@ -14,5 +12,4 @@ build_script:
   - cmake --build .
 
 test_script:
-  - ps: c:\projects\cppspec\spec\spec_runner.exe
-
+  - ps: c:\projects\cppspec\build\spec\Debug\spec_runner.exe

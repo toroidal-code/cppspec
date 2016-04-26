@@ -2,6 +2,7 @@
 #ifndef CPPSPEC_FORMATTERS_FORMATTERS_BASE
 #define CPPSPEC_FORMATTERS_FORMATTERS_BASE
 #include <iostream>
+#include <string>
 #include "term_colors.hpp"
 
 namespace CppSpec {

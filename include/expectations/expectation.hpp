@@ -84,14 +84,14 @@ class Expectation : public Child {
       : Child(it), target(std::vector<U>(init_list)) {}
 
   /** @brief Get the target of the expectation. */
-  constexpr const A &get_target() const & { return target; }
-  constexpr A &get_target() & { return target; }
+  const A &get_target() const & { return target; }
+  A &get_target() & { return target; }
 
   /** @brief Get whether the expectation is normal or negated. */
-  constexpr const bool get_sign() const { return is_positive; }
-  constexpr bool get_sign() { return is_positive; }
-  constexpr const bool get_ignore_failure() const { return ignore_failure; }
-  constexpr bool get_ignore_failure() { return ignore_failure; }
+  const bool get_sign() const { return is_positive; }
+  bool get_sign() { return is_positive; }
+  const bool get_ignore_failure() const { return ignore_failure; }
+  bool get_ignore_failure() { return ignore_failure; }
 
   Expectation &not_();
   Expectation &ignore();

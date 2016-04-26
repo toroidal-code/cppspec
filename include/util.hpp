@@ -8,8 +8,9 @@
 #ifdef __GNUG__
 #include <cxxabi.h>
 #include <memory>
-#include <sstream>
 #endif
+#include <sstream>
+#include <functional>
 
 namespace CppSpec {
 namespace Util {
@@ -30,7 +31,7 @@ inline std::string demangle(const char *mangled) {
   return (status == 0) ? result.get() : mangled;
 }
 #else
-std::string demangle(const char *name) { return name; }
+inline std::string demangle(const char *name) { return name; }
 #endif
 
 /**
@@ -182,7 +183,7 @@ auto test(void *) -> std::is_function<C>;
 template <class C>
 auto test(int) -> std::is_convertible<C, std::function<void()>>;
 
-template <class>
+template <class C>
 auto test(...) -> std::false_type;  // fallthrough
 }
 
