@@ -1,6 +1,11 @@
 /** @file */
 #ifndef CPPSPEC_MATCHERS_PRETTY_MATCHERS_HPP
 #define CPPSPEC_MATCHERS_PRETTY_MATCHERS_HPP
+#pragma once
+
+#include <string>
+#include <vector>
+#include <algorithm>
 #include <regex>
 #include "cxx-prettyprint/prettyprint.hpp"
 #include "util.hpp"
@@ -211,5 +216,5 @@ inline std::string Pretty::improve_hash_formatting(std::string inspect_string) {
   return inspect_string;
 }
 
-}  // ::CppSpec
+}  // namespace CppSpec
 #endif  // CPPSPEC_MATCHERS_PRETTY_MATCHERS_HPP

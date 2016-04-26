@@ -1,6 +1,9 @@
 /** @file */
 #ifndef CPPSPEC_RUNNER_HPP
 #define CPPSPEC_RUNNER_HPP
+#pragma once
+
+#include <list>
 #include "formatters/verbose.hpp"
 #include "formatters/progress.hpp"
 #include "formatters/tap.hpp"
@@ -12,8 +15,9 @@ class Runner {
   Formatters::BaseFormatter &formatter;
 
  public:
-  typedef std::function<void(Runner&)> spec_group;
-  Runner(Formatters::BaseFormatter &formatter = Formatters::progress) : formatter(formatter){};
+  typedef std::function<void(Runner &)> spec_group;
+  explicit Runner(Formatters::BaseFormatter &formatter = Formatters::progress)
+      : formatter(formatter) {}
 
   template <typename T>
   Runner &add_spec(ClassDescription<T> &spec);
@@ -54,5 +58,5 @@ inline Result Runner::exec() {
   return result;
 }
 
-}
+}  // namespace CppSpec
 #endif  // CPPSPEC_RUNNER_HPP

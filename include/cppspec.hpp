@@ -4,6 +4,7 @@
  */
 #ifndef CPPSPEC_HPP
 #define CPPSPEC_HPP
+#pragma once
 
 #ifndef CPPSPEC_DEBUG
 #define CPPSPEC_DEBUG false
@@ -19,7 +20,7 @@
 #define _ [=](auto &self) mutable -> void
 
 #define it self.it
-#ifdef _MSC_VER // Apparently MSVC++ doesn't conform to C++14 14.2/4. Annoying.
+#ifdef _MSC_VER  // Apparently MSVC++ doesn't conform to C++14 14.2/4. Annoying.
 #define context self.context
 #define expect self.expect
 #else

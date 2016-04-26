@@ -1,6 +1,9 @@
 /** @file */
 #ifndef CPPSPEC_FORMATTERS_TAP_HPP
 #define CPPSPEC_FORMATTERS_TAP_HPP
+#pragma once
+
+#include <string>
 #include <list>
 #include "formatters_base.hpp"
 #include "class_description.hpp"
@@ -20,11 +23,14 @@ class TAP : public BaseFormatter {
   void format(std::string message) override;
   void format_failure(std::string message) override;
   void flush() override;
-};
-inline void TAP::format(Description &description) {
+}
+
+inline void
+TAP::format(Description &description) {
   if (!first && description.get_parent() == nullptr) out_stream << std::endl;
   if (first) this->first = false;
 }
+
 inline void TAP::format(BaseIt &it) {
   std::string description = it.get_descr();
 
@@ -36,15 +42,17 @@ inline void TAP::format(BaseIt &it) {
     parent = static_cast<Description *>(parent->get_parent());
   }
 
-  if (color_output) buffer << (it.get_status() ? GREEN: RED);
+  if (color_output) buffer << (it.get_status() ? GREEN : RED);
   buffer << (it.get_status() ? "ok" : "not ok");
   if (color_output) buffer << RESET;
-  buffer << " " << get_and_increment_test_counter() << " - " << description << std::endl;
+  buffer << " " << get_and_increment_test_counter() << " - " << description
+         << std::endl;
   if (not failure_messages.empty()) {
     for (auto failure : failure_messages) buffer << failure;
     failure_messages.clear();
   }
 }
+
 inline void TAP::format(std::string message) { buffer << message << std::endl; }
 
 inline void TAP::format_failure(std::string message) {
@@ -56,6 +64,7 @@ inline void TAP::format_failure(std::string message) {
   }
   failure_messages.push_back(oss.str());
 }
+
 inline void TAP::flush() {
   std::string str = buffer.str();
   std::ostringstream oss;
@@ -74,6 +83,6 @@ inline void TAP::flush() {
 
 static TAP tap;
 
-} // ::Formatters
-} // ::CppSpec
+}  // namespace Formatters
+}  // namespace CppSpec
 #endif  // CPPSPEC_FORMATTERS_TAP_HPP

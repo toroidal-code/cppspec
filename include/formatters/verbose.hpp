@@ -1,6 +1,9 @@
 /** @file */
 #ifndef CPPSPEC_FORMATTERS_VERBOSE_HPP
 #define CPPSPEC_FORMATTERS_VERBOSE_HPP
+#pragma once
+
+#include <string>
 #include <list>
 #include "formatters_base.hpp"
 #include "class_description.hpp"
@@ -14,10 +17,10 @@ class Verbose : public BaseFormatter {
 
  public:
   Verbose() = default;
-  Verbose(std::ostream &out_stream) : BaseFormatter(out_stream){};
+  explicit Verbose(std::ostream &out_stream) : BaseFormatter(out_stream) {}
   Verbose(const BaseFormatter &base, std::ostream &out_stream)
-      : BaseFormatter(base, out_stream){};
-  Verbose(const BaseFormatter &base) : BaseFormatter(base){};
+      : BaseFormatter(base, out_stream) {}
+  explicit Verbose(const BaseFormatter &base) : BaseFormatter(base) {}
 
   void format(Description &description) override;
   void format(BaseIt &description) override;
@@ -62,6 +65,6 @@ inline void Verbose::format_failure_messages() {
 
 static Verbose verbose;
 
-}  // ::Formatters
-}  // ::CppSpec
+}  // namespace Formatters
+}  // namespace CppSpec
 #endif  // CPPSPEC_FORMATTERS_VERBOSE_HPP

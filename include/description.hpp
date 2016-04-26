@@ -4,6 +4,10 @@
  */
 #ifndef CPPSPEC_DESCRIPTION_HPP
 #define CPPSPEC_DESCRIPTION_HPP
+#pragma once
+
+#include <string>
+#include <deque>
 #include <queue>
 #include "it.hpp"
 
@@ -24,14 +28,14 @@ class Description : public Runnable {
   std::deque<rule_block_t> after_eaches;
   std::unordered_set<LetBase *> lets;
 
-  Description(){};
-  Description(std::string descr) : descr(descr){};
+  Description() {}
+  explicit Description(std::string descr) : descr(descr) {}
   Description(Child &parent, std::string descr, block_t body)
-      : Runnable(parent), body(body), descr(descr){};
+      : Runnable(parent), body(body), descr(descr) {}
 
  public:
   // Constructor
-  Description(std::string descr, block_t body) : body(body), descr(descr){};
+  Description(std::string descr, block_t body) : body(body), descr(descr) {}
 
   const bool has_subject = false;
 
@@ -71,7 +75,7 @@ class Description : public Runnable {
   auto let(T body) -> Let<decltype(body())>;
   void reset_lets();
 
-  virtual Result run(Formatters::BaseFormatter &printer) override;
+  Result run(Formatters::BaseFormatter &printer) override;
 
   virtual std::string get_descr() { return descr; }
   virtual const std::string get_descr() const { return descr; }
@@ -82,14 +86,15 @@ class Description : public Runnable {
 typedef Description Context;
 
 inline Result Description::context(std::string name,
-                            std::function<void(Description &)> body) {
+                                   std::function<void(Description &)> body) {
   Context context(*this, name, body);
   context.before_eaches = this->before_eaches;
   context.after_eaches = this->after_eaches;
   return context.run(this->get_formatter());
 }
 
-inline Result Description::it(std::string name, std::function<void(ItD &)> body) {
+inline Result Description::it(std::string name,
+                              std::function<void(ItD &)> body) {
   ItD it(*this, name, body);
   Result result = it.run(this->get_formatter());
   exec_after_eaches();
@@ -135,7 +140,9 @@ inline void Description::before_each(rule_block_t b) {
 
 inline void Description::before_all(rule_block_t b) { b(); }
 
-inline void Description::after_each(rule_block_t b) { after_eaches.push_back(b); }
+inline void Description::after_each(rule_block_t b) {
+  after_eaches.push_back(b);
+}
 
 inline void Description::after_all(rule_block_t b) { after_alls.push_back(b); }
 
@@ -182,5 +189,5 @@ inline Result ItD::run(Formatters::BaseFormatter &printer) {
   return this->get_status() ? Result::success() : Result::failure();
 }
 
-}  // ::CppSpec
+}  // namespace CppSpec
 #endif  // CPPSPEC_DESCRIPTION_HPP

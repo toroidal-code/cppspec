@@ -4,6 +4,10 @@
  */
 #ifndef CPPSPEC_EXPECTATIONS_EXPECTATION_HPP
 #define CPPSPEC_EXPECTATIONS_EXPECTATION_HPP
+#pragma once
+
+#include <string>
+#include <vector>
 #include "matchers/be.hpp"
 #include "matchers/be_between.hpp"
 #include "matchers/be_within.hpp"
@@ -45,7 +49,7 @@ class Expectation : public Child {
         // block(copy.block),
         // has_block(copy.has_block),
         is_positive(copy.is_positive),
-        ignore_failure(copy.ignore_failure){};
+        ignore_failure(copy.ignore_failure) {}
 
   /**
    * @brief Create an Expectation using a value.
@@ -329,6 +333,6 @@ Result Expectation<A>::to(M matcher, std::string msg) {
   return matcher.set_message(msg).run(this->get_formatter());
 }
 
-}  // ::Expectations
-}  // ::CppSpec
+}  // namespace Expectations
+}  // namespace CppSpec
 #endif  // CPPSPEC_EXPECTATIONS_EXPECTATION_HPP

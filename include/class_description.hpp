@@ -1,6 +1,7 @@
 /** @file */
 #ifndef CPPSPEC_CLASS_DESCRIPTION_HPP
 #define CPPSPEC_CLASS_DESCRIPTION_HPP
+#include <string>
 #include "description.hpp"
 
 namespace CppSpec {
@@ -35,28 +36,28 @@ class ClassDescription : public Description {
         type(" : " + Util::demangle(typeid(T).name())),
         subject(T()) {
     this->descr = Pretty::to_word(subject);
-  };
+  }
 
   ClassDescription<T>(std::string descr, block_t body)
-      : Description(descr), body(body), subject(T()){};
+      : Description(descr), body(body), subject(T()) {}
 
   ClassDescription(T subject, block_t body)
       : Description(Pretty::to_word(subject)),
         body(body),
         type(" : " + Util::demangle(typeid(T).name())),
-        subject(subject){};
+        subject(subject) {}
 
   ClassDescription(std::string descr, T subject, block_t body)
-      : Description(descr), body(body), subject(subject){};
+      : Description(descr), body(body), subject(subject) {}
 
   ClassDescription(T &subject, block_t body)
       : Description(Pretty::to_word(subject)),
         body(body),
         type(" : " + Util::demangle(typeid(T).name())),
-        subject(subject){};
+        subject(subject) {}
 
   ClassDescription(std::string descr, T &subject, block_t body)
-      : Description(descr), body(body), subject(subject){};
+      : Description(descr), body(body), subject(subject) {}
 
   template <typename U>
   ClassDescription(std::initializer_list<U> init_list, block_t body)
@@ -64,14 +65,14 @@ class ClassDescription : public Description {
         type(" : " + Util::demangle(typeid(T).name())),
         subject(T(init_list)) {
     this->descr = Pretty::to_word(subject);
-  };
+  }
 
   template <typename U>
   ClassDescription(std::string descr, std::initializer_list<U> init_list,
                    block_t body)
-      : Description(descr), body(body), subject(T(init_list)){};
+      : Description(descr), body(body), subject(T(init_list)) {}
 
-  ClassDescription<T>(Description &d) : Description(d){};
+  ClassDescription<T>(Description &d) : Description(d) {}
 
   const bool has_subject = true;
 
@@ -81,10 +82,10 @@ class ClassDescription : public Description {
   Result context(T &subject, block_t body);
   Result context(block_t body);
   Result run(Formatters::BaseFormatter &printer) override;
-  virtual std::string get_descr() override { return descr; }
-  virtual const std::string get_descr() const override { return descr; }
-  virtual std::string get_subject_type() override { return type; }
-  virtual const std::string get_subject_type() const override { return type; }
+  std::string get_descr() override { return descr; }
+  const std::string get_descr() const override { return descr; }
+  std::string get_subject_type() override { return type; }
+  const std::string get_subject_type() const override { return type; }
 };
 
 template <class T>
@@ -223,9 +224,10 @@ Expectations::Expectation<T> ItCd<T>::is_expected() {
 
 template <class T>
 Result ItCd<T>::run(Formatters::BaseFormatter &printer) {
-//  if (!this->needs_descr() && printer.mode == BaseFormatter::Mode::verbose) {
-//    printer.format(*this);
-//  }
+  //  if (!this->needs_descr() && printer.mode == BaseFormatter::Mode::verbose)
+  //  {
+  //    printer.format(*this);
+  //  }
 
   body(*this);
   printer.format(*this);
@@ -235,5 +237,5 @@ Result ItCd<T>::run(Formatters::BaseFormatter &printer) {
   return this->get_status() ? Result::success() : Result::failure();
 }
 
-}  // ::CppSpec
+}  // namespace CppSpec
 #endif  // CPPSPEC_CLASS_DESCRIPTION_HPP

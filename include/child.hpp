@@ -1,6 +1,9 @@
 /** @file */
 #ifndef CPPSPEC_CHILD_HPP
 #define CPPSPEC_CHILD_HPP
+#pragma once
+
+#include <string>
 #include <iostream>
 #include <typeinfo>
 
@@ -54,9 +57,9 @@ class Child {
   Child &operator=(const Child &) = default;
 
   // Custom constructors
-  Child(Child &parent) : parent(&parent){};
-  Child(Child *parent) : parent(parent){};
-  Child(const Child *parent) : parent(const_cast<Child *>(parent)){};
+  explicit Child(Child &parent) : parent(&parent) {}
+  explicit Child(Child *parent) : parent(parent) {}
+  explicit Child(const Child *parent) : parent(const_cast<Child *>(parent)) {}
 
   /*--------- Parent helper functions -------------*/
 
@@ -115,9 +118,9 @@ template <class C>
 inline C Child::get_parent_as() {
   // rejected branch should get optimized out at compile-time
   if (CPPSPEC_DEBUG) {
-    if (C casted = dynamic_cast<C>(get_parent())) {
+    if (C casted = dynamic_cast<C>(get_parent()))
       return casted;
-    } else
+    else
       throw(std::bad_cast());
   } else {
     return static_cast<C>(get_parent());
@@ -134,11 +137,11 @@ inline Formatters::BaseFormatter &Child::get_formatter() {
   if (this->formatter != nullptr) return *formatter;
   if (!this->has_parent()) {
     std::cout << "Couldn't get printer!" << std::endl;
-    throw "Couldn't get printer!";  // base case. This should never *ever*
-    // happen.
+    // base case. This should never *ever* happen
+    throw "Couldn't get printer!";
   }
   return parent->get_formatter();
 }
 
-}  // ::CppSpec
+}  // namespace CppSpec
 #endif  // CPPSPEC_CHILD_HPP

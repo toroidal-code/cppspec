@@ -1,6 +1,10 @@
 /** @file */
 #ifndef CPPSPEC_FORMATTERS_PROGRESS_HPP
 #define CPPSPEC_FORMATTERS_PROGRESS_HPP
+#pragma once
+
+#include <string>
+#include <list>
 #include <forward_list>
 #include "verbose.hpp"
 
@@ -122,6 +126,6 @@ inline void Progress::format_failure_messages() {
 
 static Progress progress;
 
-}  // ::Formatters
-}  // ::CppSpec
+}  // namespace Formatters
+}  // namespace CppSpec
 #endif  // CPPSPEC_FORMATTERS_PROGRESS_HPP

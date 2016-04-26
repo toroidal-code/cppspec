@@ -1,6 +1,8 @@
 /** @file */
 #ifndef CPPSPEC_IT_BASE_HPP
 #define CPPSPEC_IT_BASE_HPP
+#pragma once
+
 #include <vector>
 #include "runnable.hpp"
 #include "let.hpp"
@@ -27,13 +29,13 @@ class BaseIt : public Runnable {
 
  public:
   BaseIt() = delete;
-  BaseIt(BaseIt const &copy) : Runnable(copy.get_parent()), descr(copy.descr){};
+  BaseIt(BaseIt const &copy) : Runnable(copy.get_parent()), descr(copy.descr) {}
 
   /**
    * @brief Create an BaseIt without an explicit description
    * @return the constructed BaseIt
    */
-  explicit BaseIt(Child &parent) : Runnable(parent){};
+  explicit BaseIt(Child &parent) : Runnable(parent) {}
 
   /**
    * @brief Create an BaseIt with an explicit description.
@@ -41,7 +43,7 @@ class BaseIt : public Runnable {
    * @return the constructed BaseIt
    */
   explicit BaseIt(Child &parent, std::string descr)
-      : Runnable(parent), descr(descr){};
+      : Runnable(parent), descr(descr) {}
 
   /**
    * @brief Get whether the object needs a description string
@@ -60,7 +62,7 @@ class BaseIt : public Runnable {
   template <class U>
   typename std::enable_if<not Util::is_functional<U>::value,
                           Expectations::Expectation<U>>::type
-      expect(U value);
+  expect(U value);
 
   template <typename U>
   auto expect(U block) -> typename std::enable_if<
@@ -80,5 +82,5 @@ inline BaseIt &BaseIt::set_descr(std::string descr) {
   return *this;
 }
 
-}  // ::CppSpec
+}  // namespace CppSpec
 #endif  // CPPSPEC_IT_BASE_HPP

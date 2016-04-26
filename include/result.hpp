@@ -1,6 +1,9 @@
 /** @file */
 #ifndef CPPSPEC_RESULT_HPP
 #define CPPSPEC_RESULT_HPP
+#pragma once
+
+#include <string>
 #include <sstream>
 #include <ciso646>
 
@@ -9,8 +12,8 @@ namespace CppSpec {
 class Result {
   const bool value;
   std::string message;
-  Result(bool value, std::string message = "")
-      : value(value), message(message){};
+  explicit Result(bool value, std::string message = "")
+      : value(value), message(message) {}
 
  public:
   // Default destructor
@@ -73,5 +76,5 @@ inline std::ostream &operator<<(std::ostream &os, const Result &res) {
   return os << ss.str();
 }
 
-}  //::CppSpec
+}  // namespace CppSpec
 #endif  // CPPSPEC_RESULT_HPP

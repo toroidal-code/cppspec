@@ -1,6 +1,9 @@
 /** @file */
 #ifndef CPPSPEC_MATCHERS_EQUAL_HPP
 #define CPPSPEC_MATCHERS_EQUAL_HPP
+#pragma once
+
+#include <string>
 #include "matcher_base.hpp"
 
 namespace CppSpec {
@@ -116,6 +119,6 @@ std::string Equal<A, E>::actual_inspected() {
 //   return ss.str();
 // }
 
-}  // ::Matchers
-}  // ::CppSpec
-#endif // CPPSPEC_MATCHERS_EQUAL_HPP
+}  // namespace Matchers
+}  // namespace CppSpec
+#endif  // CPPSPEC_MATCHERS_EQUAL_HPP

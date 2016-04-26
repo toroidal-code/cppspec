@@ -139,5 +139,5 @@ bool Include<A, U, U>::match() {
 }
 
 }  // ::Matchers
-}  // ::CppSpec
+}  // namespace CppSpec
 #endif  // CPPSPEC_MATCHERS_INCLUDE_HPP
