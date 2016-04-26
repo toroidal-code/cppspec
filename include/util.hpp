@@ -78,8 +78,7 @@ auto test(...) -> std::false_type;
  * @tparam T a type to check
  */
 template <class T>
-class is_iterable : public decltype(is_iterable_imp::test<T>(0)) {
-}
+class is_iterable : public decltype(is_iterable_imp::test<T>(0)) {};
 
 /** @brief Helper variable template for is_iterable. */
 #ifdef HAS_VARIABLE_TEMPLATES
@@ -112,8 +111,7 @@ auto test(...) -> std::false_type;
  * @tparam T a type to check
  */
 template <class T>
-struct is_container : public decltype(is_container_imp::test<T>(0)) {
-}
+struct is_container : public decltype(is_container_imp::test<T>(0)) {};
 
 /** @brief Helper variable template for is_container. */
 #ifdef HAS_VARIABLE_TEMPLATES
@@ -157,8 +155,7 @@ auto test(...) -> std::false_type;  // fallthrough
  * @tparam T a type to check
  */
 template <class T>
-struct is_streamable : public decltype(is_streamable_imp::test<T>(0)) {
-}
+struct is_streamable : public decltype(is_streamable_imp::test<T>(0)) {};
 
 /** @brief Helper variable template for is_container. */
 #ifdef HAS_VARIABLE_TEMPLATES
@@ -193,8 +190,7 @@ auto test(...) -> std::false_type;  // fallthrough
 }  // namespace is_functional_imp
 
 template <class T>
-struct is_functional : public decltype(is_functional_imp::test<T>(0)) {
-}
+struct is_functional : public decltype(is_functional_imp::test<T>(0)) {};
 
 /** @brief Helper variable template for is_container. */
 #ifdef HAS_VARIABLE_TEMPLATES

@@ -23,7 +23,7 @@ class TAP : public BaseFormatter {
   void format(std::string message) override;
   void format_failure(std::string message) override;
   void flush() override;
-}
+};
 
 inline void
 TAP::format(Description &description) {

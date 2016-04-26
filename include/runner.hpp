@@ -22,7 +22,6 @@ class Runner {
   template <typename T>
   Runner &add_spec(ClassDescription<T> &spec);
   Runner &add_spec(Description &spec);
-  Runner &add_spec_group(spec_group);
   Result run(Formatters::BaseFormatter &printer);
   Result exec();
 };
@@ -35,11 +34,6 @@ Runner &Runner::add_spec(ClassDescription<T> &spec) {
 
 inline Runner &Runner::add_spec(Description &spec) {
   specs.push_back(&spec);
-  return *this;
-}
-
-inline Runner &Runner::add_spec_group(spec_group r) {
-  r(*this);
   return *this;
 }
 
