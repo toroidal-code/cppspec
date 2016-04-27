@@ -3,7 +3,7 @@ layout: default
 profile: true
 ---
 
-C++Spec is a behavior-driven development library for C++ with an RSpec-inspired DSL. Designed with ease of use and rapid prototyping in mind, C++Spec offers an alternative to traditional testing libraries and frameworks. Some of the core concepts:
+C++Spec is a behavior-driven development library for C++ with an RSpec-inspired DSL. Designed with ease of use and rapid prototyping in mind, C++Spec offers an alternative to traditional testing libraries and frameworks. Some things that make C++Spec different than other testing libraries:
 
 - A clean, readable syntax
 - As few macros as possibles
@@ -11,6 +11,9 @@ C++Spec is a behavior-driven development library for C++ with an RSpec-inspired 
 - Easily extensible with custom matchers.
 - Support for the RSpec and Jasmine constructs you'd expect, such as describe, context, it, expect, and let.
 - Can automatically generate documentation strings based on your tests
+- Cross-platform with no need to change complex build settings.
+
+
 
 ## An example:
 
@@ -42,7 +45,7 @@ int_list_spec("A list of ints", {1,2,3}, $ {
 
 ## Usage:
 
-Download the [header file]() and put it in your project either alongside your tests or in a folder that is in your `INCLUDE` path. Then, simply `#include "cppspec.hpp"` and you're ready to go.
+Download the [header file]() and put it in your project either alongside your tests or in a folder that is in your `INCLUDE` path. Then, simply `#include "cppspec.hpp"` and you're ready to go. Both user and API documentation is available at the top of this page, and a tutorial will soon be available.
 
 ## How does it work?
 
@@ -50,9 +53,9 @@ C++Spec utilizes templated classes and functions as well as C++14 features in or
 
 Lambdas are passed to functions (such as `context` and `it`) in order to build an execution tree at runtime. A formatter object visits each node when the tests are run and prints the status of the tests and any errors.
 
-## I'm getting really long errors. What's going on?
+## I'm getting really long compiler errors. What's going on?
 
-Due to how the library is constructed with both templates and auto-type lambdas, error messages from the compiler can be difficult to understand. Errors also tend to cascade and make the enclosing objects also fail, further obfuscating what's actually going wrong.
+Due to how the library is constructed with both templates and type-deduced (auto) lambdas, error messages from the compiler can be difficult to understand. Errors also tend to cascade and make the structures above the problem code also fail to compile, further obfuscating what's actually going wrong.
 
 Usually, the only information you want is the actual error, not all of the template substitution notes. You can reduce the template backtrace by using the flag `-ftemplate-backtrace-limit=1` when compiling with GCC and Clang.
 
