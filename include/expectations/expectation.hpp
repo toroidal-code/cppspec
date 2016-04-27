@@ -142,7 +142,6 @@ Expectation<A> &Expectation<A>::not_() {
  */
 template <typename A>
 Expectation<A> &Expectation<A>::ignore() {
-  // std::cout << "IGNORE: ";
   this->ignore_failure = true;
   return *this;
 }

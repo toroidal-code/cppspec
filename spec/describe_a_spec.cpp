@@ -25,8 +25,23 @@ describe_a <TestClass> describe_a_explicit_spec(
   });
 });
 
+describe_a <std::true_type> describe_a_syntax_spec("describe_a syntax", $ {
+  context("A nested context with no give subject", _ {
+    it("should inherit the subject", _ {
+      expect(subject).to_equal(true);
+    });
+  });
+
+  context<int>("A nested context with a given subject", 1, _ {
+    it("should not have the same subject as the parent", _ {
+      is_expected().to_equal(1);
+    });
+  });
+});
+
 
 Runner::spec_group describe_a_spec_group([](Runner &r){
   r.add_spec(describe_a_implicit_spec)
-   .add_spec(describe_a_explicit_spec);
+   .add_spec(describe_a_explicit_spec)
+   .add_spec(describe_a_syntax_spec);
 });

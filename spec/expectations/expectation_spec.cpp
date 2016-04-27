@@ -81,25 +81,23 @@ describe expectation_spec("Expectation", $ {
     let(e, [&] { return i.expect(5); });
 #define expect self.expect
 
-//    it("flips the ignore_failure flag", _ {
-//      expect(e->get_ignore_failure()).to_equal(false);
-//      expect(e->ignore().get_ignore_failure()).to_equal(true);
-//    });
+    it("flips the ignore_failure flag", _ {
+      expect(e->get_ignore_failure()).to_equal(false);
+      expect(e->ignore().get_ignore_failure()).to_equal(true);
+    });
 
-//    it("makes it so that matches do not alter the status of the parent", _ {
-//      expect([&] {
-//        e->ignore().to_equal(4);
-//        return i.get_status();
-//      }).to_be_true();
+    it("makes it so that matches do not alter the status of the parent", _ {
+      expect([=]() mutable {
+        e->ignore().to_equal(4);
+        return i.get_status();
+      }).to_equal(true);
+    });
 
-//      std::cout << std::boolalpha << expect([&self] {
-//        auto e = ItD(*(self.get_parent()), _ {}).expect(5);
-//        auto r = e->to_equal(4);
-//        std::cout << std::boolalpha << r.value << std::endl;
-//        std::cout << std::boolalpha << i.get_status() << std::endl;
-//        return i.get_status();
-//      }).get_target() << std::endl;
-//    });
+    it("still returns Result::failure on match failure", _ {
+      expect([=]() mutable {
+        return e->ignore().to_equal(4);
+      }).to_fail();
+    });
   });
 });
 

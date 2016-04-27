@@ -54,6 +54,9 @@ struct Pretty {
 
   template <class T>
   static std::string to_sentance(std::vector<T> &words);
+
+  template <typename T>
+  static std::string inspect_object(T &object);
 };
 
 /**
@@ -66,20 +69,19 @@ struct Pretty {
  */
 template <typename T>
 inline std::string Pretty::to_sentance(std::vector<T> &words) {
-  words = std::vector<T>(words);
   std::vector<std::string> my_words;
   for (T word : words) {
-    my_words.push_back(to_word(word));
+    my_words.push_back(to_word<T>(word));
   }
   std::stringstream ss;
   switch (my_words.size()) {
     case 0:
       return "";
     case 1:
-      ss << " " << words[0];
+      ss << " " << my_words[0];
       break;
     case 2:
-      ss << " " << words[0] << " and " << words[1];
+      ss << " " << my_words[0] << " and " << my_words[1];
       break;
     default:
       ss << " ";
@@ -90,6 +92,7 @@ inline std::string Pretty::to_sentance(std::vector<T> &words) {
       ss << ", and " << my_words.back();
       break;
   }
+
   return ss.str();
 }
 
@@ -103,7 +106,7 @@ inline std::string Pretty::to_sentance(std::vector<T> &words) {
 template <typename T>
 inline std::string Pretty::to_sentance(T &item) {
   std::vector<T> v = {item};
-  return to_sentance(v);
+  return to_sentance<T>(v);
 }
 
 /**
@@ -123,6 +126,21 @@ typename std::enable_if<Util::is_streamable<T>::value,
   std::stringstream ss;
   ss << item;
   return ss.str();
+}
+
+template <>
+inline std::string Pretty::to_word<bool>(bool &item) {
+  return item ? "true" : "false";
+}
+
+template <>
+inline std::string Pretty::to_word<std::true_type>(std::true_type &item) {
+  return "true";
+}
+
+template <>
+inline std::string Pretty::to_word<std::false_type>(std::false_type &item) {
+  return "false";
 }
 
 /**
@@ -214,6 +232,49 @@ inline std::string Pretty::last(const std::string &s, const char delim) {
 inline std::string Pretty::improve_hash_formatting(std::string inspect_string) {
   regex_replace(inspect_string, std::regex("(\\S)=>(\\S)"), "$1 => $2");
   return inspect_string;
+}
+
+
+/**
+ * @brief Generate a string of the class and data of an object
+ *
+ * @param o the object to inspect
+ *
+ * @return the generated string
+ */
+template <typename O>
+inline std::string Pretty::inspect_object(O &o) {
+  std::stringstream ss;
+  ss << "(" << Util::demangle(typeid(o).name()) << ") =>" << to_sentance(o);
+  return ss.str();
+}
+
+/**
+ * @brief Specialization for C-style strings
+ *
+ * @param o the input string
+ *
+ * @return the generated string
+ */
+template <>
+inline std::string Pretty::inspect_object<const char *>(const char *&o) {
+  std::stringstream ss;
+  ss << "(const char *) => " << '"' << o << '"';
+  return ss.str();
+}
+
+/**
+ * @brief Specialization for C++ STL strings
+ *
+ * @param o the input string
+ *
+ * @return the generated string
+ */
+template <>
+inline std::string Pretty::inspect_object<std::string>(std::string &o) {
+  std::stringstream ss;
+  ss << "(std::string) => " << '"' << o << '"';
+  return ss.str();
 }
 
 }  // namespace CppSpec

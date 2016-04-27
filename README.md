@@ -7,6 +7,8 @@
 
 A behavior-driven development testing library for C++ with an RSpec-inspired DSL.
 
+## Warning! This is pre-release software and may be incomplete, contain bugs, and/or introduce major breaking changes within a short period of time
+
 ## Installation ##
 
 C++Spec will be released as a single collated header-file that can be placed in any include path in your project. After that, all features are available via `#include "cppspec.hpp"`.

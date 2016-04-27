@@ -199,48 +199,6 @@ constexpr bool is_functional_v = is_functional<T>::value;
 #endif
 
 /**
- * @brief Generate a string of the class and data of an object
- *
- * @param o the object to inspect
- *
- * @return the generated string
- */
-template <typename O>
-inline std::string inspect_object(O &o) {
-  std::stringstream ss;
-  ss << "(" << Util::demangle(typeid(o).name()) << ") => " << o;
-  return ss.str();
-}
-
-/**
- * @brief Specialization for C-style strings
- *
- * @param o the input string
- *
- * @return the generated string
- */
-template <>
-inline std::string inspect_object<const char *>(const char *&o) {
-  std::stringstream ss;
-  ss << "(const char *) => " << '"' << o << '"';
-  return ss.str();
-}
-
-/**
- * @brief Specialization for C++ STL strings
- *
- * @param o the input string
- *
- * @return the generated string
- */
-template <>
-inline std::string inspect_object<std::string>(std::string &o) {
-  std::stringstream ss;
-  ss << "(std::string) => " << '"' << o << '"';
-  return ss.str();
-}
-
-/**
  * @brief Implode a string
  *
  * @tparam Range the type of the iterable object. is_iterable<Range>::value

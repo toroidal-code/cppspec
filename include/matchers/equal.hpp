@@ -37,7 +37,7 @@ class Equal : public BaseMatcher<A, E> {
 template <typename A, typename E>
 std::string Equal<A, E>::description() {
   std::stringstream ss;
-  ss << "equal" << Pretty::to_sentance(this->expected);
+  ss << "equal" << Pretty::to_sentance<E>(this->expected);
   return ss.str();
 }
 
@@ -54,23 +54,20 @@ std::string Equal<A, E>::failure_message() {
 template <typename A, typename E>
 std::string Equal<A, E>::failure_message_when_negated() {
   std::stringstream ss;
-  ss << "\n"
-     << "expected not "
-     << Util::inspect_object(BaseMatcher<A, E>::get_expected()) << "\n"
+  ss << "expected not "
+     << Pretty::inspect_object(BaseMatcher<A, E>::get_expected()) << "\n"
      << "         got " << actual_inspected() << "\n"
-     << "\n"
-     << "Compared using `==`.\n\n";
+     << "Compared using `==`" << std::endl;
   return ss.str();
 }
 
 template <typename A, typename E>
 std::string Equal<A, E>::simple_failure_message() {
   std::stringstream ss;
-  ss << "\n"
-     << "expected " << Util::inspect_object(BaseMatcher<A, E>::get_expected())
+  ss << "expected " << Pretty::inspect_object(BaseMatcher<A, E>::get_expected())
      << "\n"
      << "     got " << actual_inspected() << "\n"
-     << "Compared using `==`.\n\n";
+     << "Compared using `==`" << std::endl;
   return ss.str();
 }
 
@@ -81,7 +78,6 @@ bool Equal<A, E>::diffable() {
 
 template <typename A, typename E>
 bool Equal<A, E>::match() {
-  // TODO: compare pointers too
   return this->get_expected() == this->get_actual();
 }
 
@@ -99,7 +95,7 @@ bool Equal<A, E>::expected_is_a_literal() {
 
 template <typename A, typename E>
 std::string Equal<A, E>::actual_inspected() {
-  return Util::inspect_object(BaseMatcher<A, E>::get_actual());
+  return Pretty::inspect_object(BaseMatcher<A, E>::get_actual());
 }
 
 // template <typename A, bool E>

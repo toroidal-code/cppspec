@@ -1,11 +1,18 @@
 site_name: C++Spec
-site_description: C++Spec
-site_author: C++Spec contributors
+site_url: http://cppspec.readthedocs.org
+site_description: BDD testing for C++
+site_author: Katherine Whitlock
+
 repo_url: htpps://github.com/toroidal-code/cppspec/tree/master/docs
-copyright: Copyright © 2014-2016 Katherine Whitlock
+
 theme: readthedocs
 
 pages:
   - Home: index.md
   - Syntax:
     - Describe: syntax/describe.md
+
+markdown_extensions:
+  - admonition:
+
+copyright: Copyright © 2014-2016 Katherine Whitlock

@@ -44,6 +44,7 @@ class BaseMatcher : public Runnable, public Pretty {
         expected(expected),
         expectation(expectation) {}
 
+  // TODO: match and negated match should return Result
   virtual bool match() = 0;
   virtual bool negated_match() { return !match(); }
   virtual std::string failure_message();
@@ -69,7 +70,7 @@ std::string BaseMatcher<A, E>::failure_message() {
     return this->custom_failure_message;
   } else {
     std::stringstream ss;
-    ss << "expected " << get_actual() << " to " << description();
+    ss << "expected" << Pretty::to_sentance(get_actual()) << " to " << description();
     return ss.str();
   }
 }
@@ -80,7 +81,7 @@ std::string BaseMatcher<A, E>::failure_message_when_negated() {
     return this->custom_failure_message;
   } else {
     std::stringstream ss;
-    ss << "expected " << get_actual() << " to not " << description();
+    ss << "expected" << Pretty::to_sentance(get_actual()) << " to not " << description();
     return ss.str();
   }
 }
@@ -89,8 +90,9 @@ template <typename A, typename E>
 std::string BaseMatcher<A, E>::description() {
   std::stringstream ss;
   std::string pretty_expected = this->to_sentance(expected);
-  ss << "match " << this->name_to_sentance(Util::demangle(typeid(*this).name()))
-     << "(" << pretty_expected.substr(1, pretty_expected.length()) << ")";
+//  ss << "match " << this->name_to_sentance(Util::demangle(typeid(*this).name()))
+//     << "(" << pretty_expected.substr(1, pretty_expected.length()) << ")";
+  ss << "match" << Pretty::to_sentance(expected);
   return ss.str();
 }
 
@@ -128,6 +130,7 @@ Result BaseMatcher<A, E>::run(Formatters::BaseFormatter &printer) {
       printer.format_failure(matched.get_message());
     }
   }
+  //return !expectation.get_ignore_failure() ? matched : Result::success();
   return matched;
 }
 

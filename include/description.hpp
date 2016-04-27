@@ -23,9 +23,6 @@ class Description : public Runnable {
 
  protected:
   std::string descr = "";
-  std::deque<rule_block_t> after_alls;
-  std::deque<rule_block_t> before_eaches;
-  std::deque<rule_block_t> after_eaches;
   std::unordered_set<LetBase *> lets;
 
   Description() {}
@@ -34,10 +31,14 @@ class Description : public Runnable {
       : Runnable(parent), body(body), descr(descr) {}
 
  public:
+
   // Constructor
   Description(std::string descr, block_t body) : body(body), descr(descr) {}
 
   const bool has_subject = false;
+  std::deque<rule_block_t> after_alls;
+  std::deque<rule_block_t> before_eaches;
+  std::deque<rule_block_t> after_eaches;
 
   // Spec functions
   Result it(std::string descr, std::function<void(ItD &)> body);
@@ -47,8 +48,8 @@ class Description : public Runnable {
   template <class T>
   Result context(T subject, std::function<void(ClassDescription<T> &)> body);
 
-  //  template <class T>
-  //  bool context(T &subject, std::function<void(ClassDescription<T> &)> body);
+  template <class T>
+  Result context(std::string descr, T subject, std::function<void(ClassDescription<T> &)> body);
 
   template <class T, typename U>
   Result context(std::initializer_list<U> init_list,

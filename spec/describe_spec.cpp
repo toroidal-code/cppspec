@@ -2,10 +2,9 @@
 
 using namespace CppSpec;
 
-describe describe_spec("Description has", $ {
-  it("responds to it", _ {
-    
-  });
+describe describe_spec("Description", $ {
+  it("responds to it", _ { });
+  context<int>("can create ClassContexts", 1, _{});
 });
 
 

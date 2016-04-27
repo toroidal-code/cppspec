@@ -56,8 +56,8 @@ class ClassDescription : public Description {
         type(" : " + Util::demangle(typeid(T).name())),
         subject(subject) {}
 
-  ClassDescription(std::string descr, T &subject, block_t body)
-      : Description(descr), body(body), subject(subject) {}
+//  ClassDescription(std::string descr, T &subject, block_t body)
+//      : Description(descr), body(body), subject(subject) {}
 
   template <typename U>
   ClassDescription(std::initializer_list<U> init_list, block_t body)
@@ -78,10 +78,28 @@ class ClassDescription : public Description {
 
   Result it(std::string descr, std::function<void(ItCd<T> &)> body);
   Result it(std::function<void(ItCd<T> &)> body);
-  Result context(T subject, block_t body);
-  Result context(T &subject, block_t body);
-  Result context(block_t body);
+  /** @brief an alias for it */
+  Result specify(std::string descr, std::function<void(ItCd<T> &)> body) {
+    return it(descr, body);
+  }
+  /** @brief an alias for it */
+  Result specify(std::function<void(ItCd<T> &)> body) { return it(body); }
+
+  template <class U>
+  Result context(std::string descr, U subject,
+                 std::function<void(ClassDescription<U> &)> body);
+  template <class U>
+  Result context(std::string descr, U &subject,
+                 std::function<void(ClassDescription<U> &)> body);
+  template <class U>
+  Result context(U subject, std::function<void(ClassDescription<U> &)> body);
+  template <class U>
+  Result context(U &subject, std::function<void(ClassDescription<U> &)> body);
+
+  Result context(std::string descr, std::function<void(ClassDescription<T> &)> body);
+
   Result run(Formatters::BaseFormatter &printer) override;
+
   std::string get_descr() override { return descr; }
   const std::string get_descr() const override { return descr; }
   std::string get_subject_type() override { return type; }
@@ -92,25 +110,47 @@ template <class T>
 using ClassContext = ClassDescription<T>;
 
 template <class T>
+template <class U>
 Result ClassDescription<T>::context(
-    T subject, std::function<void(ClassDescription &)> body) {
-  ClassContext<T> context(subject, body);
+    std::string descr, U subject,
+    std::function<void(ClassDescription<U> &)> body) {
+  ClassContext<U> context(descr, subject, body);
   context.set_parent(this);
-  context.before_eaches = this->before_eaches;
-  context.after_eaches = this->after_eaches;
+  context.ClassContext<U>::before_eaches = this->before_eaches;
+  context.ClassContext<U>::after_eaches = this->after_eaches;
   return context.run(this->get_formatter());
 }
 
 template <class T>
+template <class U>
 Result ClassDescription<T>::context(
-    T &subject, std::function<void(ClassDescription &)> body) {
-  return context(subject, body);
+    U subject, std::function<void(ClassDescription<U> &)> body) {
+  return context("", std::forward<U>(subject), body);
 }
 
 template <class T>
+template <class U>
 Result ClassDescription<T>::context(
-    std::function<void(ClassDescription &)> body) {
-  ClassContext<T> context(body);
+    std::string descr, U &subject,
+    std::function<void(ClassDescription<U> &)> body) {
+  ClassContext<U> context(descr, subject, body);
+  context.set_parent(this);
+  context.ClassContext<U>::before_eaches = this->before_eaches;
+  context.ClassContext<U>::after_eaches = this->after_eaches;
+  return context.run(this->get_formatter());
+}
+
+template <class T>
+template <class U>
+Result ClassDescription<T>::context(
+    U &subject, std::function<void(ClassDescription<U> &)> body) {
+  return context("", std::forward<U>(subject), body);
+}
+
+template <class T>
+Result ClassDescription<T>::context(std::string descr,
+    std::function<void(ClassDescription<T> &)> body) {
+  ClassContext<T> context(descr, this->subject, body);
   context.set_parent(this);
   context.before_eaches = this->before_eaches;
   context.after_eaches = this->after_eaches;
@@ -120,13 +160,19 @@ Result ClassDescription<T>::context(
 template <class T>
 Result Description::context(T subject,
                             std::function<void(ClassDescription<T> &)> body) {
-  ClassContext<T> context(body);
-  context.subject = subject;
+  return this->context("", subject, body);
+}
+
+template <class T>
+Result Description::context(std::string descr, T subject,
+                            std::function<void(ClassDescription<T> &)> body) {
+  ClassContext<T> context(descr, subject, body);
   context.set_parent(this);
   context.before_eaches = this->before_eaches;
   context.after_eaches = this->after_eaches;
   return context.run(this->get_formatter());
 }
+
 
 // template <class T>
 // ClassContext<T>& Description::context(

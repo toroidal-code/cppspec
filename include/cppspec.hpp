@@ -20,6 +20,7 @@
 #define _ [=](auto &self) mutable -> void
 
 #define it self.it
+#define specify it
 #ifdef _MSC_VER  // Apparently MSVC++ doesn't conform to C++14 14.2/4. Annoying.
 #define context self.context
 #define expect self.expect
