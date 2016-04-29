@@ -13,11 +13,10 @@ class LetBase {
   bool delivered;
 
  public:
-  LetBase() noexcept : delivered(false) {}
+  constexpr LetBase() noexcept : delivered(false) {}
   LetBase(const LetBase &copy) = default;
-  constexpr void reset() noexcept { delivered = false; }
+  void reset() noexcept { delivered = false; }
   constexpr const bool has_result() noexcept { return this->delivered; }
-  constexpr const bool has_result() const noexcept { return this->delivered; }
 };
 
 template <typename T>
@@ -37,9 +36,7 @@ class Let : public LetBase {
     return result.operator->();
   }
 
-  constexpr T &operator*() & { return value(); }
-  constexpr const T &operator*() const & { return value(); }
-
+  T &operator*() & { return value(); }
   T &value()&;
 };
 

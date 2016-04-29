@@ -29,11 +29,11 @@ class Result {
   Result &operator=(Result &&) = default;
 
   /*--------- Status helper functions --------------*/
-  constexpr const bool get_status() noexcept { return value; }
-  constexpr const bool get_status() const noexcept { return value; }
+  const bool get_status() noexcept { return value; }
+  const bool get_status() const noexcept { return value; }
 
-  constexpr operator bool() noexcept { return this->get_status(); }
-  constexpr operator bool() const noexcept { return this->get_status(); }
+  operator bool() noexcept { return this->get_status(); }
+  operator bool() const noexcept { return this->get_status(); }
 
   /*--------- Message helper functions -------------*/
   const std::string get_message() noexcept { return message; }
