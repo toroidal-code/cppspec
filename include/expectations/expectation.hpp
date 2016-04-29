@@ -472,13 +472,15 @@ template <typename F>
 class ExpectationFunc : public Expectation<decltype(std::declval<F>()())> {
   static_assert(Util::is_functional<F>::value,
                 "Error! ExpectationFunc can only contaion lambdas.");
+    
+  typedef decltype(std::declval<F>()()) block_ret_t;
   F block;
-  std::shared_ptr<decltype(std::declval<F>()())> computed = nullptr;
+  std::shared_ptr<block_ret_t> computed = nullptr;
 
  public:
   ExpectationFunc(ExpectationFunc<F> const &copy)
-      : Expectation<decltype(std::declval<F>()())>(copy), block(copy.block) {}
-
+      : Expectation<block_ret_t>(copy), block(copy.block) {}
+  
   /**
    * @brief Create an ExpectationValue using a value.
    *
@@ -487,8 +489,8 @@ class ExpectationFunc : public Expectation<decltype(std::declval<F>()())> {
    * @return The constructed ExpectationValue.
    */
   ExpectationFunc(ItBase &it, F block)
-      : Expectation<decltype(block())>(it), block(block) {}
-
+      : Expectation<block_ret_t>(it), block(block) {}
+  
   /**
  * @brief Create an Expectation using a function.
  *
@@ -507,9 +509,9 @@ class ExpectationFunc : public Expectation<decltype(std::declval<F>()())> {
   //      {}
 
   /** @brief Get the target of the expectation. */
-  decltype(block()) &get_target() & override {
-    if (!computed) {
-      computed = std::make_shared<decltype(block())>(block());
+  block_ret_t &get_target() & override {
+    if (computed == nullptr) {
+      computed = std::make_shared<block_ret_t>(block());
     }
     return *computed;
   }

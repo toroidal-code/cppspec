@@ -101,8 +101,11 @@ describe expectation_spec("Expectation", $ {
   });
 
   context("ExpectationFunc", _ {
-    it("is lazy", _{
-      auto foo = [] { return 1 + 2; };
+	it("is lazy", _{
+	  // MSVCC optimizes this away into an int, when
+	  // we explicitly want a function. Any other time 
+	  // that would be perfectly okay.
+      std::function<int()> foo = [] { return 1 + 2; };
       Expectations::ExpectationFunc<decltype(foo)> expectation(self, foo);
       expect(expectation.get_target()).to_equal(3);
     });
