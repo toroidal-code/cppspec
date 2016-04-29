@@ -13,10 +13,11 @@ class LetBase {
   bool delivered;
 
  public:
-  LetBase() : delivered(false) {}
+  LetBase() noexcept : delivered(false) {}
   LetBase(const LetBase &copy) = default;
-  void reset() { delivered = false; }
-  bool has_result() { return delivered; }
+  constexpr void reset() noexcept { delivered = false; }
+  constexpr const bool has_result() noexcept { return this->delivered; }
+  constexpr const bool has_result() const noexcept { return this->delivered; }
 };
 
 template <typename T>
@@ -26,19 +27,23 @@ class Let : public LetBase {
 
   block_t body;
 
+  void exec();
+
  public:
-  explicit Let(block_t body) : LetBase(), body(body) {}
+  explicit Let(block_t body) noexcept : LetBase(), body(body) {}
 
   T *operator->() {
     value();
     return result.operator->();
   }
 
-  T &operator*() & { return value(); }
-  void exec();
+  constexpr T &operator*() & { return value(); }
+  constexpr const T &operator*() const & { return value(); }
+
   T &value()&;
 };
 
+/** @brief Executes the block of the let statment */
 template <typename T>
 void Let<T>::exec() {
   if (!delivered) {
@@ -47,6 +52,10 @@ void Let<T>::exec() {
   }
 }
 
+/**
+ * @brief Get the value contained in the Let
+ * @return a reference to the returned object of the let statement
+ */
 template <typename T>
 T &Let<T>::value() & {
   exec();

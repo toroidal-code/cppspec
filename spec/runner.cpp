@@ -5,7 +5,7 @@ extern std::function<void(CppSpec::Runner &)> expectation_spec_group,
     describe_a_spec_group, describe_spec_group;
 
 int main(void) {
-  CppSpec::Runner runner(CppSpec::Formatters::verbose);
+  CppSpec::Runner runner(CppSpec::Formatters::progress);
   expectation_spec_group(runner);
   be_between_spec_group(runner);
   be_within_spec_group(runner);

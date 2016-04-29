@@ -26,14 +26,14 @@ class Description : public Runnable {
   std::unordered_set<LetBase *> lets;
 
   Description() {}
-  explicit Description(std::string descr) : descr(descr) {}
+  explicit Description(std::string descr) noexcept : descr(descr) {}
   Description(Child &parent, std::string descr, block_t body)
       : Runnable(parent), body(body), descr(descr) {}
 
  public:
-
   // Constructor
-  Description(std::string descr, block_t body) : body(body), descr(descr) {}
+  Description(std::string descr, block_t body) noexcept : body(body),
+                                                          descr(descr) {}
 
   const bool has_subject = false;
   std::deque<rule_block_t> after_alls;
@@ -49,21 +49,12 @@ class Description : public Runnable {
   Result context(T subject, std::function<void(ClassDescription<T> &)> body);
 
   template <class T>
-  Result context(std::string descr, T subject, std::function<void(ClassDescription<T> &)> body);
+  Result context(std::string descr, T subject,
+                 std::function<void(ClassDescription<T> &)> body);
 
   template <class T, typename U>
   Result context(std::initializer_list<U> init_list,
                  std::function<void(ClassDescription<T> &)> body);
-
-  //  template <class T>
-  //  ClassDescription<T> subject(T subject);
-  //
-  //  template <class T>
-  //  ClassDescription<T> subject(T &subject);
-  //
-  //  template <class T>
-  //  ClassDescription<std::vector<T>> subject(std::initializer_list<T>
-  //  init_list);
 
   void before_each(rule_block_t block);
   void before_all(rule_block_t block);

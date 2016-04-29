@@ -15,10 +15,10 @@ namespace CppSpec {
  */
 class Runnable : public Child {
  public:
-  Runnable() {}
-  explicit Runnable(Child &parent) : Child(parent) {}
-  explicit Runnable(Child *parent) : Child(parent) {}
-  explicit Runnable(const Child *parent) : Child(parent) {}
+  Runnable() = default;
+  explicit Runnable(Child &parent) noexcept : Child(parent) {}
+  explicit Runnable(Child *parent) noexcept : Child(parent) {}
+  explicit Runnable(const Child *parent) noexcept : Child(parent) {}
   virtual Result run(Formatters::BaseFormatter &printer) = 0;
 };
 
