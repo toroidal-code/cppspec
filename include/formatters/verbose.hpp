@@ -22,22 +22,22 @@ class Verbose : public BaseFormatter {
       : BaseFormatter(base, out_stream) {}
   explicit Verbose(const BaseFormatter &base) : BaseFormatter(base) {}
 
-  void format(Description &description) override;
-  void format(ItBase &description) override;
+  void format(const Description &description) override;
+  void format(const ItBase &description) override;
   void format_failure(std::string message) override;
   void format_failure_messages();
 };
 
-inline void Verbose::format(Description &description) {
+inline void Verbose::format(const Description &description) {
   if (!first && !description.has_parent()) out_stream << std::endl;
-  out_stream << description.padding() << description.get_descr()
+  out_stream << description.padding() << description.get_description()
              << description.get_subject_type() << std::endl;
   if (first) this->first = false;
 }
 
-inline void Verbose::format(ItBase &it) {
+inline void Verbose::format(const ItBase &it) {
   if (color_output) out_stream << (it.get_status() ? GREEN : RED);
-  out_stream << it.padding() << it.get_descr() << std::endl;
+  out_stream << it.padding() << it.get_description() << std::endl;
   if (color_output) out_stream << RESET;
 
   // Print any failures if we've got them

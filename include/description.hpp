@@ -10,115 +10,113 @@
 #include <deque>
 #include <queue>
 #include "it.hpp"
+#include "class_description.hpp"
 
 namespace CppSpec {
 
-template <class T>
-class ClassDescription;
+template <typename T>
+class ClassDescription;  // forward-declaration for ClassDescription
 
 class Description : public Runnable {
-  typedef std::function<void(Description &)> block_t;
-  typedef std::function<void()> rule_block_t;
-  block_t body;
+ public:
+  using Block = std::function<void(Description &)>;
+  using VoidBlock = std::function<void()>;
+
+ private:
+  Block block;
 
  protected:
-  std::string descr = "";
-  std::unordered_set<LetBase *> lets;
+  std::string description = "";
 
   Description() {}
-  explicit Description(std::string descr) noexcept : descr(descr) {}
-  Description(Child &parent, std::string descr, block_t body)
-      : Runnable(parent), body(body), descr(descr) {}
 
- public:
-  // Constructor
-  Description(std::string descr, block_t body) noexcept : body(body),
-                                                          descr(descr) {}
+  explicit Description(std::string description) noexcept
+      : description(description) {}
 
-  const bool has_subject = false;
-  std::deque<rule_block_t> after_alls;
-  std::deque<rule_block_t> before_eaches;
-  std::deque<rule_block_t> after_eaches;
+  Description(const Child &parent, std::string description,
+              Block block) noexcept : Runnable(parent),
+                                      block(block),
+                                      description(description) {}
 
-  // Spec functions
-  Result it(std::string descr, std::function<void(ItD &)> body);
-  Result it(std::function<void(ItD &)> body);
-  Result context(std::string descr, block_t body);
-
-  template <class T>
-  Result context(T subject, std::function<void(ClassDescription<T> &)> body);
-
-  template <class T>
-  Result context(std::string descr, T subject,
-                 std::function<void(ClassDescription<T> &)> body);
-
-  template <class T, typename U>
-  Result context(std::initializer_list<U> init_list,
-                 std::function<void(ClassDescription<T> &)> body);
-
-  void before_each(rule_block_t block);
-  void before_all(rule_block_t block);
-  void after_each(rule_block_t block);
-  void after_all(rule_block_t block);
   void exec_before_eaches();
   void exec_after_eaches();
 
+ public:
+  // Constructor
+  Description(std::string description, Block block) noexcept
+      : block(block),
+        description(description) {}
+
+  const bool has_subject = false;
+  std::unordered_set<LetBase *> lets;
+  std::deque<VoidBlock> after_alls;
+  std::deque<VoidBlock> before_eaches;
+  std::deque<VoidBlock> after_eaches;
+
+  // Specify/It functions
+  Result it(std::string description, ItD::Block body);
+  Result it(ItD::Block body);
+
+  // Context functions
+  Result context(std::string name, Block body);
+
+  template <class T>
+  Result context(T subject, std::function<void(ClassDescription<T> &)> block);
+
+  template <class T>
+  Result context(std::string description, T subject,
+                 std::function<void(ClassDescription<T> &)> block);
+
+  template <class T, typename U>
+  Result context(std::initializer_list<U> init_list,
+                 std::function<void(ClassDescription<T> &)> block);
+
+  void before_each(VoidBlock block);
+  void before_all(VoidBlock block);
+  void after_each(VoidBlock block);
+  void after_all(VoidBlock block);
+
   template <typename T>
   auto let(T body) -> Let<decltype(body())>;
-  void reset_lets();
+  void reset_lets() noexcept;
 
   Result run(Formatters::BaseFormatter &printer) override;
 
-  virtual std::string get_descr() { return descr; }
-  virtual const std::string get_descr() const { return descr; }
-  virtual std::string get_subject_type() { return ""; }
-  virtual const std::string get_subject_type() const { return ""; }
+  virtual std::string get_description() noexcept { return description; }
+  virtual const std::string get_description() const noexcept {
+    return description;
+  }
+
+  virtual std::string get_subject_type() noexcept { return ""; }
+  virtual const std::string get_subject_type() const noexcept { return ""; }
 };
 
-typedef Description Context;
+using Context = Description;
 
-inline Result Description::context(std::string name,
-                                   std::function<void(Description &)> body) {
-  Context context(*this, name, body);
+inline Result Description::context(std::string description, Block body) {
+  Context context(*this, description, body);
   context.before_eaches = this->before_eaches;
   context.after_eaches = this->after_eaches;
   return context.run(this->get_formatter());
 }
 
-inline Result Description::it(std::string name,
-                              std::function<void(ItD &)> body) {
-  ItD it(*this, name, body);
+inline Result Description::it(std::string description, ItD::Block block) {
+  ItD it(*this, description, block);
   Result result = it.run(this->get_formatter());
   exec_after_eaches();
   exec_before_eaches();
   return result;
 }
 
-inline Result Description::it(std::function<void(ItD &)> body) {
-  ItD it(*this, body);
+inline Result Description::it(ItD::Block block) {
+  ItD it(*this, block);
   Result result = it.run(this->get_formatter());
   exec_after_eaches();
   exec_before_eaches();
   return result;
 }
 
-// template <class U>
-// ClassDescription<U> Description::subject(U subject) {
-//  return ClassDescription<U>(*this, subject);
-//}
-//
-// template <class U>
-// ClassDescription<U> Description::subject(U &subject) {
-//  return ClassDescription<U>(*this, subject);
-//}
-//
-// template <class U>
-// ClassDescription<std::vector<U>> Description::subject(
-//    std::initializer_list<U> init_list) {
-//  return ClassDescription<std::vector<U>>(*this, std::vector<U>(init_list));
-//}
-
-inline void Description::before_each(rule_block_t b) {
+inline void Description::before_each(VoidBlock b) {
   before_eaches.push_back(b);
 
   // Due to how lambdas and their contexts are passed around, we need to prime
@@ -130,20 +128,18 @@ inline void Description::before_each(rule_block_t b) {
   b();
 }
 
-inline void Description::before_all(rule_block_t b) { b(); }
+inline void Description::before_all(VoidBlock b) { b(); }
 
-inline void Description::after_each(rule_block_t b) {
-  after_eaches.push_back(b);
-}
+inline void Description::after_each(VoidBlock b) { after_eaches.push_back(b); }
 
-inline void Description::after_all(rule_block_t b) { after_alls.push_back(b); }
+inline void Description::after_all(VoidBlock b) { after_alls.push_back(b); }
 
 inline void Description::exec_before_eaches() {
-  for (rule_block_t b : before_eaches) b();
+  for (VoidBlock b : before_eaches) b();
 }
 
 inline void Description::exec_after_eaches() {
-  for (rule_block_t b : after_eaches) b();
+  for (VoidBlock b : after_eaches) b();
 }
 
 /**
@@ -154,8 +150,8 @@ inline void Description::exec_after_eaches() {
  * @return a new Let object
  */
 template <typename T>
-inline auto Description::let(T body) -> Let<decltype(body())> {
-  Let<decltype(body())> let(body);
+inline auto Description::let(T block) -> Let<decltype(block())> {
+  Let<decltype(block())> let(block);
   lets.insert(&let);
   return let;
 }
@@ -163,19 +159,19 @@ inline auto Description::let(T body) -> Let<decltype(body())> {
 inline Result Description::run(Formatters::BaseFormatter &printer) {
   if (not this->has_formatter()) this->set_printer(printer);
   printer.format(*this);
-  body(*this);
+  block(*this);
   for (auto a : after_alls) a();
   if (this->get_parent() == nullptr) printer.flush();
   return this->get_status() ? Result::success() : Result::failure();
 }
 
-inline void Description::reset_lets() {
+inline void Description::reset_lets() noexcept {
   for (auto &let : lets) let->reset();
   if (this->has_parent()) this->get_parent_as<Description *>()->reset_lets();
 }
 
 inline Result ItD::run(Formatters::BaseFormatter &printer) {
-  body(*this);
+  block(*this);
   printer.format(*this);
   this->get_parent_as<Description *>()->reset_lets();
   return this->get_status() ? Result::success() : Result::failure();

@@ -62,6 +62,8 @@ class Child {
 
   // Custom constructors
   explicit Child(Child &parent) noexcept : parent(&parent) {}
+  explicit Child(const Child &parent) noexcept
+      : parent(&const_cast<Child &>(parent)) {}
   explicit Child(Child *parent) noexcept : parent(parent) {}
   explicit Child(const Child *parent) noexcept
       : parent(const_cast<Child *>(parent)) {}
@@ -70,6 +72,7 @@ class Child {
 
   /** @brief Check to see if the Child has a parent. */
   const bool has_parent() noexcept { return parent != nullptr; }
+  const bool has_parent() const noexcept { return parent != nullptr; }
 
   // TODO: Look in to making these references instead of pointer returns
   /** @brief Get the Child's parent. */
@@ -80,6 +83,11 @@ class Child {
 
   template <class C>
   C get_parent_as() noexcept {
+    return static_cast<C>(get_parent());
+  }
+
+  template <class C>
+  C get_parent_as() const noexcept {
     return static_cast<C>(get_parent());
   }
 
@@ -110,6 +118,7 @@ class Child {
 
   // Calculate the padding for printing this object
   std::string padding() noexcept;
+  std::string padding() const noexcept;
 };
 
 /*>>>>>>>>>>>>>>>>>>>> Child IMPLEMENTATION <<<<<<<<<<<<<<<<<<<<<<<<<*/
@@ -123,7 +132,7 @@ class Child {
 inline void Child::failed() noexcept {
   this->status = false;
   // propogates the failure up the tree
-  if (has_parent()) this->get_parent()->failed();
+  if (this->has_parent()) this->get_parent()->failed();
 }
 
 /**
@@ -131,7 +140,11 @@ inline void Child::failed() noexcept {
  * @return A string of spaces for use in pretty-printing.
  */
 inline std::string Child::padding() noexcept {
-  return has_parent() ? get_parent()->padding() + "  " : "";
+  return this->has_parent() ? this->get_parent()->padding() + "  " : "";
+}
+
+inline std::string Child::padding() const noexcept {
+  return this->has_parent() ? this->get_parent()->padding() + "  " : "";
 }
 
 inline const bool Child::has_formatter() noexcept {

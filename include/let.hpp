@@ -8,6 +8,13 @@
 
 namespace CppSpec {
 
+/**
+ * @brief Base class for lets to abstract away the template arguments
+ *
+ * Expectation needs to know whether the calculated value of a
+ * Let has been delivered or not, but doesn't need to know the value
+ * itself or its type.
+ */
 class LetBase {
  protected:
   bool delivered;
@@ -19,6 +26,12 @@ class LetBase {
   constexpr const bool has_result() noexcept { return this->delivered; }
 };
 
+/**
+ * @brief A container that memoizes the result of a block in `it's
+ *
+ * @tparm T the type of the object that the Let will contain, aka
+ *          return type of the block.
+ */
 template <typename T>
 class Let : public LetBase {
   typedef std::function<T()> block_t;

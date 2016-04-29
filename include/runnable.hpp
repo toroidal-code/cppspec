@@ -19,6 +19,7 @@ class Runnable : public Child {
   explicit Runnable(Child &parent) noexcept : Child(parent) {}
   explicit Runnable(Child *parent) noexcept : Child(parent) {}
   explicit Runnable(const Child *parent) noexcept : Child(parent) {}
+  explicit Runnable(const Child &parent) noexcept : Child(parent) {}
   virtual Result run(Formatters::BaseFormatter &printer) = 0;
 };
 

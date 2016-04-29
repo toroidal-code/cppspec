@@ -33,8 +33,8 @@ class BaseFormatter {
 
   virtual ~BaseFormatter() = default;
 
-  virtual void format(Description &description) {}
-  virtual void format(ItBase &it) {}
+  virtual void format(const Description &description) {}
+  virtual void format(const ItBase &it) {}
   virtual void format(std::string message) {
     out_stream << message << std::endl;
   }

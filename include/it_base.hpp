@@ -3,10 +3,12 @@
 #define CPPSPEC_IT_BASE_HPP
 #pragma once
 
+#include <string>
 #include <vector>
 #include "runnable.hpp"
 #include "let.hpp"
 #include "util.hpp"
+
 namespace CppSpec {
 
 namespace Expectations {
@@ -17,7 +19,7 @@ class ExpectationFunc;
 }
 
 /**
- * @brief Most-base class for `it` expressions.
+ * @brief Base class for `it` expressions.
  *
  * This class is needed to prevent a circular dependency between it.hpp and
  * basematcher.hpp. Matchers need to know whether or not an `it` has an explicit
@@ -27,64 +29,116 @@ class ExpectationFunc;
  * `it` classes, and thus is used to resolve the dependency cycle.
  */
 class ItBase : public Runnable {
-  std::string descr = "";
+  /** @brief The documentation string for this `it` */
+  std::string description = "";
 
  public:
-  ItBase() = delete;
-  ItBase(ItBase const &copy) : Runnable(copy.get_parent()), descr(copy.descr) {}
+  ItBase() = delete;  // Don't allow a default constructor
+
+  /** @brief Copy constructor */
+  ItBase(const ItBase &copy) noexcept : Runnable(copy.get_parent()),
+                                        description(copy.description) {}
 
   /**
    * @brief Create an BaseIt without an explicit description
    * @return the constructed BaseIt
    */
-  explicit ItBase(Child &parent) : Runnable(parent) {}
+  explicit ItBase(const Child &parent) noexcept : Runnable(parent) {}
 
   /**
    * @brief Create an BaseIt with an explicit description.
-   * @param descr the description of the `it` statement
+   * @param description the documentation string of the `it` statement
    * @return the constructed BaseIt
    */
-  explicit ItBase(Child &parent, std::string descr)
-      : Runnable(parent), descr(descr) {}
+  explicit ItBase(const Child &parent, std::string description) noexcept
+      : Runnable(parent),
+        description(description) {}
 
   /**
    * @brief Get whether the object needs a description string
    * @return whether this object needs a description to be generated or not
    */
-  bool needs_descr() { return descr.empty(); }
+  const bool needs_description() noexcept { return description.empty(); }
 
   /**
    * @brief Get the description string for the `it` statement
    * @return the description string
    */
-  std::string get_descr() { return descr; }
-  const std::string get_descr() const { return descr; }
-  ItBase &set_descr(std::string descr);
+  std::string get_description() noexcept { return description; }
+  const std::string get_description() const noexcept { return description; }
 
-  template <class U>
-  typename std::enable_if<not Util::is_functional<U>::value,
-                          Expectations::ExpectationValue<U>>::type
-  expect(U value);
+  /**
+   * @brief Set the description string
+   * @return a reference to the modified ItBase
+   */
+  ItBase &set_description(std::string description) noexcept {
+    this->description = description;
+    return *this;
+  }
 
-  template <typename U>
-  auto expect(U block) ->
-      typename std::enable_if<Util::is_functional<U>::value,
-                              Expectations::ExpectationFunc<U>>::type;
+  /**
+   * @brief The `expect` object generator for objects and LiteralTypes
+   *
+   * @param value the item to wrap. This parameter is passed by value so
+   *              that statements like `expect(2)` or `expect(SomeClass())`
+   *              can be passed in
+   *
+   * @tparam T the type of the object contained in the ExpectationValue
+   *
+   * @return a ExpectationValue object containing the given value.
+   */
+  template <typename T>
+  typename std::enable_if<not Util::is_functional<T>::value,
+                          Expectations::ExpectationValue<T>>::type
+  expect(T value);
 
-  template <class U>
-  Expectations::ExpectationValue<std::vector<U>> expect(
-      std::initializer_list<U> init_list);
+  /**
+   * @brief The `expect` object generator for lambdas
+   *
+   * @param block the lambda to wrap.
+   *
+   * @tparam T the type of the lambda/function contained in the ExpectationFunc
+   *
+   * @return a ExpectationFunc object containing the given value.
+   */
+  template <typename T>
+  typename std::enable_if<Util::is_functional<T>::value,
+                          Expectations::ExpectationFunc<T>>::type
+  expect(T block);
 
-  template <class U>
-  Expectations::ExpectationValue<U> expect(Let<U> &let);
+  /**
+   * @brief The `expect` object generator for initializer lists
+   *
+   * @param init_list the list to wrap
+   *
+   * @tparam T the type of the items inside the initializer list
+   *
+   * @return a ExpectationValue object containing the given init_list.
+   */
+  template <typename T>
+  Expectations::ExpectationValue<std::initializer_list<T>> expect(
+      std::initializer_list<T> init_list);
 
-  Expectations::ExpectationValue<std::string> expect(const char* str);
+  /**
+   * @brief The `expect` object generator for Let
+   *
+   * @param block the let variable
+   *
+   * @tparam T the type of the value contained in the ExpectationFunc
+   *
+   * @return a ExpectationValue object containing the given value.
+   */
+  template <typename T>
+  Expectations::ExpectationValue<T> expect(Let<T> &let);
+
+  /**
+   * @brief The `expect` object generator for const char*
+   *
+   * @param string the string to wrap
+   * @return a ExpectationValue object containing a C++ string
+   */
+  Expectations::ExpectationValue<std::string> expect(const char *string);
 };
-
-inline ItBase &ItBase::set_descr(std::string descr) {
-  this->descr = descr;
-  return *this;
-}
 
 }  // namespace CppSpec
 #endif  // CPPSPEC_IT_BASE_HPP

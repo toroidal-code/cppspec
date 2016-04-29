@@ -18,28 +18,27 @@ class TAP : public BaseFormatter {
   std::list<std::string> failure_messages;
 
  public:
-  void format(Description &description) override;
-  void format(ItBase &it) override;
+  void format(const Description &description) override;
+  void format(const ItBase &it) override;
   void format(std::string message) override;
   void format_failure(std::string message) override;
   void flush() override;
 };
 
-inline void
-TAP::format(Description &description) {
+inline void TAP::format(const Description &description) {
   if (!first && description.get_parent() == nullptr) out_stream << std::endl;
   if (first) this->first = false;
 }
 
-inline void TAP::format(ItBase &it) {
-  std::string description = it.get_descr();
+inline void TAP::format(const ItBase &it) {
+  std::string description = it.get_description();
 
   // Build up the description for the test by ascending the
   // execution tree and chaining the individual descriptions together
-  Description *parent = static_cast<Description *>(it.get_parent());
+  const Description *parent = it.get_parent_as<const Description *>();
   while (parent != nullptr) {
-    description = parent->get_descr() + " " + description;
-    parent = static_cast<Description *>(parent->get_parent());
+    description = parent->get_description() + " " + description;
+    parent = it.get_parent_as<const Description *>();
   }
 
   if (color_output) buffer << (it.get_status() ? GREEN : RED);

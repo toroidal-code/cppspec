@@ -16,20 +16,20 @@ class Progress : public BaseFormatter {
   std::list<std::string> baked_failure_messages;
   std::list<std::string> raw_failure_messages;
 
-  std::string prep_failure_helper(ItBase &it);
+  std::string prep_failure_helper(const ItBase &it);
 
  public:
-  void format(ItBase &it) override;
+  void format(const ItBase &it) override;
   void format_failure(std::string message) override;
   void flush() override;
   void cleanup() override;
 
   void format_failure_messages();
-  void prep_failure(ItBase &it);
+  void prep_failure(const ItBase &it);
 };
 
 /** @brief An assistant function for prep_failure to reduce complexity */
-inline std::string Progress::prep_failure_helper(ItBase &it) {
+inline std::string Progress::prep_failure_helper(const ItBase &it) {
   // a singly-linked list to act as a LIFO queue
   std::forward_list<std::string> list;
 
@@ -44,7 +44,7 @@ inline std::string Progress::prep_failure_helper(ItBase &it) {
   };
 
   // Format the 'it' example first
-  temp_stream << it.padding() << it.get_descr() << std::endl;
+  temp_stream << it.padding() << it.get_description() << std::endl;
   push_and_clear();
 
   // Verbose already has the majority of what we need
@@ -53,17 +53,17 @@ inline std::string Progress::prep_failure_helper(ItBase &it) {
 
   // Ascend the tree to the root, formatting the nodes and
   // enqueing each formatted string as we go.
-  Description *parent = dynamic_cast<Description *>(it.get_parent());
+  const Description *parent = it.get_parent_as<const Description *>();
 
   do {
     helper_formatter.format(*parent);  // Format the node
     push_and_clear();
-  } while ((parent = dynamic_cast<Description *>(parent->get_parent())));
+  } while ((parent = dynamic_cast<const Description *>(parent->get_parent())));
 
   return Util::join(list);  // squash the list of strings and return it.
 }
 
-inline void Progress::prep_failure(ItBase &it) {
+inline void Progress::prep_failure(const ItBase &it) {
   std::ostringstream string_builder;  // oss is used as the local string builder
   if (color_output) string_builder << RED;  // if we're doing color, make it red
   string_builder << "Test number " << test_counter
@@ -78,7 +78,7 @@ inline void Progress::prep_failure(ItBase &it) {
   baked_failure_messages.push_back(string_builder.str());
 }
 
-inline void Progress::format(ItBase &it) {
+inline void Progress::format(const ItBase &it) {
   if (it.get_status()) {
     if (color_output) out_stream << GREEN;
     out_stream << ".";

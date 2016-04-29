@@ -101,14 +101,14 @@ Result MatcherBase<A, E>::run(Formatters::BaseFormatter &printer) {
   ItBase *par = static_cast<ItBase *>(this->get_parent());
   // If we need a description for our test, generate it
   // unless we're ignoring the output.
-  if (par->needs_descr() && !expectation.get_ignore_failure()) {
+  if (par->needs_description() && !expectation.get_ignore_failure()) {
     std::stringstream ss;
     ss << (expectation.get_sign()
                ? Expectations::PositiveExpectationHandler::verb()
                : Expectations::NegativeExpectationHandler::verb())
        << " " << this->description();
     std::string ss_str = ss.str();
-    par->set_descr(ss_str);
+    par->set_description(ss_str);
   }
 
   Result matched =
