@@ -19,7 +19,7 @@ class TAP : public BaseFormatter {
 
  public:
   void format(Description &description) override;
-  void format(BaseIt &it) override;
+  void format(ItBase &it) override;
   void format(std::string message) override;
   void format_failure(std::string message) override;
   void flush() override;
@@ -31,7 +31,7 @@ TAP::format(Description &description) {
   if (first) this->first = false;
 }
 
-inline void TAP::format(BaseIt &it) {
+inline void TAP::format(ItBase &it) {
   std::string description = it.get_descr();
 
   // Build up the description for the test by ascending the

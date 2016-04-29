@@ -49,34 +49,34 @@ describe bool_spec("Some Tests", $ {
 
 
   explain("{1,2,3}", _ {
-    it("includes 1", _ {
-      expect({1,2,3}).to_include({1});
+    it("contains 1", _ {
+      expect({1,2,3}).to_contain({1});
     });
     it("includes [1,2,3]", _ {
-      expect({1,2,3}).to_include({1,2,8});
-      expect({1,2,3}).to_include({1,2,7});
+      expect({1,2,3}).to_contain({1,2,8});
+      expect({1,2,3}).to_contain({1,2,7});
     });
     it("does not include 4", _ {
-      expect({1,2,3}).not_().to_include({4});
+      expect({1,2,3}).not_().to_contain({4});
     });
 
     it("does not include [4,5,6]", _ {
-      expect({1,2,3}).not_().to_include({4,5,6});
+      expect({1,2,3}).not_().to_contain({4,5,6});
     });
   });
 
 
   explain <std::list<int>> ({1,2,3}, _ {
-    it(_ { is_expected().to_include(1); });
+    it(_ { is_expected().to_contain(1); });
 
     it("includes [1,2,3]", _ {
-      expect<std::list<int>>({1,2,3}).to_include({1,2,3});
+      expect<std::list<int>>({1,2,3}).to_contain({1,2,3});
     });
 
-    it( _ { is_expected().not_().to_include(4); });
+    it( _ { is_expected().not_().to_contain(4); });
 
     it("does not include [4,5,6]", _ {
-      is_expected().not_().to_include({4,5,6});
+      is_expected().not_().to_contain({4,5,6});
     });
   });
 
@@ -140,22 +140,22 @@ describe strcmp_spec("int strcmp ( const char * str1, const char * str2 )", $ {
   });
 
   it("returns a negative integer when str1 is less than str2", _ {
-    expect(strcmp("hello", "world")).to_be(less_than_zero);
-    expect(strcmp("0123", "1321431")).to_be(less_than_zero);
+    expect(strcmp("hello", "world")).to_satisfy(less_than_zero);
+    expect(strcmp("0123", "1321431")).to_satisfy(less_than_zero);
   });
 
   it("returns a positive integer if str1 is greater than str2", _ {
-    expect(strcmp("yellow", "world")).to_be(greater_than_zero);
-    expect(strcmp("9", "789")).to_be(greater_than_zero);
+    expect(strcmp("yellow", "world")).to_satisfy(greater_than_zero);
+    expect(strcmp("9", "789")).to_satisfy(greater_than_zero);
   });
 });
 
 describe_a <std::vector<int>> vector_spec({1,2,3,4}, $ {
   it("should contain 2", _ {
-    expect({1,2,3,4}).to_include(2);
+    expect({1,2,3,4}).to_contain(2);
   });
 
-  it( _ { is_expected().to_include(2); });
+  it( _ { is_expected().to_contain(2); });
 });
 
 int _count = 0;
@@ -184,7 +184,8 @@ describe let_spec("let", $ {
 
 describe list_spec("A list spec", $ {
   explain <std::list<int>> ({1,2,3,4}, _ {
-    it( _ { is_expected().to_include(8); });
+    it( _ { is_expected().to_contain(8); });
+    it( _ { is_expected().to_start_with({1,2,3}); });
   });
 });
 

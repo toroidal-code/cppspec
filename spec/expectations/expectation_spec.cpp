@@ -3,15 +3,15 @@
 using namespace CppSpec;
 
 // Very simple int<=>int custom matcher
-struct CustomMatcher : public Matchers::BaseMatcher<int, int> {
+struct CustomMatcher : public Matchers::MatcherBase<int, int> {
   CustomMatcher(Expectations::Expectation<int> &expectation, int expected)
-      : Matchers::BaseMatcher<int,int>(expectation, expected){};
+      : Matchers::MatcherBase<int,int>(expectation, expected){};
   bool match() { return get_expected() == get_actual(); }
 };
 
 describe expectation_spec("Expectation", $ {
   context(".to", _ {
-    it("accepts a custom BaseMatcher subclass", _ {
+    it("accepts a custom MatcherBase subclass", _ {
       auto e = expect(2);
       e.to(CustomMatcher(e, 2));
     });
@@ -23,7 +23,7 @@ describe expectation_spec("Expectation", $ {
     });
 
     it("is false when false", _ {
-      expect(false).ignore().to_be_true();
+      expect(false).not_().to_be_true();
     });
   });
 
@@ -33,18 +33,18 @@ describe expectation_spec("Expectation", $ {
     });
 
     it("is false when true", _ {
-      expect(true).ignore().to_be_false();
+      expect(true).not_().to_be_false();
     });
   });
 
   context(".to_fail", _ {
     it("is true when Result is false", _ {
-      expect(Result::failure).to_fail();
+      expect(Result::failure()).to_fail();
     });
 
     it("is false when Result is true", _ {
-      expect(expect(Result::success).ignore().to_fail().get_status()).to_be_false();
-      expect(expect(Result::success).ignore().to_fail()).to_fail();
+      expect(expect(Result::success()).ignore().to_fail().get_status()).to_be_false();
+      expect(expect(Result::success()).ignore().to_fail()).to_fail();
     });
   });
 
@@ -74,7 +74,7 @@ describe expectation_spec("Expectation", $ {
     });
   });
 
-  context(".ignore()", [=] (Description &self) {
+  context(".ignore()", _ {
     ItD i(self, _ {});
 #undef expect
     // TODO: Allow lets take a &self that refers to calling it?
@@ -82,21 +82,29 @@ describe expectation_spec("Expectation", $ {
 #define expect self.expect
 
     it("flips the ignore_failure flag", _ {
-      expect(e->get_ignore_failure()).to_equal(false);
-      expect(e->ignore().get_ignore_failure()).to_equal(true);
+      expect(e->get_ignore_failure()).to_be_false();
+      expect(e->ignore().get_ignore_failure()).to_be_true();
     });
 
     it("makes it so that matches do not alter the status of the parent", _ {
       expect([=]() mutable {
         e->ignore().to_equal(4);
         return i.get_status();
-      }).to_equal(true);
+      }).to_be_true();
     });
 
     it("still returns Result::failure on match failure", _ {
       expect([=]() mutable {
         return e->ignore().to_equal(4);
       }).to_fail();
+    });
+  });
+
+  context("ExpectationFunc", _ {
+    it("is lazy", _{
+      auto foo = [] { return 1 + 2; };
+      Expectations::ExpectationFunc<decltype(foo)> expectation(self, foo);
+      expect(expectation.get_target()).to_equal(3);
     });
   });
 });

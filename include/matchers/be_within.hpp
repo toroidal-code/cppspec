@@ -9,14 +9,14 @@ namespace CppSpec {
 namespace Matchers {
 
 template <typename A, typename E>
-class BeWithin : public BaseMatcher<A, E> {
+class BeWithin : public MatcherBase<A, E> {
   E delta;
   std::string unit;
   E tolerance;
 
  public:
   BeWithin(Expectations::Expectation<A> &expectation, E delta)
-      : BaseMatcher<A, E>(expectation, 0), delta(delta) {}
+      : MatcherBase<A, E>(expectation, 0), delta(delta) {}
 
   bool of(E expected);
   bool percent_of(E expected);

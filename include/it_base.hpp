@@ -11,7 +11,9 @@ namespace CppSpec {
 
 namespace Expectations {
 template <typename T>
-class Expectation;
+class ExpectationValue;
+template <typename T>
+class ExpectationFunc;
 }
 
 /**
@@ -24,25 +26,25 @@ class Expectation;
  * Matchers and execute them. This class is the least common denominator of the
  * `it` classes, and thus is used to resolve the dependency cycle.
  */
-class BaseIt : public Runnable {
+class ItBase : public Runnable {
   std::string descr = "";
 
  public:
-  BaseIt() = delete;
-  BaseIt(BaseIt const &copy) : Runnable(copy.get_parent()), descr(copy.descr) {}
+  ItBase() = delete;
+  ItBase(ItBase const &copy) : Runnable(copy.get_parent()), descr(copy.descr) {}
 
   /**
    * @brief Create an BaseIt without an explicit description
    * @return the constructed BaseIt
    */
-  explicit BaseIt(Child &parent) : Runnable(parent) {}
+  explicit ItBase(Child &parent) : Runnable(parent) {}
 
   /**
    * @brief Create an BaseIt with an explicit description.
    * @param descr the description of the `it` statement
    * @return the constructed BaseIt
    */
-  explicit BaseIt(Child &parent, std::string descr)
+  explicit ItBase(Child &parent, std::string descr)
       : Runnable(parent), descr(descr) {}
 
   /**
@@ -57,27 +59,29 @@ class BaseIt : public Runnable {
    */
   std::string get_descr() { return descr; }
   const std::string get_descr() const { return descr; }
-  BaseIt &set_descr(std::string descr);
+  ItBase &set_descr(std::string descr);
 
   template <class U>
   typename std::enable_if<not Util::is_functional<U>::value,
-                          Expectations::Expectation<U>>::type
+                          Expectations::ExpectationValue<U>>::type
   expect(U value);
 
   template <typename U>
-  auto expect(U block) -> typename std::enable_if<
-      Util::is_functional<U>::value,
-      Expectations::Expectation<decltype(block())>>::type;
+  auto expect(U block) ->
+      typename std::enable_if<Util::is_functional<U>::value,
+                              Expectations::ExpectationFunc<U>>::type;
 
   template <class U>
-  Expectations::Expectation<std::vector<U>> expect(
+  Expectations::ExpectationValue<std::vector<U>> expect(
       std::initializer_list<U> init_list);
 
   template <class U>
-  Expectations::Expectation<U> expect(Let<U> &let);
+  Expectations::ExpectationValue<U> expect(Let<U> &let);
+
+  Expectations::ExpectationValue<std::string> expect(const char* str);
 };
 
-inline BaseIt &BaseIt::set_descr(std::string descr) {
+inline ItBase &ItBase::set_descr(std::string descr) {
   this->descr = descr;
   return *this;
 }

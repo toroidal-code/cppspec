@@ -10,12 +10,12 @@ namespace CppSpec {
 namespace Matchers {
 
 template <typename A>
-class Fail : public BaseMatcher<A, void *> {
+class Fail : public MatcherBase<A, void *> {
  public:
   static_assert(std::is_same<A, Result>::value,
                 ".fail must be matched against a Result.");
   explicit Fail(Expectations::Expectation<A> &expectation)
-      : BaseMatcher<A, void *>(expectation, nullptr) {}
+      : MatcherBase<A, void *>(expectation, nullptr) {}
 
   typename std::enable_if<std::is_same<A, Result>::value, bool>::type match() {
     return not this->get_actual().get_status();
@@ -23,10 +23,10 @@ class Fail : public BaseMatcher<A, void *> {
 };
 
 template <typename A>
-class FailWith : public Matchers::BaseMatcher<A, std::string> {
+class FailWith : public Matchers::MatcherBase<A, std::string> {
  public:
   FailWith(Expectations::Expectation<A> &expectation, std::string expected)
-      : Matchers::BaseMatcher<A, std::string>(expectation, expected) {}
+      : Matchers::MatcherBase<A, std::string>(expectation, expected) {}
 
   typename std::enable_if<std::is_same<A, Result>::value, bool>::type match();
 };

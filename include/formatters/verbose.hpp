@@ -23,7 +23,7 @@ class Verbose : public BaseFormatter {
   explicit Verbose(const BaseFormatter &base) : BaseFormatter(base) {}
 
   void format(Description &description) override;
-  void format(BaseIt &description) override;
+  void format(ItBase &description) override;
   void format_failure(std::string message) override;
   void format_failure_messages();
 };
@@ -35,7 +35,7 @@ inline void Verbose::format(Description &description) {
   if (first) this->first = false;
 }
 
-inline void Verbose::format(BaseIt &it) {
+inline void Verbose::format(ItBase &it) {
   if (color_output) out_stream << (it.get_status() ? GREEN : RED);
   out_stream << it.padding() << it.get_descr() << std::endl;
   if (color_output) out_stream << RESET;

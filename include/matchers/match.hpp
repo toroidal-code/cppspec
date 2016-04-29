@@ -1,0 +1,55 @@
+/** @file */
+#ifndef CPPSPEC_MATCHERS_MATCH_HPP
+#define CPPSPEC_MATCHERS_MATCH_HPP
+#pragma once
+#include <string>
+#include <regex>
+#include "matcher_base.hpp"
+namespace CppSpec {
+namespace Matchers {
+
+template <typename A>
+class Match : MatcherBase<A, std::regex> {
+ public:
+  explicit Match(Expectations::Expectation<A> &expectation,
+                 std::string expected)
+      : MatcherBase<A, std::regex>(expectation, std::regex(expected)) {}
+
+  explicit Match(Expectations::Expectation<A> &expectation, std::regex expected)
+      : MatcherBase<A, std::regex>(expectation, expected) {}
+
+  std::string description() override {
+    return "match " + Pretty::to_word(this->get_expected());
+  }
+
+  virtual bool match() override {
+    std::smatch temp_match;
+    return std::regex_match(this->get_actual(), temp_match,
+                            this->get_expected());
+  }
+};
+
+template <typename A>
+class MatchPartial : public MatcherBase<A, std::regex> {
+ public:
+  explicit MatchPartial(Expectations::Expectation<A> &expectation,
+                        std::string expected)
+      : MatcherBase<A, std::regex>(expectation, std::regex(expected)) {}
+
+  explicit MatchPartial(Expectations::Expectation<A> &expectation,
+                        std::regex expected)
+      : MatcherBase<A, std::regex>(expectation, expected) {}
+
+  std::string description() override {
+    return "partially match " + Pretty::to_word(this->get_expected());
+  }
+
+  bool match() override {
+    return std::regex_match(this->get_actual(), this->get_expected());
+  }
+};
+
+}  // namespace Matchers
+}  // namespace CppSpec
+
+#endif  // CPPSPEC_MATCHERS_BE_NULLPTR_HPP

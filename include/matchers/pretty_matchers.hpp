@@ -14,7 +14,7 @@ namespace CppSpec {
 
 namespace Matchers {
 template <typename A, typename E>
-class BaseMatcher;
+class MatcherBase;
 }
 
 /**
@@ -47,7 +47,7 @@ struct Pretty {
   static std::string to_word_type(T &item);
 
   template <typename A, typename E>
-  static std::string to_word(Matchers::BaseMatcher<A, E> &matcher);
+  static std::string to_word(Matchers::MatcherBase<A, E> &matcher);
 
   template <class T>
   static std::string to_sentance(T &item);
@@ -171,7 +171,7 @@ typename std::enable_if<!Util::is_streamable<T>::value,
  * @return a string representation of the Matcher
  */
 template <typename A, typename E>
-inline std::string Pretty::to_word(Matchers::BaseMatcher<A, E> &matcher) {
+inline std::string Pretty::to_word(Matchers::MatcherBase<A, E> &matcher) {
   std::string description = matcher.description();
   if (description.empty()) {
     return "[No description]";
@@ -205,15 +205,15 @@ inline std::string Pretty::split_words(std::string sym) {
   std::stringstream ss;
   ss << sym;
   sym = ss.str();
-  regex_replace(sym, std::regex("_"), " ");
+  std::regex_replace(sym, std::regex("_"), " ");
   return sym;
 }
 
 inline std::string Pretty::underscore(std::string word) {
-  regex_replace(word, std::regex("([A-Z]+)([A-Z][a-z])"), "$1_$2");
-  regex_replace(word, std::regex("([a-z\\d])([A-Z])"), "$1_$2");
-  regex_replace(word, std::regex("-"), "_");
-  transform(word.begin(), word.end(), word.begin(), ::tolower);
+  std::regex_replace(word, std::regex("([A-Z]+)([A-Z][a-z])"), "$1_$2");
+  std::regex_replace(word, std::regex("([a-z\\d])([A-Z])"), "$1_$2");
+  std::regex_replace(word, std::regex("-"), "_");
+  std::transform(word.begin(), word.end(), word.begin(), ::tolower);
   return word;
 }
 
@@ -230,7 +230,7 @@ inline std::string Pretty::last(const std::string &s, const char delim) {
 }
 
 inline std::string Pretty::improve_hash_formatting(std::string inspect_string) {
-  regex_replace(inspect_string, std::regex("(\\S)=>(\\S)"), "$1 => $2");
+  std::regex_replace(inspect_string, std::regex("(\\S)=>(\\S)"), "$1 => $2");
   return inspect_string;
 }
 

@@ -9,21 +9,21 @@
 
 namespace CppSpec {
 
-class ItD : public BaseIt {
+class ItD : public ItBase {
   std::function<void(ItD &)> body;
 
  public:
   ItD(Child &parent, std::string descr, std::function<void(ItD &)> body)
-      : BaseIt(parent, descr), body(body) {}
+      : ItBase(parent, descr), body(body) {}
 
   ItD(Child &parent, std::function<void(ItD &)> body)
-      : BaseIt(parent), body(body) {}
+      : ItBase(parent), body(body) {}
 
   Result run(Formatters::BaseFormatter &printer) override;
 };
 
 template <class T>
-class ItCd : public BaseIt {
+class ItCd : public ItBase {
   std::function<void(ItCd<T> &)> body;
 
  public:
@@ -32,12 +32,12 @@ class ItCd : public BaseIt {
   // This is only ever instantiated by ClassDescription<T>
   ItCd(Child &parent, T &subject, std::string descr,
        std::function<void(ItCd<T> &)> body)
-      : BaseIt(parent, descr), body(body), subject(subject) {}
+      : ItBase(parent, descr), body(body), subject(subject) {}
 
   ItCd(Child &parent, T &subject, std::function<void(ItCd<T> &)> body)
-      : BaseIt(parent), body(body), subject(subject) {}
+      : ItBase(parent), body(body), subject(subject) {}
 
-  Expectations::Expectation<T> is_expected();
+  Expectations::ExpectationValue<T> is_expected();
   Result run(Formatters::BaseFormatter &printer) override;
 };
 
@@ -52,18 +52,17 @@ class ItCd : public BaseIt {
  */
 template <class T>
 typename std::enable_if<not Util::is_functional<T>::value,
-                        Expectations::Expectation<T>>::type
-BaseIt::expect(T value) {
-  return Expectations::Expectation<T>(*this, value);
+                        Expectations::ExpectationValue<T>>::type
+ItBase::expect(T value) {
+  return Expectations::ExpectationValue<T>(*this, value);
 }
 
 template <typename T>
-auto BaseIt::expect(T block) ->
-    typename std::enable_if<Util::is_functional<T>::value,
-                            Expectations::Expectation<decltype(block())>>::type
-
+auto ItBase::expect(T block) -> typename std::enable_if<
+    Util::is_functional<T>::value,
+    Expectations::ExpectationFunc<T>>::type
 {
-  return expect(block());
+  return Expectations::ExpectationFunc<T>(*this, block);
 }
 
 // template <class T>
@@ -74,8 +73,8 @@ auto BaseIt::expect(T block) ->
 // }
 
 template <typename T>
-Expectations::Expectation<T> BaseIt::expect(Let<T> &let) {
-  return Expectations::Expectation<T>(*this, let.value());
+Expectations::ExpectationValue<T> ItBase::expect(Let<T> &let) {
+  return Expectations::ExpectationValue<T>(*this, let.value());
 }
 
 /**
@@ -86,10 +85,15 @@ Expectations::Expectation<T> BaseIt::expect(Let<T> &let) {
  * @endcode
  */
 template <class T>
-Expectations::Expectation<std::vector<T>> BaseIt::expect(
+Expectations::ExpectationValue<std::vector<T>> ItBase::expect(
     std::initializer_list<T> init_list) {
-  return Expectations::Expectation<std::vector<T>>(*this, init_list);
+  return Expectations::ExpectationValue<std::vector<T>>(*this, init_list);
 }
+
+inline Expectations::ExpectationValue<std::string> ItBase::expect(const char * str) {
+  return Expectations::ExpectationValue<std::string>(*this, std::string(str));
+}
+
 
 }  // namespace CppSpec
 #endif  // CPPSPEC_IT_HPP

@@ -11,7 +11,7 @@ namespace Matchers {
 enum class RangeMode { exclusive, inclusive };
 
 template <typename A, typename E>
-class BeBetween : public BaseMatcher<A, E> {
+class BeBetween : public MatcherBase<A, E> {
   E min;
   E max;
   RangeMode mode;
@@ -24,7 +24,7 @@ class BeBetween : public BaseMatcher<A, E> {
 
   BeBetween(Expectations::Expectation<A> &expectation, E min, E max,
             RangeMode mode = RangeMode::inclusive)
-      : BaseMatcher<A, E>(expectation), min(min), max(max), mode(mode) {
+      : MatcherBase<A, E>(expectation), min(min), max(max), mode(mode) {
     switch (mode) {
       case RangeMode::inclusive:
         lt_op = LtOp::lt_eq;

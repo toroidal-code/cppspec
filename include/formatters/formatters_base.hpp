@@ -9,7 +9,7 @@
 
 namespace CppSpec {
 class Description;
-class BaseIt;
+class ItBase;
 
 namespace Formatters {
 
@@ -34,7 +34,7 @@ class BaseFormatter {
   virtual ~BaseFormatter() = default;
 
   virtual void format(Description &description) {}
-  virtual void format(BaseIt &it) {}
+  virtual void format(ItBase &it) {}
   virtual void format(std::string message) {
     out_stream << message << std::endl;
   }

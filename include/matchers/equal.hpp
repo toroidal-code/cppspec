@@ -16,10 +16,10 @@ namespace Matchers {
  * @tparam E the type of the expected value
  */
 template <typename A, typename E>
-class Equal : public BaseMatcher<A, E> {
+class Equal : public MatcherBase<A, E> {
  public:
   Equal(Expectations::Expectation<A> &expectation, E expected)
-      : BaseMatcher<A, E>(expectation, expected) {}
+      : MatcherBase<A, E>(expectation, expected) {}
 
   std::string description() override;
   std::string failure_message() override;
@@ -55,7 +55,7 @@ template <typename A, typename E>
 std::string Equal<A, E>::failure_message_when_negated() {
   std::stringstream ss;
   ss << "expected not "
-     << Pretty::inspect_object(BaseMatcher<A, E>::get_expected()) << "\n"
+     << Pretty::inspect_object(MatcherBase<A, E>::get_expected()) << "\n"
      << "         got " << actual_inspected() << "\n"
      << "Compared using `==`" << std::endl;
   return ss.str();
@@ -64,7 +64,7 @@ std::string Equal<A, E>::failure_message_when_negated() {
 template <typename A, typename E>
 std::string Equal<A, E>::simple_failure_message() {
   std::stringstream ss;
-  ss << "expected " << Pretty::inspect_object(BaseMatcher<A, E>::get_expected())
+  ss << "expected " << Pretty::inspect_object(MatcherBase<A, E>::get_expected())
      << "\n"
      << "     got " << actual_inspected() << "\n"
      << "Compared using `==`" << std::endl;
@@ -95,7 +95,7 @@ bool Equal<A, E>::expected_is_a_literal() {
 
 template <typename A, typename E>
 std::string Equal<A, E>::actual_inspected() {
-  return Pretty::inspect_object(BaseMatcher<A, E>::get_actual());
+  return Pretty::inspect_object(MatcherBase<A, E>::get_actual());
 }
 
 // template <typename A, bool E>
