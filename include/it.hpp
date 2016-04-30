@@ -52,8 +52,7 @@ class ItCD : public ItBase {
   const T &subject;
 
   // This is only ever instantiated by ClassDescription<T>
-  ItCD(const Child &parent, const T &subject, std::string description,
-       Block block)
+  ItCD(const Child &parent, const T &subject, std::string description, Block block)
       : ItBase(parent, description), block(block), subject(subject) {}
 
   ItCD(const Child &parent, const T &subject, Block block)

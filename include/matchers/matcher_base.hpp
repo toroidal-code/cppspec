@@ -26,11 +26,7 @@ class MatcherBase : public Runnable, public Pretty {
   Expectations::Expectation<Actual> &expectation;
 
  public:
-  MatcherBase(MatcherBase<Actual, Expected> const &copy)
-      : Runnable(copy.get_parent()),
-        custom_failure_message(copy.custom_failure_message),
-        expected(copy.expected),
-        expectation(copy.expectation) {}
+  MatcherBase(MatcherBase<Actual, Expected> const &copy) = default;
 
   explicit MatcherBase(Expectations::Expectation<Actual> &expectation)
       : Runnable(*expectation.get_parent()),  // We want the parent of the

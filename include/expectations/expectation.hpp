@@ -51,12 +51,7 @@ class Expectation : public Child {
   bool ignore_failure = false;
 
  public:
-  Expectation(Expectation const &copy)
-      : Child(copy.get_parent()),
-        // block(copy.block),
-        // has_block(copy.has_block),
-        is_positive(copy.is_positive),
-        ignore_failure(copy.ignore_failure) {}
+  Expectation(const Expectation &) = default;
 
   /**
    * @brief Create an Expectation using a value.
@@ -65,7 +60,7 @@ class Expectation : public Child {
    *
    * @return The constructed Expectation.
    */
-  Expectation(ItBase &it) : Child(it) {}
+  explicit Expectation(ItBase &it) : Child(Child::of(it)) {}
 
   /** @brief Get the target of the expectation. */
   // virtual const A &get_target() const & { return target; }
@@ -520,7 +515,7 @@ class ExpectationFunc : public Expectation<decltype(std::declval<F>()())> {
   // Expectation<A>::get_target()(); }
 
   ExpectationFunc &not_() override {
-    this->is_positive = not this->is_positive;
+    this->is_positive = !this->is_positive;
     return *this;
   }
 

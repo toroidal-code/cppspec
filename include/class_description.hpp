@@ -25,6 +25,7 @@ class ClassDescription : public Description {
   std::string type = "";
 
  public:
+  const bool has_subject = true;
   T subject;  // subject field public for usage in `expect([self.]subject)`
 
   // Constructor
@@ -69,10 +70,6 @@ class ClassDescription : public Description {
                    Block block)
       : Description(description), block(block), subject(T(init_list)) {}
 
-  ClassDescription<T>(Description &d) : Description(d) {}
-
-  const bool has_subject = true;
-
   Result it(std::string description, std::function<void(ItCD<T> &)> block);
   Result it(std::function<void(ItCD<T> &)> block);
   /** @brief an alias for it */
@@ -99,11 +96,7 @@ class ClassDescription : public Description {
 
   Result run(Formatters::BaseFormatter &printer) override;
 
-  //  std::string get_descr() noexcept override { return description; }
-  //  const std::string get_descr() const noexcept override { return
-  //  description; }
-  std::string get_subject_type() noexcept override { return type; }
-  const std::string get_subject_type() const noexcept override { return type; }
+  std::string get_subject_type() const noexcept override { return type; }
 };
 
 template <class T>
@@ -246,7 +239,7 @@ Result ClassDescription<T>::it(std::function<void(ItCD<T> &)> block) {
 
 template <class T>
 Result ClassDescription<T>::run(Formatters::BaseFormatter &printer) {
-  if (not this->has_formatter()) this->set_printer(printer);
+  if (not this->has_formatter()) this->set_formatter(printer);
   printer.format(*this);
   this->block(*this);
   for (const auto &a : after_alls) a();

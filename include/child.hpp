@@ -58,15 +58,11 @@ class Child {
   Child &operator=(Child &&) = default;
 
   // Copy constructor/operator
+  Child(const Child &) = default;
   Child &operator=(const Child &) = default;
 
   // Custom constructors
-  explicit Child(Child &parent) noexcept : parent(&parent) {}
-  explicit Child(const Child &parent) noexcept
-      : parent(&const_cast<Child &>(parent)) {}
-  explicit Child(Child *parent) noexcept : parent(parent) {}
-  explicit Child(const Child *parent) noexcept
-      : parent(const_cast<Child *>(parent)) {}
+  static Child of(const Child& parent) noexcept { return Child().set_parent(&parent); }
 
   /*--------- Parent helper functions -------------*/
 
@@ -76,15 +72,7 @@ class Child {
 
   // TODO: Look in to making these references instead of pointer returns
   /** @brief Get the Child's parent. */
-  Child *get_parent() noexcept { return parent; }
-  const Child *get_parent() const noexcept {
-    return const_cast<Child *>(parent);
-  }
-
-  template <class C>
-  C get_parent_as() noexcept {
-    return static_cast<C>(get_parent());
-  }
+  Child *get_parent() const noexcept { return parent;  }
 
   template <class C>
   C get_parent_as() const noexcept {
@@ -92,36 +80,34 @@ class Child {
   }
 
   /** @brief Set the Child's parent */
-  void set_parent(Child *parent) noexcept { this->parent = parent; }
-  void set_parent(const Child *parent) noexcept {
+  Child set_parent(Child *parent) noexcept { this->parent = parent; return *this; }
+  Child& set_parent(const Child *parent) noexcept {
     this->parent = const_cast<Child *>(parent);
+    return *this;
   }
 
   /*--------- Formatter helper functions -----------*/
   // Check to see if the tree has a printer
-  const bool has_formatter() noexcept;
+  const bool has_formatter() const noexcept;
 
   // Get the printer from the tree
-  Formatters::BaseFormatter &get_formatter() noexcept;
+  Formatters::BaseFormatter &get_formatter() const noexcept;
 
-  void set_printer(const Formatters::BaseFormatter &formatter) {
+  void set_formatter(const Formatters::BaseFormatter &formatter) {
     this->formatter = &const_cast<Formatters::BaseFormatter &>(formatter);
   }
 
   /*--------- Primary member functions -------------*/
 
   /** @brief Get the status of the object (success/failure) */
-  const bool get_status() noexcept { return this->status; }
   const bool get_status() const noexcept { return this->status; }
-
   void failed() noexcept;  // Report failure to the object.
 
   // Calculate the padding for printing this object
-  std::string padding() noexcept;
   std::string padding() const noexcept;
 };
 
-/*>>>>>>>>>>>>>>>>>>>> Child IMPLEMENTATION <<<<<<<<<<<<<<<<<<<<<<<<<*/
+/*>>>>>>>>>>>>>>>>>>>> Child <<<<<<<<<<<<<<<<<<<<<<<<<*/
 
 /**
  * @brief Report failure to the object.
@@ -139,21 +125,17 @@ inline void Child::failed() noexcept {
  * @brief Generate padding (indentation) fore the current object.
  * @return A string of spaces for use in pretty-printing.
  */
-inline std::string Child::padding() noexcept {
-  return this->has_parent() ? this->get_parent()->padding() + "  " : "";
-}
-
 inline std::string Child::padding() const noexcept {
   return this->has_parent() ? this->get_parent()->padding() + "  " : "";
 }
 
-inline const bool Child::has_formatter() noexcept {
+inline const bool Child::has_formatter() const noexcept {
   if (this->formatter != nullptr) return true;
   if (!this->has_parent()) return false;  // base case;
   return parent->has_formatter();
 }
 
-inline Formatters::BaseFormatter &Child::get_formatter() noexcept {
+inline Formatters::BaseFormatter &Child::get_formatter() const noexcept {
   if (this->formatter) return *formatter;
   if (!this->has_parent()) std::terminate();
   return parent->get_formatter();

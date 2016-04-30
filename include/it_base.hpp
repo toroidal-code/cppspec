@@ -36,7 +36,7 @@ class ItBase : public Runnable {
   ItBase() = delete;  // Don't allow a default constructor
 
   /** @brief Copy constructor */
-  ItBase(const ItBase &copy) noexcept : Runnable(copy.get_parent()),
+  ItBase(const ItBase &copy) noexcept : Runnable(copy),
                                         description(copy.description) {}
 
   /**
