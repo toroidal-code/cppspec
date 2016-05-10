@@ -2,7 +2,7 @@
 using namespace CppSpec;
 describe be_between_spec("BeBetween", $ {
 //  class SizeMatters : public Matchers::BaseMatcher<std::string, std::string> {
-//    SizeMatters(Expectations::Expectation<std::string> &expectation, std::string expected)
+//    SizeMatters(Expectation<std::string> &expectation, std::string expected)
 //        : Matchers::BaseMatcher<std::string,std::string>(expectation, expected){};
 //    bool match() { return this->get_actual() == this->get_expected(); }
 //  };

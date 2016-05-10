@@ -7,7 +7,6 @@
 #include "result.hpp"
 
 namespace CppSpec {
-namespace Expectations {
 
 struct PositiveExpectationHandler {
   template <typename A, class Matcher>
@@ -36,6 +35,5 @@ Result NegativeExpectationHandler::handle_matcher(Matcher &matcher) {
              : Result::success();
 }
 
-}  // namespace Expectations
 }  // namespace CppSpec
 #endif  // CPPSPEC_EXPECTATIONS_HANDLER_HPP

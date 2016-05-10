@@ -11,11 +11,11 @@ namespace Matchers {
 template <typename A>
 class Match : MatcherBase<A, std::regex> {
  public:
-  explicit Match(Expectations::Expectation<A> &expectation,
+  explicit Match(Expectation<A> &expectation,
                  std::string expected)
       : MatcherBase<A, std::regex>(expectation, std::regex(expected)) {}
 
-  explicit Match(Expectations::Expectation<A> &expectation, std::regex expected)
+  explicit Match(Expectation<A> &expectation, std::regex expected)
       : MatcherBase<A, std::regex>(expectation, expected) {}
 
   std::string description() override {
@@ -32,11 +32,11 @@ class Match : MatcherBase<A, std::regex> {
 template <typename A>
 class MatchPartial : public MatcherBase<A, std::regex> {
  public:
-  explicit MatchPartial(Expectations::Expectation<A> &expectation,
+  explicit MatchPartial(Expectation<A> &expectation,
                         std::string expected)
       : MatcherBase<A, std::regex>(expectation, std::regex(expected)) {}
 
-  explicit MatchPartial(Expectations::Expectation<A> &expectation,
+  explicit MatchPartial(Expectation<A> &expectation,
                         std::regex expected)
       : MatcherBase<A, std::regex>(expectation, expected) {}
 

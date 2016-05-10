@@ -11,12 +11,10 @@
 
 namespace CppSpec {
 
-namespace Expectations {
 template <typename T>
 class ExpectationValue;
 template <typename T>
 class ExpectationFunc;
-}
 
 /**
  * @brief Base class for `it` expressions.
@@ -89,7 +87,7 @@ class ItBase : public Runnable {
    */
   template <typename T>
   typename std::enable_if<not Util::is_functional<T>::value,
-                          Expectations::ExpectationValue<T>>::type
+                          ExpectationValue<T>>::type
   expect(T value);
 
   /**
@@ -103,7 +101,7 @@ class ItBase : public Runnable {
    */
   template <typename T>
   typename std::enable_if<Util::is_functional<T>::value,
-                          Expectations::ExpectationFunc<T>>::type
+                          ExpectationFunc<T>>::type
   expect(T block);
 
   /**
@@ -116,7 +114,7 @@ class ItBase : public Runnable {
    * @return a ExpectationValue object containing the given init_list.
    */
   template <typename T>
-  Expectations::ExpectationValue<std::initializer_list<T>> expect(
+  ExpectationValue<std::initializer_list<T>> expect(
       std::initializer_list<T> init_list);
 
   /**
@@ -129,7 +127,7 @@ class ItBase : public Runnable {
    * @return a ExpectationValue object containing the given value.
    */
   template <typename T>
-  Expectations::ExpectationValue<T> expect(Let<T> &let);
+  ExpectationValue<T> expect(Let<T> &let);
 
   /**
    * @brief The `expect` object generator for const char*
@@ -137,7 +135,7 @@ class ItBase : public Runnable {
    * @param string the string to wrap
    * @return a ExpectationValue object containing a C++ string
    */
-  Expectations::ExpectationValue<std::string> expect(const char *string);
+  ExpectationValue<std::string> expect(const char *string);
 };
 
 }  // namespace CppSpec

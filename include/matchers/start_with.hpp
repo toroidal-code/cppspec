@@ -16,7 +16,7 @@ class StartWith : public MatcherBase<A, E> {
                     "container");
 
  public:
-  StartWith(Expectations::Expectation <A> &expectation, E start)
+  StartWith(Expectation <A> &expectation, E start)
       : MatcherBase<A, E>(expectation, start) { }
 
   std::string description() override {

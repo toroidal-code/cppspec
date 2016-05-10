@@ -11,6 +11,11 @@ pages:
   - Home: index.md
   - Syntax:
     - Describe: syntax/describe.md
+    - It: syntax/it.md
+    - Let: syntax/let.md
+    - Befores and Afters: syntax/before_after.md
+    - Expect: syntax/expect.md
+  # - Matchers:
 
 markdown_extensions:
   - admonition:

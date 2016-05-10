@@ -15,7 +15,7 @@ class BeWithin : public MatcherBase<A, E> {
   E tolerance;
 
  public:
-  BeWithin(Expectations::Expectation<A> &expectation, E delta)
+  BeWithin(Expectation<A> &expectation, E delta)
       : MatcherBase<A, E>(expectation, 0), delta(delta) {}
 
   bool of(E expected);

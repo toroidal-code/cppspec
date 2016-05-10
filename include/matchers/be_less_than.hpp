@@ -10,7 +10,7 @@ namespace Matchers {
 template <typename A, typename E>
 class BeLessThan : public MatcherBase<A, E> {
  public:
-  BeLessThan(Expectations::Expectation<A> &expectation, E expected)
+  BeLessThan(Expectation<A> &expectation, E expected)
       : MatcherBase<A, E>(expectation, expected) {}
   bool match() override { return this->get_actual() < this->get_expected(); }
   std::string description() override {

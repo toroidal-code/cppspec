@@ -19,10 +19,10 @@ class BeBetween : public MatcherBase<A, E> {
   enum class GtOp { gt, gt_eq } gt_op;
 
  public:
-  //  BeBetween(Expectations::Expectation<A> &expectation, E min, E max)
+  //  BeBetween(Expectation<A> &expectation, E min, E max)
   //      : BaseMatcher<A, E>(expectation), min(min), max(max) {}
 
-  BeBetween(Expectations::Expectation<A> &expectation, E min, E max,
+  BeBetween(Expectation<A> &expectation, E min, E max,
             RangeMode mode = RangeMode::inclusive)
       : MatcherBase<A, E>(expectation), min(min), max(max), mode(mode) {
     switch (mode) {

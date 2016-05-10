@@ -24,7 +24,7 @@ class Satisfy : public MatcherBase<A, bool> //, BeHelpers<Satisfy<A>>
   std::function<bool(A)> test;
 
  public:
-  Satisfy(Expectations::Expectation<A> &expectation, std::function<bool(A)> test)
+  Satisfy(Expectation<A> &expectation, std::function<bool(A)> test)
       : MatcherBase<A, bool>(expectation), test(test) {}
 
   std::string description() override;

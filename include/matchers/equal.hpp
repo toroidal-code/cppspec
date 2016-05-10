@@ -18,7 +18,7 @@ namespace Matchers {
 template <typename A, typename E>
 class Equal : public MatcherBase<A, E> {
  public:
-  Equal(Expectations::Expectation<A> &expectation, E expected)
+  Equal(Expectation<A> &expectation, E expected)
       : MatcherBase<A, E>(expectation, expected) {}
 
   std::string description() override;

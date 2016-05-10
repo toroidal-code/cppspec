@@ -14,7 +14,7 @@ class Fail : public MatcherBase<A, void *> {
  public:
   static_assert(std::is_same<A, Result>::value,
                 ".fail must be matched against a Result.");
-  explicit Fail(Expectations::Expectation<A> &expectation)
+  explicit Fail(Expectation<A> &expectation)
       : MatcherBase<A, void *>(expectation, nullptr) {}
 
   typename std::enable_if<std::is_same<A, Result>::value, bool>::type match() {
@@ -25,7 +25,7 @@ class Fail : public MatcherBase<A, void *> {
 template <typename A>
 class FailWith : public Matchers::MatcherBase<A, std::string> {
  public:
-  FailWith(Expectations::Expectation<A> &expectation, std::string expected)
+  FailWith(Expectation<A> &expectation, std::string expected)
       : Matchers::MatcherBase<A, std::string>(expectation, expected) {}
 
   typename std::enable_if<std::is_same<A, Result>::value, bool>::type match();

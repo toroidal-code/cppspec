@@ -10,7 +10,18 @@
 namespace CppSpec {
 
 /**
- * @brief
+ * @brief An `it` embedded in a Description
+ *
+ * ItD objects are the representation of an `it` in a `describe` block (_not_ a
+ * `describe_a`) the sole item they contain is the function that represents
+ * the block of the `it`. ItD is derived from ItBase.
+ *
+ * @code
+ *   describe a_thing("A Thing", $ {
+ *     it("should have 4", _ { ... });
+ *   });
+ * @endcode
+ *
  */
 class ItD : public ItBase {
  public:
@@ -21,17 +32,57 @@ class ItD : public ItBase {
   const Block block;
 
  public:
+  /**
+   * @brief The primary ItD constructor
+   *
+   * This constructor is used for creating ItDs that are given a documentation
+   * string.
+   *
+   * @code
+   *   it("should exist", _ { ... });
+   * @endcode
+   *
+   * @param parent the parent of the `it` (i.e. the Description object)
+   * @param description the documentation string of the `it`
+   * @param block the lambda/function passed to the it
+   *
+   * @return the constructed ItD object
+   */
   ItD(const Child &parent, std::string description, Block block)
       : ItBase(parent, description), block(block) {}
 
+  /**
+   * @brief The anonymous ItD constructor
+   *
+   * Not used frequently, as most anonymous `it`s will be ItCD objects, since
+   * the syntax lends itself to this. However, the possibility of not giving a
+   * documentation string to the `it` still exists, both to be consistent and
+   * for cases it might want to be used.
+   *
+   * @code
+   *   it(_ { ... });
+   * @endcode
+   *
+   * @param parent the parent of the `it` (i.e. the Description object)
+   * @param block the lambda function passed to the it
+   *
+   * @return the constructed ItD object
+   */
   ItD(const Child &parent, Block block) : ItBase(parent), block(block) {}
 
+  // implemented in description.hpp
   Result run(Formatters::BaseFormatter &printer) override;
 };
 
 /**
- * @brief
- * @tparam T
+ * @brief An `it` embedded in a ClassDescription
+ *
+ * ItCD objects are the representation of an `it` in a `describe_a` block. They
+ * contain both the function that represents the block of the `it`, and a
+ * reference to the parent ClassDescription::subject
+ *
+ * @tparam T the type of the subject of the parent ClassDescription
+ * (ClassDescription<T>)
  */
 template <typename T>
 class ItCD : public ItBase {
@@ -47,18 +98,19 @@ class ItCD : public ItBase {
    * @brief A reference to the parent ClassDescription's subject
    *
    * Public so that we can easily do expect(subject) without
-   * putting getters in the macro-expansion
+   * needing to have a dedicated macro for accessing the subject via getter, or
+   * needing to introduce parenthesis for call syntax (like `subject()`)
    */
-  const T &subject;
+  T &subject;
 
   // This is only ever instantiated by ClassDescription<T>
-  ItCD(const Child &parent, const T &subject, std::string description, Block block)
+  ItCD(const Child &parent, T &subject, std::string description, Block block)
       : ItBase(parent, description), block(block), subject(subject) {}
 
-  ItCD(const Child &parent, const T &subject, Block block)
+  ItCD(const Child &parent, T &subject, Block block)
       : ItBase(parent), block(block), subject(subject) {}
 
-  Expectations::ExpectationValue<T> is_expected();
+  ExpectationValue<T> is_expected();
   Result run(Formatters::BaseFormatter &printer) override;
 };
 
@@ -73,21 +125,21 @@ class ItCD : public ItBase {
  */
 template <class T>
 typename std::enable_if<not Util::is_functional<T>::value,
-                        Expectations::ExpectationValue<T>>::type
+                        ExpectationValue<T>>::type
 ItBase::expect(T value) {
-  return Expectations::ExpectationValue<T>(*this, value);
+  return ExpectationValue<T>(*this, value);
 }
 
 template <typename T>
 auto ItBase::expect(T block) ->
     typename std::enable_if<Util::is_functional<T>::value,
-                            Expectations::ExpectationFunc<T>>::type {
-  return Expectations::ExpectationFunc<T>(*this, block);
+                            ExpectationFunc<T>>::type {
+  return ExpectationFunc<T>(*this, block);
 }
 
 template <typename T>
-Expectations::ExpectationValue<T> ItBase::expect(Let<T> &let) {
-  return Expectations::ExpectationValue<T>(*this, let.value());
+ExpectationValue<T> ItBase::expect(Let<T> &let) {
+  return ExpectationValue<T>(*this, let.value());
 }
 
 /**
@@ -98,15 +150,13 @@ Expectations::ExpectationValue<T> ItBase::expect(Let<T> &let) {
  * @endcode
  */
 template <class T>
-Expectations::ExpectationValue<std::initializer_list<T>> ItBase::expect(
+ExpectationValue<std::initializer_list<T>> ItBase::expect(
     std::initializer_list<T> init_list) {
-  return Expectations::ExpectationValue<std::initializer_list<T>>(*this,
-                                                                  init_list);
+  return ExpectationValue<std::initializer_list<T>>(*this, init_list);
 }
 
-inline Expectations::ExpectationValue<std::string> ItBase::expect(
-    const char *str) {
-  return Expectations::ExpectationValue<std::string>(*this, std::string(str));
+inline ExpectationValue<std::string> ItBase::expect(const char *str) {
+  return ExpectationValue<std::string>(*this, std::string(str));
 }
 
 }  // namespace CppSpec

@@ -4,7 +4,7 @@ using namespace CppSpec;
 
 // Very simple int<=>int custom matcher
 struct CustomMatcher : public Matchers::MatcherBase<int, int> {
-  CustomMatcher(Expectations::Expectation<int> &expectation, int expected)
+  CustomMatcher(Expectation<int> &expectation, int expected)
       : Matchers::MatcherBase<int,int>(expectation, expected){};
   bool match() { return get_expected() == get_actual(); }
 };
@@ -106,7 +106,7 @@ describe expectation_spec("Expectation", $ {
 	  // we explicitly want a function. Any other time 
 	  // that would be perfectly okay.
       std::function<int()> foo = [] { return 1 + 2; };
-      Expectations::ExpectationFunc<decltype(foo)> expectation(self, foo);
+      ExpectationFunc<decltype(foo)> expectation(self, foo);
       expect(expectation.get_target()).to_equal(3);
     });
   });

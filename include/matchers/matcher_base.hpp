@@ -10,10 +10,8 @@
 
 namespace CppSpec {
 
-namespace Expectations {
 template <class T>
 class Expectation;
-}
 
 namespace Matchers {
 
@@ -23,19 +21,19 @@ class MatcherBase : public Runnable, public Pretty {
 
  protected:
   Expected expected;
-  Expectations::Expectation<Actual> &expectation;
+  Expectation<Actual> &expectation;
 
  public:
   MatcherBase(MatcherBase<Actual, Expected> const &copy) = default;
 
-  explicit MatcherBase(Expectations::Expectation<Actual> &expectation)
+  explicit MatcherBase(Expectation<Actual> &expectation)
       : Runnable(*expectation.get_parent()),  // We want the parent of the
                                               // matcher to be the `it` block,
                                               // not the
                                               // Expectation.
         expectation(expectation) {}
 
-  MatcherBase(Expectations::Expectation<Actual> &expectation, Expected expected)
+  MatcherBase(Expectation<Actual> &expectation, Expected expected)
       : Runnable(*expectation.get_parent()),
         expected(expected),
         expectation(expectation) {}
@@ -48,7 +46,7 @@ class MatcherBase : public Runnable, public Pretty {
   virtual std::string description();
   Actual &get_actual() { return expectation.get_target(); }
   Expected &get_expected() { return expected; }
-  Expectations::Expectation<Actual> &get_expectation() { return expectation; }
+  Expectation<Actual> &get_expectation() { return expectation; }
   virtual MatcherBase &set_message(std::string message);
   Result run(Formatters::BaseFormatter &printer) override;
   typedef Expected expected_t;
@@ -100,8 +98,8 @@ Result MatcherBase<A, E>::run(Formatters::BaseFormatter &printer) {
   if (par->needs_description() && !expectation.get_ignore_failure()) {
     std::stringstream ss;
     ss << (expectation.get_sign()
-               ? Expectations::PositiveExpectationHandler::verb()
-               : Expectations::NegativeExpectationHandler::verb())
+               ? PositiveExpectationHandler::verb()
+               : NegativeExpectationHandler::verb())
        << " " << this->description();
     std::string ss_str = ss.str();
     par->set_description(ss_str);
@@ -109,8 +107,8 @@ Result MatcherBase<A, E>::run(Formatters::BaseFormatter &printer) {
 
   Result matched =
       expectation.get_sign()
-          ? Expectations::PositiveExpectationHandler::handle_matcher<A>(*this)
-          : Expectations::NegativeExpectationHandler::handle_matcher<A>(*this);
+          ? PositiveExpectationHandler::handle_matcher<A>(*this)
+          : NegativeExpectationHandler::handle_matcher<A>(*this);
 
   // If our items didn't match, we obviously failed.
   // Only report the failure if we aren't actively ignoring it.

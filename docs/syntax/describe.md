@@ -12,9 +12,8 @@ Each `describe` is a global instance of the `Description` class, the name of the
 
 !!! important
 
-```
-Take note of the `$`. This is used whenever you write a `describe` or a `describe_a`.
-```
+    Take note of the `$`. This is used whenever you write a `describe` or a `describe_a`.
+
 
 In conventional C++14, after macro-expansion the above snippet would be written as:
 

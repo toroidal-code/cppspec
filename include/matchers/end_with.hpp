@@ -16,7 +16,7 @@ class EndWith : public MatcherBase<A, E> {
                     "container");
 
  public:
- EndWith(Expectations::Expectation <A> &expectation, E start)
+ EndWith(Expectation <A> &expectation, E start)
      : MatcherBase<A, E>(expectation, start) { }
 
   std::string description() override {

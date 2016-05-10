@@ -248,9 +248,9 @@ Result ClassDescription<T>::run(Formatters::BaseFormatter &printer) {
 }
 
 template <class T>
-Expectations::ExpectationValue<T> ItCD<T>::is_expected() {
+ExpectationValue<T> ItCD<T>::is_expected() {
   auto cd = static_cast<ClassDescription<T> *>(this->get_parent());
-  Expectations::ExpectationValue<T> expectation(*this, cd->subject);
+  ExpectationValue<T> expectation(*this, cd->subject);
   return expectation;
 }
 

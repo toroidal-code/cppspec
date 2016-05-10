@@ -15,7 +15,7 @@ namespace Matchers {
 template <class A, class Ex>
 class Throw : public MatcherBase<A, void *> {
  public:
-  explicit Throw(Expectations::Expectation<A> &expectation)
+  explicit Throw(Expectation<A> &expectation)
       : MatcherBase<A, void *>(expectation, nullptr) {}
   bool match() override;
   std::string description() override;

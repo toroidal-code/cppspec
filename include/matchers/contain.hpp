@@ -22,11 +22,11 @@ class ContainBase : public MatcherBase<A, E> {
 
  protected:
   bool actual_collection_includes(U expected_item);
-  ContainBase(Expectations::Expectation<A> &expectation,
+  ContainBase(Expectation<A> &expectation,
               std::initializer_list<U> expected)
       : MatcherBase<A, std::vector<U>>(expectation, std::vector<U>(expected)),
         actual(this->get_actual()){};
-  ContainBase(Expectations::Expectation<A> &expectation, U expected)
+  ContainBase(Expectation<A> &expectation, U expected)
       : MatcherBase<A, U>(expectation, expected), actual(this->get_actual()){};
 };
 
@@ -69,7 +69,7 @@ class Contain : public ContainBase<A, E, U> {
  public:
   bool match() override;
   bool negated_match() override;
-  Contain(Expectations::Expectation<A> &expectation,
+  Contain(Expectation<A> &expectation,
           std::initializer_list<U> expected)
       : ContainBase<A, E, U>(expectation, expected){};
 
@@ -127,7 +127,7 @@ bool Contain<A, E, U>::perform_match(Predicate predicate,
 template <typename A, typename U>
 class Contain<A, U, U> : public ContainBase<A, U, U> {
  public:
-  Contain(Expectations::Expectation<A> &expectation, U expected)
+  Contain(Expectation<A> &expectation, U expected)
       : ContainBase<A, U, U>(expectation, expected){};
 
   bool match() override;
