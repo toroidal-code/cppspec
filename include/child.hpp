@@ -1,4 +1,12 @@
-/** @file */
+/**
+ * Copyright 2016 Katherine Whitlock
+ *
+ * @file child.hpp
+ * @brief Contains the base Child class.
+ *
+ * @author Katherine Whitlock (toroidalcode)
+ */
+
 #ifndef CPPSPEC_CHILD_HPP
 #define CPPSPEC_CHILD_HPP
 #pragma once
@@ -7,9 +15,9 @@
 #define CPPSPEC_DEBUG false
 #endif
 
-#include <string>
-#include <memory>
 #include <iostream>
+#include <memory>
+#include <string>
 #include <typeinfo>
 
 namespace CppSpec {
@@ -46,10 +54,12 @@ class Child {
   // All instances of Child start out healthy.
   bool status = true;
 
+  // The global formatter when running the tests. Would typically point to one
+  // of the globally instantiated formatters in formatters.hpp
   Formatters::BaseFormatter *formatter = nullptr;
 
  public:
-  // Default constructor/desctructor
+  // Default constructor/destructor
   Child() = default;
   virtual ~Child() = default;
 
@@ -62,7 +72,9 @@ class Child {
   Child &operator=(const Child &) = default;
 
   // Custom constructors
-  static Child of(const Child& parent) noexcept { return Child().set_parent(&parent); }
+  static Child of(const Child &parent) noexcept {
+    return Child().set_parent(&parent);
+  }
 
   /*--------- Parent helper functions -------------*/
 
@@ -72,7 +84,7 @@ class Child {
 
   // TODO: Look in to making these references instead of pointer returns
   /** @brief Get the Child's parent. */
-  Child *get_parent() const noexcept { return parent;  }
+  Child *get_parent() const noexcept { return parent; }
 
   template <class C>
   C get_parent_as() const noexcept {
@@ -80,8 +92,11 @@ class Child {
   }
 
   /** @brief Set the Child's parent */
-  Child set_parent(Child *parent) noexcept { this->parent = parent; return *this; }
-  Child& set_parent(const Child *parent) noexcept {
+  Child set_parent(Child *parent) noexcept {
+    this->parent = parent;
+    return *this;
+  }
+  Child &set_parent(const Child *parent) noexcept {
     this->parent = const_cast<Child *>(parent);
     return *this;
   }
