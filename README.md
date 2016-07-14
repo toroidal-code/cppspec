@@ -33,6 +33,9 @@ __Note:__ Only the tests require being compiled with C++14 support (`-std=c++14`
 If you've ever used RSpec or Jasmine, chances are you'll be familiar with C++Spec's syntax. For example, this is a C++Spec version of the first snippet on RSpec's [README](https://github.com/rspec/rspec-core/blob/master/README.md#basic-structure).
 
 ```c++
+#include "cppspec.hpp"
+#include "order.hpp"
+
 describe order_spec("Order", $ {
   it("sums the prices of its line items", _ {
     Order order();
@@ -49,6 +52,13 @@ describe order_spec("Order", $ {
 	expect(order.total()).to_equal(Money(5.55, Money::USD));
   });
 });
+
+
+int main(){
+  return CppSpec::Runner(CppSpec::Formatters::verbose)
+             .add_spec(order_spec)
+             .exec() ? EXIT_SUCCESS : EXIT_FAILURE;
+}
 
 ```
 

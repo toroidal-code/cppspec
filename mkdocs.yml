@@ -16,6 +16,7 @@ pages:
     - Befores and Afters: syntax/before_after.md
     - Expect: syntax/expect.md
   # - Matchers:
+  - Testing: testing.md
 
 markdown_extensions:
   - admonition:
