@@ -18,6 +18,11 @@ project as a submodule, releases will also be available as tags. This project's
 include folder should then be added to your project's include path. Again, all
 functionality is exposed through `#include "cppspec.hpp"`.
 
+If you want to manually generate the collated `cppspec.hpp` yourself, you can download the ccollate tool [here](https://raw.githubusercontent.com/toroidal-code/ccollate/master/ccollate.rb) and then run `./ccollate.rb include/cppspec.hpp > cppspec.hpp` in the 
+toplevel directory of the C++Spec repo. A fully-featured `cppspec.hpp` file 
+will then be available in the root of the project for usage.
+
+
 ## Documentation ##
 
 See [http://cppspec.readthedocs.org/](http://cppspec.readthedocs.org/) for full documentation and a tutorial.

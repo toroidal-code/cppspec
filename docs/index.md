@@ -16,4 +16,6 @@ information.
 Either run `git clone https://github.com/toroidal-code/cppspec.git` or download the collated header
 file (if it is available). You can also download a ZIP version of the repo.
 
-If you want to manually generate the collated `cppspec.hpp`, you can download the ccollate tool [here](https://raw.githubusercontent.com/toroidal-code/ccollate/master/ccollate.rb) and then run `./ccollate.rb` in the toplevel directory of the C++Spec repo.
+If you want to manually generate the collated `cppspec.hpp`, you can download the ccollate tool [here](https://raw.githubusercontent.com/toroidal-code/ccollate/master/ccollate.rb) and then run `./ccollate.rb include/cppspec.hpp > cppspec.hpp` in the 
+toplevel directory of the C++Spec repo. A `cppspec.hpp` file will then be 
+available in the root of the project for copying.
