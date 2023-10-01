@@ -15,6 +15,7 @@
 #include "expectations/handler.hpp"
 #include "it_base.hpp"
 #include "pretty_matchers.hpp"
+#include "formatters/formatters_base.hpp"
 
 namespace CppSpec {
 

@@ -1,8 +1,11 @@
 /** @file */
 #ifndef CPPSPEC_CLASS_DESCRIPTION_HPP
 #define CPPSPEC_CLASS_DESCRIPTION_HPP
+#pragma once
 #include <string>
+
 #include "description.hpp"
+
 
 namespace CppSpec {
 
@@ -31,7 +34,7 @@ class ClassDescription : public Description {
   // Constructor
   // if there's no explicit subject given, then use
   // the default constructor of the given type as the implicit subject.
-  ClassDescription<T>(Block block)
+  ClassDescription(Block block)
       : Description(),
         block(block),
         type(" : " + Util::demangle(typeid(T).name())),
@@ -39,7 +42,7 @@ class ClassDescription : public Description {
     this->description = Pretty::to_word(subject);
   }
 
-  ClassDescription<T>(std::string description, Block block)
+  ClassDescription(std::string description, Block block)
       : Description(description), block(block), subject(T()) {}
 
   ClassDescription(T subject, Block block)
@@ -80,6 +83,10 @@ class ClassDescription : public Description {
   /** @brief an alias for it */
   Result specify(std::function<void(ItCD<T> &)> block) { return it(block); }
 
+  template <class U=std::nullptr_t>
+  Result context(std::string description,
+                 std::function<void(ClassDescription<T> &)> block);
+
   template <class U>
   Result context(std::string description, U subject,
                  std::function<void(ClassDescription<U> &)> block);
@@ -90,9 +97,6 @@ class ClassDescription : public Description {
   Result context(U subject, std::function<void(ClassDescription<U> &)> block);
   template <class U>
   Result context(U &subject, std::function<void(ClassDescription<U> &)> block);
-
-  Result context(std::string description,
-                 std::function<void(ClassDescription<T> &)> block);
 
   Result run(Formatters::BaseFormatter &printer) override;
 
@@ -141,6 +145,7 @@ Result ClassDescription<T>::context(
 }
 
 template <class T>
+template <class U>
 Result ClassDescription<T>::context(
     std::string description, std::function<void(ClassDescription<T> &)> block) {
   ClassContext<T> context(description, this->subject, block);

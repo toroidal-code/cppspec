@@ -68,6 +68,7 @@ class Description : public Runnable {
 
   /********* Context ***********/
 
+  template <class T=std::nullptr_t>
   Result context(std::string name, Block body);
 
   template <class T>
@@ -128,6 +129,7 @@ inline Result Description::it(ItD::Block block) {
 
 /*========= Description::context =========*/
 
+template <class T>
 inline Result Description::context(std::string description, Block body) {
   Context context(*this, description, body);
   context.before_eaches = this->before_eaches;

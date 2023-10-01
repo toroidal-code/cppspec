@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Launch",
+      "program": "${workspaceFolder}/build/spec/spec_runner.exe",
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+  ],
+  "compounds": []
+}

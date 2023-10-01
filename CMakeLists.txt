@@ -1,37 +1,38 @@
-project( c++spec )
-
-if ( IWYU )
-  cmake_minimum_required( VERSION 3.3 FATAL_ERROR )
+cmake_minimum_required(VERSION 3.27 FATAL_ERROR)
+if(IWYU)
   find_program(iwyu_path NAMES include-what-you-use iwyu)
-else ()
-  cmake_minimum_required( VERSION 3.0 )
-endif ( IWYU )
+endif(IWYU)
 
-if ( NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
-  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -Wall -Werror")
-endif ()
+project(c++spec)
 
-set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
-include(cotire)
+set(CMAKE_COLOR_DIAGNOSTICS ON)
 
-add_library( c++spec INTERFACE )
-target_include_directories( c++spec INTERFACE
+add_library(c++spec INTERFACE)
+target_include_directories(c++spec INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>
-  $<INSTALL_INTERFACE:include/>  # <prefix>/include/
+  $<INSTALL_INTERFACE:include/cppspec/> # <prefix>/include/cppspec
 )
 
-option ( BUILD_TESTS "Build tests." OFF )
-if ( BUILD_TESTS )
+FILE(GLOB_RECURSE c++spec_headers ${CMAKE_CURRENT_LIST_DIR}/include/*.hpp)
+target_precompile_headers(c++spec INTERFACE
+  ${c++spec_headers}
+)
+
+option(BUILD_TESTS "Build tests." OFF)
+
+if(BUILD_TESTS)
   # enable_testing()
 
   # Tests
-  add_subdirectory( spec )
-endif ( BUILD_TESTS )
+  add_subdirectory(spec)
+endif(BUILD_TESTS)
 
-option( BUILD_EXAMPLES "Build examples." OFF )
-if ( BUILD_EXAMPLES )
-  add_subdirectory( examples )
+option(BUILD_EXAMPLES "Build examples." OFF)
+
+if(BUILD_EXAMPLES)
+  add_subdirectory(examples)
+
   if(iwyu_path)
     set_property(TARGET cppspec_sample PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path})
   endif()
-endif ( BUILD_EXAMPLES )
+endif(BUILD_EXAMPLES)

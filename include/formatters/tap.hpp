@@ -3,10 +3,12 @@
 #define CPPSPEC_FORMATTERS_TAP_HPP
 #pragma once
 
-#include <string>
 #include <list>
-#include "formatters_base.hpp"
+#include <string>
+
 #include "class_description.hpp"
+#include "formatters_base.hpp"
+
 
 namespace CppSpec {
 namespace Formatters {
@@ -35,10 +37,11 @@ inline void TAP::format(const ItBase &it) {
 
   // Build up the description for the test by ascending the
   // execution tree and chaining the individual descriptions together
-  const Description *parent = it.get_parent_as<const Description *>();
-  while (parent != nullptr) {
+
+  for (const Description *parent = it.get_parent_as<const Description *>();
+       parent != nullptr;
+       parent = parent->get_parent_as<const Description *>()) {
     description = parent->get_description() + " " + description;
-    parent = it.get_parent_as<const Description *>();
   }
 
   if (color_output) buffer << (it.get_status() ? GREEN : RED);

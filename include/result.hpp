@@ -22,11 +22,11 @@ class Result {
 
   // Copy constructor/operator
   Result(const Result &) = default;
-  Result &operator=(const Result &) = default;
+  Result &operator=(const Result &) = delete;
 
   // Move constructor/operator
   Result(Result &&) = default;
-  Result &operator=(Result &&) = default;
+  Result &operator=(Result &&) = delete;
 
   /*--------- Status helper functions --------------*/
   const bool get_status() noexcept { return value; }

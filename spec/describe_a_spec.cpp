@@ -26,7 +26,7 @@ describe_a <TestClass> describe_a_explicit_spec(
 });
 
 describe_a <std::true_type> describe_a_syntax_spec("describe_a syntax", $ {
-  context("A nested context with no give subject", _ {
+  context("A nested context with no given subject", _ {
     it("should inherit the subject", _ {
       expect(subject).to_equal(true);
     });

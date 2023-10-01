@@ -205,14 +205,14 @@ inline std::string Pretty::split_words(std::string sym) {
   std::stringstream ss;
   ss << sym;
   sym = ss.str();
-  std::regex_replace(sym, std::regex("_"), " ");
+  sym = std::regex_replace(sym, std::regex("_"), " ");
   return sym;
 }
 
 inline std::string Pretty::underscore(std::string word) {
-  std::regex_replace(word, std::regex("([A-Z]+)([A-Z][a-z])"), "$1_$2");
-  std::regex_replace(word, std::regex("([a-z\\d])([A-Z])"), "$1_$2");
-  std::regex_replace(word, std::regex("-"), "_");
+  word = std::regex_replace(word, std::regex("([A-Z]+)([A-Z][a-z])"), "$1_$2");
+  word = std::regex_replace(word, std::regex("([a-z\\d])([A-Z])"), "$1_$2");
+  word = std::regex_replace(word, std::regex("-"), "_");
   std::transform(word.begin(), word.end(), word.begin(), ::tolower);
   return word;
 }
@@ -230,7 +230,7 @@ inline std::string Pretty::last(const std::string &s, const char delim) {
 }
 
 inline std::string Pretty::improve_hash_formatting(std::string inspect_string) {
-  std::regex_replace(inspect_string, std::regex("(\\S)=>(\\S)"), "$1 => $2");
+  inspect_string = std::regex_replace(inspect_string, std::regex("(\\S)=>(\\S)"), "$1 => $2");
   return inspect_string;
 }
 

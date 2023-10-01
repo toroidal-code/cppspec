@@ -1,0 +1,8 @@
+{
+  "files.associations": {
+    "*.scons": "python",
+    "regex": "cpp",
+    "xutility": "cpp",
+    "optional": "cpp"
+  }
+}

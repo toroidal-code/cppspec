@@ -1,6 +1,3 @@
 [submodule "include/cxx-prettyprint"]
 	path = include/cxx-prettyprint
 	url = https://github.com/toroidal-code/cxx-prettyprint.git
-[submodule "include/optional"]
-	path = include/optional
-	url = https://github.com/akrzemi1/Optional

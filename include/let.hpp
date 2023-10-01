@@ -4,7 +4,7 @@
 #pragma once
 
 #include <functional>
-#include "optional/optional.hpp"
+#include <optional>
 
 namespace CppSpec {
 
@@ -34,8 +34,8 @@ class LetBase {
  */
 template <typename T>
 class Let : public LetBase {
-  typedef std::function<T()> block_t;
-  std::experimental::optional<T> result;
+  using block_t = std::function<T()>;
+  std::optional<T> result;
 
   block_t body;
 

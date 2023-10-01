@@ -1,5 +1,6 @@
 #include <cmath>
 #include <cstdlib>
+#include <cstring>
 #include <list>
 #include "cppspec.hpp"
 
