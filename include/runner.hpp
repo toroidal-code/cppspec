@@ -18,7 +18,7 @@ class Runner {
   Formatters::BaseFormatter &formatter;
 
  public:
-  typedef std::function<void(Runner &)> spec_group;
+  using spec_group = std::function<void (Runner &)>;
   explicit Runner(Formatters::BaseFormatter &formatter =
                       Formatters::progress) noexcept : formatter(formatter) {}
 

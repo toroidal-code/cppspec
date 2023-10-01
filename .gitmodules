@@ -1,3 +1,0 @@
-[submodule "include/cxx-prettyprint"]
-	path = include/cxx-prettyprint
-	url = https://github.com/toroidal-code/cxx-prettyprint.git

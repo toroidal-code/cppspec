@@ -7,7 +7,7 @@
 #include <vector>
 #include <algorithm>
 #include <regex>
-#include "cxx-prettyprint/prettyprint.hpp"
+#include "prettyprint.hpp"
 #include "util.hpp"
 
 namespace CppSpec {
