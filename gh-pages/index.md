@@ -17,7 +17,7 @@ C++Spec is a behavior-driven development library for C++ with an RSpec-inspired 
 
 ## An example:
 
-```c++
+```cpp
 describe_a <std::list<int>>
 int_list_spec("A list of ints", {1,2,3}, $ {
   it("is doubly-linked", _ {

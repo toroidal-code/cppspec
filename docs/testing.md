@@ -19,7 +19,7 @@ fully RSpec-like list of tests, coloring them to show their status and result.
 
 Here's an example spec and the associated runner:
 
-```c++
+```cpp
 #include <cstdlib>
 #include "cppspec.hpp"
 

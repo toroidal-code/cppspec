@@ -4,7 +4,7 @@ Every test suite begins with either `describe` or `describe_a`.
 
 Describes have the form of:
 
-```c++
+```cpp
 describe example_spec("An example", $ { });
 ```
 
@@ -17,7 +17,7 @@ Each `describe` is a global instance of the `Description` class, the name of the
 
 In conventional C++14, after macro-expansion the above snippet would be written as:
 
-```c++
+```cpp
 Description example_spec("An example", [](&self auto) { });
 ```
 
@@ -29,7 +29,7 @@ A `describe_a` is more complex than `describe`.
 
 Unlike `describe` which creates instances of `Description`, `describe_a` creates instances of `ClassDescription`. `ClassDescription` is a template class, where the template's type variable is used to specialize the description and create a subject available to all statements in the description. The subject is available via the `subject` keyword.
 
-```c++
+```cpp
 template <typename T>
 class ClassDescription : public Description { ... };
 ```
@@ -42,20 +42,20 @@ An explicit describe_a has the subject passed into it as the first argument if t
 
 For example:
 
-```c++
+```cpp
 describe_a <TestClass> tc_spec(TestClass(arg1, arg2), $ { ... });
 ```
 
 and
 
-```c++
+```cpp
 describe_an <AnotherTestClass> atc_spec
     ("The class AnotherTest class", AnotherTestClass(args...), $ { ... });
 ```
 
 ## Implied subject describe_a
 
-```c++
+```cpp
 describe_a <YetAnotherTestClass> yatc_spec( $ { ... });
 ```
 

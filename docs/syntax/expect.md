@@ -5,7 +5,7 @@ back on assertions.
 
 Expectations have two parts, the "actual" value, and the "expected" value.
 
-```c++
+```cpp
 auto x = 2;
 expect(x).to_equal(2);
 //     ^           ^
@@ -19,7 +19,7 @@ matcher references what the value _should_ be (the "expected" value of the test)
 
 The standard usage of an `expect` is to reference a variable or value to test.
 
-```c++
+```cpp
 Something some_thing();
 
 expect(some_thing.some_method()).to_be_true();
@@ -29,7 +29,7 @@ expect(some_thing.some_method()).to_be_true();
 
 Expectations are also to contain lambdas that return objects or throw exceptions.
 
-```c++
+```cpp
 expect([] { return 2; }).to_equal(2);
 expect([] { throw std::exception; }).to_throw<std::exception>();
 ```
@@ -37,7 +37,7 @@ expect([] { throw std::exception; }).to_throw<std::exception>();
 This allows creating delayed "thunks" that can be created earlier and then passed to the 
 `Expectation`.
 
-```c++
+```cpp
 auto val = [] { return 5; };
 expect(val).to_equal(5);
 ```

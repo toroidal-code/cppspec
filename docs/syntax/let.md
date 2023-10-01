@@ -4,7 +4,7 @@
 A `let` introduces a memoized local variable inside of a `Description`. This is best shown in an
 example:
 
-```c++
+```cpp
 int _count = 0;
 describe let_spec("let", $ {
   let(count, [&]{ return ++_count ;});
