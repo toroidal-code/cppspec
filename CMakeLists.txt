@@ -18,7 +18,7 @@ target_precompile_headers(c++spec INTERFACE
   ${c++spec_headers}
 )
 
-option(BUILD_TESTS "Build tests." OFF)
+option(BUILD_TESTS "Build tests." ON)
 
 if(BUILD_TESTS)
   # enable_testing()
@@ -27,7 +27,7 @@ if(BUILD_TESTS)
   add_subdirectory(spec)
 endif(BUILD_TESTS)
 
-option(BUILD_EXAMPLES "Build examples." OFF)
+option(BUILD_EXAMPLES "Build examples." ON)
 
 if(BUILD_EXAMPLES)
   add_subdirectory(examples)

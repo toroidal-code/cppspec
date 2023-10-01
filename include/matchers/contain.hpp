@@ -20,14 +20,14 @@ class ContainBase : public MatcherBase<A, E> {
   virtual std::string failure_message_when_negated() override;
   virtual bool diffable() { return true; }
 
- protected:
-  bool actual_collection_includes(U expected_item);
-  ContainBase(Expectation<A> &expectation,
-              std::initializer_list<U> expected)
+  ContainBase(Expectation<A> &expectation, std::initializer_list<U> expected)
       : MatcherBase<A, std::vector<U>>(expectation, std::vector<U>(expected)),
         actual(this->get_actual()){};
   ContainBase(Expectation<A> &expectation, U expected)
       : MatcherBase<A, U>(expectation, expected), actual(this->get_actual()){};
+
+ protected:
+  bool actual_collection_includes(U expected_item);
 };
 
 template <typename A, typename E, typename U>
@@ -53,7 +53,7 @@ bool ContainBase<A, E, U>::actual_collection_includes(U expected_item) {
   auto actual = this->get_actual();
   auto last = *(actual.begin());
   static_assert(
-      Util::verbose_assert<std::is_same<decltype(last), U>>::value,
+      Util::verbose_assert<std::is_same_v<decltype(last), U>>::value,
       "Expected item is not the same type as what is inside container.");
   return std::find(actual.begin(), actual.end(), expected_item) != actual.end();
 }
@@ -69,9 +69,7 @@ class Contain : public ContainBase<A, E, U> {
  public:
   bool match() override;
   bool negated_match() override;
-  Contain(Expectation<A> &expectation,
-          std::initializer_list<U> expected)
-      : ContainBase<A, E, U>(expectation, expected){};
+  using ContainBase<A, E, U>::ContainBase;
 
  protected:
   bool perform_match(Predicate predicate, Predicate hash_subset_predicate);
@@ -138,6 +136,6 @@ bool Contain<A, U, U>::match() {
   return this->actual_collection_includes(this->get_expected());
 }
 
-}  // ::Matchers
+}  // namespace Matchers
 }  // namespace CppSpec
 #endif  // CPPSPEC_MATCHERS_INCLUDE_HPP

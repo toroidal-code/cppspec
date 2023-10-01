@@ -33,15 +33,11 @@ struct Pretty {
   static std::string last(const std::string &s, const char delim);
   static std::string improve_hash_formatting(std::string inspect_string);
 
-  template <typename T>
-  static
-      typename std::enable_if<Util::is_streamable<T>::value, std::string>::type
-      to_word(T &item);
+  template <Util::is_streamable T>
+  static std::string to_word(T &item);
 
   template <typename T>
-  static
-      typename std::enable_if<!Util::is_streamable<T>::value, std::string>::type
-      to_word(T &item);
+  static std::string to_word(T &item);
 
   template <typename T>
   static std::string to_word_type(T &item);
@@ -120,9 +116,8 @@ inline std::string Pretty::to_sentance(T &item) {
  *
  * @return the string representation
  */
-template <typename T>
-typename std::enable_if<Util::is_streamable<T>::value,
-                        std::string>::type inline Pretty::to_word(T &item) {
+template <Util::is_streamable T>
+inline std::string Pretty::to_word(T &item) {
   std::stringstream ss;
   ss << item;
   return ss.str();
@@ -151,8 +146,7 @@ inline std::string Pretty::to_word<std::false_type>(std::false_type &item) {
  * @return the string representation
  */
 template <typename T>
-typename std::enable_if<!Util::is_streamable<T>::value,
-                        std::string>::type inline Pretty::to_word(T &item) {
+inline std::string Pretty::to_word(T &item) {
   std::stringstream ss;
   // Ruby-style inspect for objects without an overloaded operator<<
   ss << "#<" << Util::demangle(typeid(item).name()) << ":" << &item << ">";
@@ -183,7 +177,7 @@ inline std::string Pretty::to_word(Matchers::MatcherBase<A, E> &matcher) {
 template <typename T>
 inline std::string Pretty::to_word_type(T &item) {
   std::string word = to_word(item);
-  if (Util::is_streamable<T>::value) {
+  if constexpr (Util::is_streamable<T>) {
     word += " : " + Util::demangle(typeid(T).name());
   }
   return word;

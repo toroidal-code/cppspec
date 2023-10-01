@@ -4,16 +4,14 @@
 #pragma once
 
 #include <string>
+#include <ranges>
 #include "matcher_base.hpp"
 
 namespace CppSpec {
 namespace Matchers {
 
-template <typename A, typename E>
+template <std::ranges::range A, std::ranges::range E>
 class StartWith : public MatcherBase<A, E> {
-  static_assert(Util::is_iterable<A>::value && Util::is_iterable<E>::value,
-                "Error! Trying to match starting items with a non-iterable "
-                    "container");
 
  public:
   StartWith(Expectation <A> &expectation, E start)

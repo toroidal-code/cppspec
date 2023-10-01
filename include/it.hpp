@@ -5,6 +5,7 @@
 
 #include <string>
 #include <vector>
+
 #include "expectations/expectation.hpp"
 
 namespace CppSpec {
@@ -123,17 +124,13 @@ class ItCD : public ItBase {
  *   expect([] -> int { return 4; })
  * @endcode
  */
-template <class T>
-typename std::enable_if<not Util::is_functional<T>::value,
-                        ExpectationValue<T>>::type
-ItBase::expect(T value) {
+template <Util::is_not_functional T>
+ExpectationValue<T> ItBase::expect(T value) {
   return ExpectationValue<T>(*this, value);
 }
 
-template <typename T>
-auto ItBase::expect(T block) ->
-    typename std::enable_if<Util::is_functional<T>::value,
-                            ExpectationFunc<T>>::type {
+template <Util::is_functional T>
+ExpectationFunc<T> ItBase::expect(T block) {
   return ExpectationFunc<T>(*this, block);
 }
 
@@ -149,7 +146,7 @@ ExpectationValue<T> ItBase::expect(Let<T> &let) {
  *   expect({1,2,3})
  * @endcode
  */
-template <class T>
+template <typename T>
 ExpectationValue<std::initializer_list<T>> ItBase::expect(
     std::initializer_list<T> init_list) {
   return ExpectationValue<std::initializer_list<T>>(*this, init_list);

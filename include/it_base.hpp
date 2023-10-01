@@ -5,15 +5,16 @@
 
 #include <string>
 #include <vector>
-#include "runnable.hpp"
+
 #include "let.hpp"
+#include "runnable.hpp"
 #include "util.hpp"
 
 namespace CppSpec {
 
 template <typename T>
 class ExpectationValue;
-template <typename T>
+template <Util::is_functional T>
 class ExpectationFunc;
 
 /**
@@ -34,8 +35,8 @@ class ItBase : public Runnable {
   ItBase() = delete;  // Don't allow a default constructor
 
   /** @brief Copy constructor */
-  ItBase(const ItBase &copy) noexcept : Runnable(copy),
-                                        description(copy.description) {}
+  ItBase(const ItBase &copy) noexcept
+      : Runnable(copy), description(copy.description) {}
 
   /**
    * @brief Create an BaseIt without an explicit description
@@ -49,8 +50,7 @@ class ItBase : public Runnable {
    * @return the constructed BaseIt
    */
   explicit ItBase(const Child &parent, std::string description) noexcept
-      : Runnable(parent),
-        description(description) {}
+      : Runnable(parent), description(description) {}
 
   /**
    * @brief Get whether the object needs a description string
@@ -85,10 +85,8 @@ class ItBase : public Runnable {
    *
    * @return a ExpectationValue object containing the given value.
    */
-  template <typename T>
-  typename std::enable_if<not Util::is_functional<T>::value,
-                          ExpectationValue<T>>::type
-  expect(T value);
+  template <Util::is_not_functional T>
+  ExpectationValue<T> expect(T value);
 
   /**
    * @brief The `expect` object generator for lambdas
@@ -99,10 +97,8 @@ class ItBase : public Runnable {
    *
    * @return a ExpectationFunc object containing the given value.
    */
-  template <typename T>
-  typename std::enable_if<Util::is_functional<T>::value,
-                          ExpectationFunc<T>>::type
-  expect(T block);
+  template <Util::is_functional T>
+  ExpectationFunc<T> expect(T block);
 
   /**
    * @brief The `expect` object generator for initializer lists

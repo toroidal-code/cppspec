@@ -480,10 +480,8 @@ class ExpectationValue : public Expectation<A> {
   }
 };
 
-template <typename F>
+template <Util::is_functional F>
 class ExpectationFunc : public Expectation<decltype(std::declval<F>()())> {
-  static_assert(Util::is_functional<F>::value,
-                "Error! ExpectationFunc can only contaion lambdas.");
 
   typedef decltype(std::declval<F>()()) block_ret_t;
   F block;
@@ -549,7 +547,7 @@ class ExpectationFunc : public Expectation<decltype(std::declval<F>()())> {
   Result to_throw(std::string msg = "");
 };
 
-template <typename F>
+template <Util::is_functional F>
 template <typename Ex>
 Result ExpectationFunc<F>::to_throw(std::string msg) {
   Matchers::Throw<decltype(this->block.operator()()), Ex> matcher(*this);
