@@ -6,12 +6,13 @@
 #define CPPSPEC_DESCRIPTION_HPP
 #pragma once
 
-#include <string>
 #include <deque>
-#include <queue>
 #include <forward_list>
-#include "it.hpp"
+#include <queue>
+#include <string>
+
 #include "class_description.hpp"
+#include "it.hpp"
 
 namespace CppSpec {
 
@@ -45,9 +46,8 @@ class Description : public Runnable {
       : description(description) {}
 
   Description(const Child &parent, std::string description,
-              Block block) noexcept : Runnable(parent),
-                                      block(block),
-                                      description(description) {}
+              Block block) noexcept
+      : Runnable(parent), block(block), description(description) {}
 
   void exec_before_eaches();
   void exec_after_eaches();
@@ -55,11 +55,11 @@ class Description : public Runnable {
  public:
   // Copy constructor
   Description(const Description &copy) = default;
+  Description(Description &&copy) = default;
 
   // Primary constructor. Entry of all specs.
   Description(std::string description, Block block) noexcept
-      : block(block),
-        description(description) {}
+      : block(block), description(description) {}
 
   /********* Specify/It *********/
 
@@ -68,7 +68,7 @@ class Description : public Runnable {
 
   /********* Context ***********/
 
-  template <class T=std::nullptr_t>
+  template <class T = std::nullptr_t>
   Result context(std::string name, Block body);
 
   template <class T>
@@ -103,6 +103,9 @@ class Description : public Runnable {
   /********* Run *********/
 
   Result run(Formatters::BaseFormatter &printer) override;
+  // std::function<int(int, char **)>
+  template <typename Formatter>
+  inline auto as_main();
 };
 
 using Context = Description;

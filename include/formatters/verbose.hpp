@@ -3,10 +3,13 @@
 #define CPPSPEC_FORMATTERS_VERBOSE_HPP
 #pragma once
 
-#include <string>
 #include <list>
-#include "formatters_base.hpp"
+#include <string>
+
 #include "class_description.hpp"
+#include "formatters_base.hpp"
+#include "it_base.hpp"
+
 
 namespace CppSpec {
 namespace Formatters {
@@ -66,5 +69,14 @@ inline void Verbose::format_failure_messages() {
 static Verbose verbose;
 
 }  // namespace Formatters
+
+template <typename Formatter = Formatters::Verbose>
+inline auto Description::as_main()  {
+  Description description{*this};
+  return [=](int argc, char** argv) mutable -> int {
+    Formatter f{};
+    return description.run(f) ? EXIT_SUCCESS : EXIT_FAILURE;
+  };
+}
 }  // namespace CppSpec
 #endif  // CPPSPEC_FORMATTERS_VERBOSE_HPP

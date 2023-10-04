@@ -6,9 +6,6 @@
 #define CPPSPEC_HPP
 #pragma once
 
-#ifndef CPPSPEC_DEBUG
-#define CPPSPEC_DEBUG false
-#endif
 #include "runner.hpp"
 
 /*>>>>>>>>>>>>>>>>>>>> MACROS <<<<<<<<<<<<<<<<<<<<<<*/
@@ -41,7 +38,7 @@
 
 /*>>>>>>>>>>>>>>>>>>> TYPEDEFS <<<<<<<<<<<<<<<<<<<<<*/
 
-typedef CppSpec::Description describe;
+using describe = CppSpec::Description;
 
 template <class T>
 using describe_a = CppSpec::ClassDescription<T>;

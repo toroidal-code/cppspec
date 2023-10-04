@@ -3,9 +3,10 @@
   "configurations": [
     {
       "type": "lldb",
+      "preLaunchTask": "CMake: build",
       "request": "launch",
       "name": "Launch",
-      "program": "${workspaceFolder}/build/spec/spec_runner.exe",
+      "program": "${workspaceFolder}/build/examples/sample/jasmine_intro.exe",
       "args": [],
       "cwd": "${workspaceFolder}"
     },

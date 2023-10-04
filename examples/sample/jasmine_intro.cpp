@@ -1,6 +1,7 @@
 // Copyright 2016 Katherine Whitlock
 
 #include "cppspec.hpp"
+#include "formatters/verbose.hpp"
 
 describe a_suite("A suite", $ {
   it("contains a spec with an expectation", _ {
@@ -244,7 +245,7 @@ describe a_spec_nesting("A spec", $ {
 
 // TODO: pending specs
 
-describe to_include_matcher("to contain", $ {
+auto to_include_matcher = describe("to contain", $ {
   let(foo, ([]() -> std::vector<int> { return {1,2,3,4}; }));
 
   it("matches arrays with some of the values", _ {
@@ -253,8 +254,8 @@ describe to_include_matcher("to contain", $ {
   });
 });
 
-int main() {
-  return CppSpec::Runner(CppSpec::Formatters::verbose)
+int main(int argc, char** argv) {
+  return CppSpec::Runner()
              .add_spec(a_suite)
              .add_spec(suite_object)
              .add_spec(to_be_compare)
@@ -265,5 +266,5 @@ int main() {
              .add_spec(a_spec_before_each)
              .add_spec(a_spec_nesting)
              .add_spec(to_include_matcher)
-             .exec() ? EXIT_SUCCESS : EXIT_FAILURE;
+             .exec<CppSpec::Formatters::Verbose>() ? EXIT_SUCCESS : EXIT_FAILURE;
 }
