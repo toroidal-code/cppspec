@@ -6,9 +6,7 @@
 
 #include <list>
 
-#include "formatters/progress.hpp"
-#include "formatters/tap.hpp"
-#include "formatters/verbose.hpp"
+#include "argparse.hpp"
 
 namespace CppSpec {
 

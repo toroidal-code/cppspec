@@ -3,10 +3,13 @@
 #include <argparse/argparse.hpp>
 #include <string_view>
 
-#include "argparse.hpp"
-#include "formatters/formatters_base.hpp"
+#include "formatters/progress.hpp"
+#include "formatters/tap.hpp"
+#include "formatters/verbose.hpp"
+
 
 namespace CppSpec {
+
 constexpr std::string file_name(std::string_view path) {
   std::string_view file = path;
   for (size_t i = 0; i < path.size(); ++i) {
@@ -17,15 +20,9 @@ constexpr std::string file_name(std::string_view path) {
   return std::string{file};
 }
 
-enum class Formatter {
-  Progress,
-  TAP,
-  Detail
-};
-
 struct RuntimeOpts {
   bool verbose = false;
-  Formatter format = Formatter::Progress;
+  std::unique_ptr<Formatters::BaseFormatter> formatter = nullptr;
 };
 
 inline RuntimeOpts parse(int argc, char** argv) {
@@ -55,13 +52,18 @@ inline RuntimeOpts parse(int argc, char** argv) {
     opts.verbose = true;
   }
 
-  auto format_string  = program.get<std::string>("--format");
+  auto format_string = program.get<std::string>("--format");
   if (format_string == "p" || format_string == "progress") {
-    opts.format = Formatter::Progress;
+    opts.formatter = std::make_unique<Formatters::Progress>();
   } else if (format_string == "t" || format_string == "tap") {
-    opts.format = Formatter::TAP;
+    opts.formatter = std::make_unique<Formatters::TAP>();
   } else if (format_string == "d" || format_string == "detail") {
-    opts.format = Formatter::Detail;
+    opts.formatter = std::make_unique<Formatters::Verbose>();
+  } else {
+    std::cerr << "Unrecognized format type" << std::endl;
+    std::exit(-1);
   }
+
+  return opts;
 }
 }  // namespace CppSpec

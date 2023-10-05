@@ -6,10 +6,10 @@
 #include <list>
 #include <string>
 
+#include "argparse.hpp"
 #include "class_description.hpp"
 #include "formatters_base.hpp"
 #include "it_base.hpp"
-
 
 namespace CppSpec {
 namespace Formatters {
@@ -70,12 +70,12 @@ static Verbose verbose;
 
 }  // namespace Formatters
 
-template <typename Formatter = Formatters::Verbose>
-inline auto Description::as_main()  {
+template <typename FormatterType = Formatters::Verbose>
+inline auto Description::as_main() {
   Description description{*this};
-  return [=](int argc, char** argv) mutable -> int {
-    Formatter f{};
-    return description.run(f) ? EXIT_SUCCESS : EXIT_FAILURE;
+  return [=](int argc, char **argv) mutable -> int {
+    auto opts = parse(argc, argv);
+    return description.run(*opts.formatter) ? EXIT_SUCCESS : EXIT_FAILURE;
   };
 }
 }  // namespace CppSpec
