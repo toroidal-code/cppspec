@@ -29,6 +29,12 @@ FetchContent_Declare(
 CPMAddPackage("gh:toroidal-code/cppspec@VERSION")
 ```
 
+Specs can then be automatically added as targets with
+```cmake
+discover_specs(specs_folder)
+```
+This will create a separate executable for every file ending in `_spec.cpp` in the given directory (recursive) and add them to CTest.
+
 ## Introduction
 
 If you've ever used RSpec or Jasmine, chances are you'll be familiar with C++Spec's syntax. For example, this is a C++Spec version of the first snippet on RSpec's [README](https://github.com/rspec/rspec-core/blob/master/README.md#basic-structure).
