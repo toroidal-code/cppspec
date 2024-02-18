@@ -63,7 +63,7 @@ function(discover_specs spec_folder)
   endforeach()
 endfunction(discover_specs)
 
-option(BUILD_TESTS "Build tests" ON)
+option(BUILD_TESTS "Build tests" OFF)
 
 if(BUILD_TESTS)
   enable_testing()
@@ -72,7 +72,7 @@ if(BUILD_TESTS)
   discover_specs(spec)
 endif(BUILD_TESTS)
 
-option(BUILD_EXAMPLES "Build examples" ON)
+option(BUILD_EXAMPLES "Build examples" OFF)
 
 if(BUILD_EXAMPLES)
   add_subdirectory(examples)
