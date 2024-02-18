@@ -11,7 +11,7 @@
 
 namespace CppSpec {
 
-constexpr std::string file_name(std::string_view path) {
+inline std::string file_name(std::string_view path) {
   std::string_view file = path;
   for (size_t i = 0; i < path.size(); ++i) {
     if (path[i] == '/') {
