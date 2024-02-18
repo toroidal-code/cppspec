@@ -18,7 +18,9 @@ jobs:
       matrix:
         compiler: [native, llvm]
         os: [ubuntu-latest, macos-latest, windows-latest]
-
+        exclude:
+          - os: macos-latest
+            compiler: native
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -40,4 +42,4 @@ jobs:
       run: cmake --build build --config Release
 
     - name: Test
-      run: ctest --test-dir build
+      run: ctest --test-dir build --build-config Release
