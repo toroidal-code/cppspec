@@ -192,13 +192,13 @@ describe list_spec("A list spec", $ {
 });
 
 /* Here is the declaration of fabs description defined in an other file (fabs_spec.c in this sample)*/
-int main(){
-  return CppSpec::Runner()
+int main(int argc, char **argv){
+  return CppSpec::parse(argc, argv)
              .add_spec(bool_spec)
              .add_spec(abs_spec)
              .add_spec(strcmp_spec)
              .add_spec(vector_spec)
              .add_spec(let_spec)
              .add_spec(list_spec)
-             .exec<CppSpec::Formatters::Verbose>() ? EXIT_SUCCESS : EXIT_FAILURE;
+             .exec() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

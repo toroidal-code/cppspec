@@ -6,18 +6,18 @@
 #include <string>
 #include "matcher_base.hpp"
 
-namespace CppSpec {
-namespace Matchers {
+
+namespace CppSpec::Matchers {
 
 template <typename A>
 class Fail : public MatcherBase<A, void *> {
  public:
-  static_assert(std::is_same<A, Result>::value,
+  static_assert(std::is_same_v<A, Result>,
                 ".fail must be matched against a Result.");
   explicit Fail(Expectation<A> &expectation)
       : MatcherBase<A, void *>(expectation, nullptr) {}
 
-  typename std::enable_if<std::is_same<A, Result>::value, bool>::type match() {
+  std::enable_if_t<std::is_same_v<A, Result>, bool>match() {
     return not this->get_actual().get_status();
   }
 };
@@ -28,11 +28,11 @@ class FailWith : public Matchers::MatcherBase<A, std::string> {
   FailWith(Expectation<A> &expectation, std::string expected)
       : Matchers::MatcherBase<A, std::string>(expectation, expected) {}
 
-  typename std::enable_if<std::is_same<A, Result>::value, bool>::type match();
+  std::enable_if_t<std::is_same_v<A, Result>, bool>match();
 };
 
 template <typename A>
-typename std::enable_if<std::is_same<A, Result>::value, bool>::type
+std::enable_if_t<std::is_same_v<A, Result>, bool>
 FailWith<A>::match() {
   static_assert(std::is_same<A, Result>::value,
                 ".fail_with must be matched against a Result.");
@@ -40,6 +40,6 @@ FailWith<A>::match() {
          this->get_actual().get_message() == this->get_expected();
 }
 
-}  // namespace Matchers
-}  // namespace CppSpec
+} // namespace CppSpec::Matchers
+
 #endif  // CPPSPEC_FAIL_HPP

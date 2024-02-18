@@ -4,6 +4,7 @@
 #pragma once
 
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "expectations/expectation.hpp"
@@ -50,7 +51,7 @@ class ItD : public ItBase {
    * @return the constructed ItD object
    */
   ItD(const Child &parent, std::string description, Block block)
-      : ItBase(parent, description), block(block) {}
+      : ItBase(parent, std::move(description)), block(std::move(block)) {}
 
   /**
    * @brief The anonymous ItD constructor

@@ -5,8 +5,8 @@
 
 #include "matcher_base.hpp"
 
-namespace CppSpec {
-namespace Matchers {
+
+namespace CppSpec::Matchers {
 
 template <typename A, typename E>
 class BeWithin : public MatcherBase<A, E> {
@@ -77,6 +77,6 @@ std::string BeWithin<A, E>::description() {
   return ss.str();
 }
 
-}  // namespace Matchers
-}  // namespace CppSpec
+} // namespace CppSpec::Matchers
+
 #endif // CPPSPEC_MATCHERS_BE_WITHIN_HPP

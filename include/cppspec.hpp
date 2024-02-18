@@ -6,8 +6,9 @@
 #define CPPSPEC_HPP
 #pragma once
 
-#include "runner.hpp"
+#include "argparse.hpp"
 
+#ifndef CPPSPEC_MACROLESS
 /*>>>>>>>>>>>>>>>>>>>> MACROS <<<<<<<<<<<<<<<<<<<<<<*/
 
 // For *some* reason, MSVC++ refuses to correctly deduce the types of
@@ -18,7 +19,9 @@
 
 #define it self.it
 #define specify it
-#ifdef _MSC_VER  // Apparently MSVC++ doesn't conform to C++14 14.2/4. Annoying.
+
+// Apparently MSVC++ doesn't conform to C++14 14.2/4. Annoying.
+#if defined(_MSC_VER) && !defined(__clang__)
 #define context self.context
 #define expect self.expect
 #else
@@ -34,8 +37,15 @@
 #define before_each self.before_each
 #define after_all self.after_all
 #define after_each self.after_each
-#define let(name, body) auto name = self.let(body);
+#define let(name, body) auto (name) = self.let(body);
 
+#define CPPSPEC_MAIN(spec)                                                  \
+  int main(int argc, char **argv) {                                         \
+    return CppSpec::parse(argc, argv).add_spec(spec).exec() ? EXIT_SUCCESS  \
+                                                            : EXIT_FAILURE; \
+  }
+
+#endif
 /*>>>>>>>>>>>>>>>>>>> TYPEDEFS <<<<<<<<<<<<<<<<<<<<<*/
 
 using describe = CppSpec::Description;

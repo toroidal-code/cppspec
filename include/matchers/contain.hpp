@@ -3,8 +3,8 @@
 #define CPPSPEC_MATCHERS_INCLUDE_HPP
 #include "matcher_base.hpp"
 
-namespace CppSpec {
-namespace Matchers {
+
+namespace CppSpec::Matchers {
 
 /**
  * The abstract base class for the Include matcher.
@@ -15,9 +15,9 @@ class ContainBase : public MatcherBase<A, E> {
   A actual;
 
  public:
-  virtual std::string description() override;
-  virtual std::string failure_message() override;
-  virtual std::string failure_message_when_negated() override;
+  std::string description() override;
+  std::string failure_message() override;
+  std::string failure_message_when_negated() override;
   virtual bool diffable() { return true; }
 
   ContainBase(Expectation<A> &expectation, std::initializer_list<U> expected)
@@ -136,6 +136,6 @@ bool Contain<A, U, U>::match() {
   return this->actual_collection_includes(this->get_expected());
 }
 
-}  // namespace Matchers
-}  // namespace CppSpec
+} // namespace CppSpec::Matchers
+
 #endif  // CPPSPEC_MATCHERS_INCLUDE_HPP

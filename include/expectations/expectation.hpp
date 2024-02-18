@@ -67,9 +67,9 @@ class Expectation : public Child {
   virtual A &get_target()& = 0;
 
   /** @brief Get whether the expectation is normal or negated. */
-  const bool get_sign() const { return is_positive; }
+  [[nodiscard]] bool get_sign() const { return is_positive; }
   bool get_sign() { return is_positive; }
-  const bool get_ignore_failure() const { return ignore_failure; }
+  [[nodiscard]] bool get_ignore_failure() const { return ignore_failure; }
   bool get_ignore_failure() { return ignore_failure; }
 
   /********* Modifiers *********/
@@ -113,7 +113,7 @@ class Expectation : public Child {
   Result to_match(std::string str, std::string msg = "");
   Result to_partially_match(std::regex regex, std::string msg = "");
   Result to_partially_match(std::string str, std::string msg = "");
-  Result to_satisfy(std::function<bool(A)>, std::string msg = "");
+  Result to_satisfy(std::function<bool(A)> /*test*/, std::string msg = "");
   Result to_start_with(std::string start, std::string msg = "");
 
   template <typename U>
@@ -483,7 +483,7 @@ class ExpectationValue : public Expectation<A> {
 template <Util::is_functional F>
 class ExpectationFunc : public Expectation<decltype(std::declval<F>()())> {
 
-  typedef decltype(std::declval<F>()()) block_ret_t;
+  using block_ret_t = decltype(std::declval<F>()());
   F block;
   std::shared_ptr<block_ret_t> computed = nullptr;
 

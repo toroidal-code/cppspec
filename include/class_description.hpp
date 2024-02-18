@@ -6,7 +6,6 @@
 
 #include "description.hpp"
 
-
 namespace CppSpec {
 
 /**
@@ -25,7 +24,7 @@ class ClassDescription : public Description {
   using Block = std::function<void(ClassDescription<T> &)>;
 
   Block block;
-  std::string type = "";
+  std::string type;
 
  public:
   const bool has_subject = true;
@@ -83,7 +82,7 @@ class ClassDescription : public Description {
   /** @brief an alias for it */
   Result specify(std::function<void(ItCD<T> &)> block) { return it(block); }
 
-  template <class U=std::nullptr_t>
+  template <class U = std::nullptr_t>
   Result context(std::string description,
                  std::function<void(ClassDescription<T> &)> block);
 
@@ -100,7 +99,9 @@ class ClassDescription : public Description {
 
   Result run(Formatters::BaseFormatter &printer) override;
 
-  std::string get_subject_type() const noexcept override { return type; }
+  [[nodiscard]] std::string get_subject_type() const noexcept override {
+    return type;
+  }
 };
 
 template <class T>
@@ -244,11 +245,17 @@ Result ClassDescription<T>::it(std::function<void(ItCD<T> &)> block) {
 
 template <class T>
 Result ClassDescription<T>::run(Formatters::BaseFormatter &printer) {
-  if (not this->has_formatter()) this->set_formatter(printer);
+  if (not this->has_formatter()) {
+    this->set_formatter(printer);
+  }
   printer.format(*this);
   this->block(*this);
-  for (const auto &a : after_alls) a();
-  if (this->get_parent() == nullptr) printer.flush();
+  for (const auto &a : after_alls) {
+    a();
+  }
+  if (this->get_parent() == nullptr) {
+    printer.flush();
+  }
   return this->get_status() ? Result::success() : Result::failure();
 }
 

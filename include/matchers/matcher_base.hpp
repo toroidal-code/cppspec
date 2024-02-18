@@ -12,10 +12,12 @@
 #pragma once
 
 #include <string>
+
 #include "expectations/handler.hpp"
+#include "formatters/formatters_base.hpp"
 #include "it_base.hpp"
 #include "pretty_matchers.hpp"
-#include "formatters/formatters_base.hpp"
+
 
 namespace CppSpec {
 
@@ -36,7 +38,7 @@ namespace Matchers {
  */
 template <typename Actual, typename Expected>
 class MatcherBase : public Runnable, public Pretty {
-  std::string custom_failure_message = "";
+  std::string custom_failure_message;
 
  protected:
   Expected expected;  // The expected object contained by the matcher
@@ -79,7 +81,7 @@ class MatcherBase : public Runnable, public Pretty {
   Expectation<Actual> &get_expectation() { return expectation; }
 
   // Set the message to give on match failure
-  virtual MatcherBase &set_message(std::string message);
+  virtual MatcherBase &set_message(const std::string &message);
 
   /*--------- Primary functions -------------*/
 
@@ -91,7 +93,7 @@ class MatcherBase : public Runnable, public Pretty {
   virtual bool negated_match() { return !match(); }
 
   // typedef Expected
-  typedef Expected expected_t;
+  using expected_t = Expected;
 };
 
 /**
@@ -101,7 +103,7 @@ class MatcherBase : public Runnable, public Pretty {
  * @return the modified Matcher
  */
 template <typename A, typename E>
-MatcherBase<A, E> &MatcherBase<A, E>::set_message(std::string message) {
+MatcherBase<A, E> &MatcherBase<A, E>::set_message(const std::string &message) {
   this->custom_failure_message = message;
   return *this;
 }
@@ -115,36 +117,33 @@ template <typename A, typename E>
 std::string MatcherBase<A, E>::failure_message() {
   if (not custom_failure_message.empty()) {
     return this->custom_failure_message;
-  } else {
-    std::stringstream ss;
-    ss << "expected " << Pretty::to_word(get_actual()) << " to "
-       << description();
-    return ss.str();
   }
+  std::stringstream ss;
+  ss << "expected " << Pretty::to_word(get_actual()) << " to " << description();
+  return ss.str();
 }
 
 /**
-* @brief Get message to give on match failure when negated
-*
-* @return the message
-*/
+ * @brief Get message to give on match failure when negated
+ *
+ * @return the message
+ */
 template <typename A, typename E>
 std::string MatcherBase<A, E>::failure_message_when_negated() {
   if (not custom_failure_message.empty()) {
     return this->custom_failure_message;
-  } else {
-    std::stringstream ss;
-    ss << "expected " << Pretty::to_word(get_actual()) << " to not "
-       << description();
-    return ss.str();
   }
+  std::stringstream ss;
+  ss << "expected " << Pretty::to_word(get_actual()) << " to not "
+     << description();
+  return ss.str();
 }
 
 /**
-* @brief Get the description of the Matcher
-*
-* @return the description
-*/
+ * @brief Get the description of the Matcher
+ *
+ * @return the description
+ */
 template <typename A, typename E>
 std::string MatcherBase<A, E>::description() {
   std::stringstream ss;
@@ -165,7 +164,7 @@ std::string MatcherBase<A, E>::description() {
  */
 template <typename A, typename E>
 Result MatcherBase<A, E>::run(Formatters::BaseFormatter &printer) {
-  ItBase *par = static_cast<ItBase *>(this->get_parent());
+  auto *par = static_cast<ItBase *>(this->get_parent());
   // If we need a description for our test, generate it
   // unless we're ignoring the output.
   if (par->needs_description() && !expectation.get_ignore_failure()) {

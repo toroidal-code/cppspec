@@ -4,8 +4,8 @@
 #pragma once
 #include <string>
 #include "matcher_base.hpp"
-namespace CppSpec {
-namespace Matchers {
+
+namespace CppSpec::Matchers {
 
 template <class A>
 class BeNullptr : MatcherBase<A, std::nullptr_t> {
@@ -17,7 +17,7 @@ class BeNullptr : MatcherBase<A, std::nullptr_t> {
   bool match() override { return this->get_actual() == nullptr; }
 };
 
-}  // namespace Matchers
-}  // namespace CppSpec
+} // namespace CppSpec::Matchers
+
 
 #endif  // CPPSPEC_MATCHERS_BE_NULLPTR_HPP

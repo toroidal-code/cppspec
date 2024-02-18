@@ -255,7 +255,7 @@ auto to_include_matcher = describe("to contain", $ {
 });
 
 int main(int argc, char** argv) {
-  return CppSpec::Runner()
+  return CppSpec::parse(argc, argv)
              .add_spec(a_suite)
              .add_spec(suite_object)
              .add_spec(to_be_compare)
@@ -266,5 +266,5 @@ int main(int argc, char** argv) {
              .add_spec(a_spec_before_each)
              .add_spec(a_spec_nesting)
              .add_spec(to_include_matcher)
-             .exec<CppSpec::Formatters::Verbose>() ? EXIT_SUCCESS : EXIT_FAILURE;
+             .exec() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

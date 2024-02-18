@@ -10,9 +10,10 @@
 #include <forward_list>
 #include <queue>
 #include <string>
+#include <utility>
 
-#include "class_description.hpp"
 #include "it.hpp"
+
 
 namespace CppSpec {
 
@@ -26,16 +27,16 @@ class Description : public Runnable {
   using Block = std::function<void(Description &)>;
 
   const bool has_subject = false;
-  std::forward_list<LetBase *> lets;
-  std::deque<VoidBlock> after_alls;
-  std::deque<VoidBlock> before_eaches;
-  std::deque<VoidBlock> after_eaches;
+  std::forward_list<LetBase *> lets{};
+  std::deque<VoidBlock> after_alls{};
+  std::deque<VoidBlock> before_eaches{};
+  std::deque<VoidBlock> after_eaches{};
 
  private:
   Block block;
 
  protected:
-  std::string description = "";
+  std::string description;
 
   // These two constructors are the most basic ones,
   // used to create Descriptions with only their description
@@ -43,11 +44,13 @@ class Description : public Runnable {
   // of Description.
   Description() = default;
   explicit Description(std::string description) noexcept
-      : description(description) {}
+      : description(std::move(description)) {}
 
   Description(const Child &parent, std::string description,
               Block block) noexcept
-      : Runnable(parent), block(block), description(description) {}
+      : Runnable(parent),
+        block(std::move(block)),
+        description(std::move(description)) {}
 
   void exec_before_eaches();
   void exec_after_eaches();
@@ -59,7 +62,7 @@ class Description : public Runnable {
 
   // Primary constructor. Entry of all specs.
   Description(std::string description, Block block) noexcept
-      : block(block), description(description) {}
+      : block(std::move(block)), description(std::move(description)) {}
 
   /********* Specify/It *********/
 
@@ -97,8 +100,12 @@ class Description : public Runnable {
 
   /********* Standard getters *********/
 
-  virtual std::string get_description() const noexcept { return description; }
-  virtual std::string get_subject_type() const noexcept { return ""; }
+  [[nodiscard]] virtual std::string get_description() const noexcept {
+    return description;
+  }
+  [[nodiscard]] virtual std::string get_subject_type() const noexcept {
+    return "";
+  }
 
   /********* Run *********/
 
@@ -207,12 +214,16 @@ inline void Description::reset_lets() noexcept {
 
 inline Result Description::run(Formatters::BaseFormatter &formatter) {
   // If there isn't already a formatter in the family tree, set ours.
-  if (!this->has_formatter()) this->set_formatter(formatter);
+  if (!this->has_formatter()) {
+    this->set_formatter(formatter);
+  }
 
   formatter.format(*this);              // Format our description in some way
   block(*this);                         // Run the block
   for (VoidBlock &a : after_alls) a();  // Run all our after_alls
-  if (!this->has_parent()) formatter.flush();  // Inform the printer we're done
+  if (!this->has_parent()) {
+    formatter.flush();  // Inform the printer we're done
+  }
 
   // Return success or failure
   return this->get_status() ? Result::success() : Result::failure();

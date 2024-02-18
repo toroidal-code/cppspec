@@ -7,8 +7,8 @@
 #include <ranges>
 #include "matcher_base.hpp"
 
-namespace CppSpec {
-namespace Matchers {
+
+namespace CppSpec::Matchers {
 
 template <std::ranges::range A, std::ranges::range E>
 class EndWith : public MatcherBase<A, E> {
@@ -27,6 +27,6 @@ class EndWith : public MatcherBase<A, E> {
   }
 };
 
-}  // namespace Matchers
-}  // namespace CppSpec
+} // namespace CppSpec::Matchers
+
 #endif  // CPPSPEC_MATCHERS_END_WITH_HPP

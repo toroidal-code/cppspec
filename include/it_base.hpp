@@ -4,6 +4,8 @@
 #pragma once
 
 #include <string>
+#include <utility>
+#include <utility>
 #include <vector>
 
 #include "let.hpp"
@@ -29,14 +31,14 @@ class ExpectationFunc;
  */
 class ItBase : public Runnable {
   /** @brief The documentation string for this `it` */
-  std::string description = "";
+  std::string description;
 
  public:
   ItBase() = delete;  // Don't allow a default constructor
 
   /** @brief Copy constructor */
   ItBase(const ItBase &copy) noexcept
-      : Runnable(copy), description(copy.description) {}
+       = default;
 
   /**
    * @brief Create an BaseIt without an explicit description
@@ -50,26 +52,26 @@ class ItBase : public Runnable {
    * @return the constructed BaseIt
    */
   explicit ItBase(const Child &parent, std::string description) noexcept
-      : Runnable(parent), description(description) {}
+      : Runnable(parent), description(std::move(description)) {}
 
   /**
    * @brief Get whether the object needs a description string
    * @return whether this object needs a description to be generated or not
    */
-  const bool needs_description() noexcept { return description.empty(); }
+   bool needs_description() noexcept { return description.empty(); }
 
   /**
    * @brief Get the description string for the `it` statement
    * @return the description string
    */
   std::string get_description() noexcept { return description; }
-  const std::string get_description() const noexcept { return description; }
+  [[nodiscard]] std::string get_description() const noexcept { return description; }
 
   /**
    * @brief Set the description string
    * @return a reference to the modified ItBase
    */
-  ItBase &set_description(std::string description) noexcept {
+  ItBase &set_description(const std::string& description) noexcept {
     this->description = description;
     return *this;
   }

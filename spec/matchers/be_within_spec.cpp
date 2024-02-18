@@ -136,6 +136,4 @@ describe be_within_spec("expect(actual).to_be_within(delta).of(expected)", $  {
 });
 
 
-Runner::spec_group be_within_spec_group([](Runner &r){
-  r.add_spec(be_within_spec);
-});
+CPPSPEC_MAIN(be_within_spec);

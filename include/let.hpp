@@ -17,13 +17,15 @@ namespace CppSpec {
  */
 class LetBase {
  protected:
-  bool delivered;
+  bool delivered{false};
 
  public:
-  constexpr LetBase() noexcept : delivered(false) {}
+  constexpr LetBase() noexcept = default;
   LetBase(const LetBase &copy) = default;
   void reset() noexcept { delivered = false; }
-  constexpr const bool has_result() noexcept { return this->delivered; }
+  [[nodiscard]] constexpr bool has_result() const noexcept {
+    return this->delivered;
+  }
 };
 
 /**
@@ -50,7 +52,7 @@ class Let : public LetBase {
   }
 
   T &operator*() & { return value(); }
-  T &value()&;
+  T &value() &;
 };
 
 /** @brief Executes the block of the let statment */

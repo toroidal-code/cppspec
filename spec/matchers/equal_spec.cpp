@@ -26,6 +26,4 @@ describe equal_spec("Equal", $ {
 });
 
 
-Runner::spec_group equal_spec_group([](Runner &r){
-  r.add_spec(equal_spec);
-});
+CPPSPEC_MAIN(equal_spec);

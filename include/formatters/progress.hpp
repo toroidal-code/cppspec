@@ -3,24 +3,24 @@
 #define CPPSPEC_FORMATTERS_PROGRESS_HPP
 #pragma once
 
-#include <string>
-#include <list>
 #include <forward_list>
+#include <list>
+#include <string>
+
 #include "verbose.hpp"
 
-namespace CppSpec {
-namespace Formatters {
+namespace CppSpec::Formatters {
 
 // The TAP format makes things a little tricky
 class Progress : public BaseFormatter {
-  std::list<std::string> baked_failure_messages;
-  std::list<std::string> raw_failure_messages;
+  std::list<std::string> baked_failure_messages{};
+  std::list<std::string> raw_failure_messages{};
 
   std::string prep_failure_helper(const ItBase &it);
 
  public:
   void format(const ItBase &it) override;
-  void format_failure(std::string message) override;
+  void format_failure(const std::string &message) override;
   void flush() override;
   void cleanup() override;
 
@@ -53,46 +53,60 @@ inline std::string Progress::prep_failure_helper(const ItBase &it) {
 
   // Ascend the tree to the root, formatting the nodes and
   // enqueing each formatted string as we go.
-  const Description *parent = it.get_parent_as<const Description *>();
+  const auto *parent = it.get_parent_as<const Description *>();
 
   do {
     helper_formatter.format(*parent);  // Format the node
     push_and_clear();
-  } while ((parent = dynamic_cast<const Description *>(parent->get_parent())));
+  } while ((parent = dynamic_cast<const Description *>(parent->get_parent())) !=
+           nullptr);
 
   return Util::join(list);  // squash the list of strings and return it.
 }
 
 inline void Progress::prep_failure(const ItBase &it) {
   std::ostringstream string_builder;  // oss is used as the local string builder
-  if (color_output) string_builder << RED;  // if we're doing color, make it red
+  if (color_output) {
+    string_builder << RED;  // if we're doing color, make it red
+  }
   string_builder << "Test number " << test_counter
                  << " failed:";  // Tell us what test # failed
-  if (color_output)
+  if (color_output) {
     string_builder << RESET;  // if we're doing color, reset the terminal
+  }
   string_builder << prep_failure_helper(it);
-  if (color_output) string_builder << RED;
+  if (color_output) {
+    string_builder << RED;
+  }
   string_builder << Util::join(raw_failure_messages, "\n");
-  if (color_output) string_builder << RESET;
+  if (color_output) {
+    string_builder << RESET;
+  }
   raw_failure_messages.clear();
   baked_failure_messages.push_back(string_builder.str());
 }
 
 inline void Progress::format(const ItBase &it) {
   if (it.get_status()) {
-    if (color_output) out_stream << GREEN;
+    if (color_output) {
+      out_stream << GREEN;
+    }
     out_stream << ".";
   } else {
-    if (color_output) out_stream << RED;
+    if (color_output) {
+      out_stream << RED;
+    }
     out_stream << "F";
     prep_failure(it);
   }
-  if (color_output) out_stream << RESET;
+  if (color_output) {
+    out_stream << RESET;
+  }
   out_stream << std::flush;
   get_and_increment_test_counter();
 }
 
-inline void Progress::format_failure(std::string message) {
+inline void Progress::format_failure(const std::string &message) {
   raw_failure_messages.push_back(message);
 }
 
@@ -113,8 +127,7 @@ inline void Progress::cleanup() {
 }
 
 inline void Progress::format_failure_messages() {
-  if (not baked_failure_messages
-              .empty()) {  // If we have any failures to format
+  if (!baked_failure_messages.empty()) {  // If we have any failures to format
     // if (color_output) out_stream << RED;      // make them red
     out_stream << Util::join(baked_failure_messages,
                              "\n\n")  // separated by a blank line
@@ -126,6 +139,6 @@ inline void Progress::format_failure_messages() {
 
 static Progress progress;
 
-}  // namespace Formatters
-}  // namespace CppSpec
+}  // namespace CppSpec::Formatters
+
 #endif  // CPPSPEC_FORMATTERS_PROGRESS_HPP

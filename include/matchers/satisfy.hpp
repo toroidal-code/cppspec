@@ -6,8 +6,8 @@
 #include <string>
 #include "matcher_base.hpp"
 
-namespace CppSpec {
-namespace Matchers {
+
+namespace CppSpec::Matchers {
 //
 //template <class D>
 //class BeHelpers {
@@ -62,6 +62,6 @@ bool Satisfy<A>::match() {
   return test(this->get_actual());
 }
 
-}  // namespace Matchers
-}  // namespace CppSpec
+} // namespace CppSpec::Matchers
+
 #endif  // CPPSPEC_MATCHERS_SATISFY_HPP

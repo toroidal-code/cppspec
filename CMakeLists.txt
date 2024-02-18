@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 3.27 FATAL_ERROR)
 
-if(IWYU)
-  find_program(iwyu_path NAMES include-what-you-use iwyu)
-endif(IWYU)
-
 project(c++spec)
 
 set(CMAKE_COLOR_DIAGNOSTICS ON)
@@ -14,7 +10,7 @@ include(FetchContent)
 
 FetchContent_Declare(argparse
   GIT_REPOSITORY https://github.com/p-ranav/argparse/
-  GIT_TAG v2.9
+  GIT_TAG v3.0
 )
 FetchContent_MakeAvailable(argparse)
 
@@ -43,23 +39,43 @@ target_precompile_headers(c++spec INTERFACE
   ${c++spec_headers}
 )
 
-option(BUILD_TESTS "Build tests." ON)
+# HELPERS
+
+# Add spec
+function(add_spec source_file)
+  cmake_path(GET source_file STEM spec_name)
+  add_executable(${spec_name} ${source_file})
+  target_link_libraries(${spec_name} c++spec)
+
+  set_target_properties(${spec_name} PROPERTIES
+    CXX_STANDARD 20
+    CXX_STANDARD_REQUIRED YES
+  )
+  add_test(NAME ${spec_name} COMMAND ${spec_name} --verbose)
+endfunction(add_spec)
+
+# Discover Specs
+function(discover_specs spec_folder)
+  file(GLOB_RECURSE specs ${spec_folder}/*_spec.cpp)
+
+  foreach(spec IN LISTS specs)
+    add_spec(${spec})
+  endforeach()
+endfunction(discover_specs)
+
+option(BUILD_TESTS "Build tests" ON)
 
 if(BUILD_TESTS)
-  # enable_testing()
+  enable_testing()
 
   # Tests
-  add_subdirectory(spec)
+  discover_specs(spec)
 endif(BUILD_TESTS)
 
-option(BUILD_EXAMPLES "Build examples." ON)
+option(BUILD_EXAMPLES "Build examples" ON)
 
 if(BUILD_EXAMPLES)
   add_subdirectory(examples)
-
-  if(iwyu_path)
-    set_property(TARGET cppspec_sample PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path})
-  endif()
 endif(BUILD_EXAMPLES)
 
 # ##### Documentation generation #######

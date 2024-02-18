@@ -6,8 +6,8 @@
 #include <string>
 #include "matcher_base.hpp"
 
-namespace CppSpec {
-namespace Matchers {
+
+namespace CppSpec::Matchers {
 
 /**
  * @brief The `equal` matcher
@@ -115,6 +115,6 @@ std::string Equal<A, E>::actual_inspected() {
 //   return ss.str();
 // }
 
-}  // namespace Matchers
-}  // namespace CppSpec
+} // namespace CppSpec::Matchers
+
 #endif  // CPPSPEC_MATCHERS_EQUAL_HPP

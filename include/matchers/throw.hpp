@@ -8,9 +8,9 @@
 #include "util.hpp"
 #include "matcher_base.hpp"
 
-namespace CppSpec {
 
-namespace Matchers {
+
+namespace CppSpec::Matchers {
 
 template <class A, class Ex>
 class Throw : public MatcherBase<A, void *> {
@@ -60,7 +60,7 @@ std::string Throw<A, Ex>::
   return ss.str();
 }
 
-}  // namespace Matchers
-}  // namespace CppSpec
+} // namespace CppSpec::Matchers
+
 
 #endif  // C_SPEC_THROW_HPP

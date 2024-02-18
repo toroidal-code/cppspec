@@ -4,8 +4,8 @@
 #pragma once
 #include <string>
 #include "matcher_base.hpp"
-namespace CppSpec {
-namespace Matchers {
+
+namespace CppSpec::Matchers {
 
 template <typename A, typename E>
 class BeGreaterThan : public MatcherBase<A, E> {
@@ -18,7 +18,7 @@ class BeGreaterThan : public MatcherBase<A, E> {
   }
 };
 
-}  // namespace Matchers
-}  // namespace CppSpec
+} // namespace CppSpec::Matchers
+
 
 #endif  // CPPSPEC_MATCHERS_BE_GREATER_THAN_HPP

@@ -80,11 +80,11 @@ class Child {
 
   /** @brief Check to see if the Child has a parent. */
   const bool has_parent() noexcept { return parent != nullptr; }
-  const bool has_parent() const noexcept { return parent != nullptr; }
+  [[nodiscard]] const bool has_parent() const noexcept { return parent != nullptr; }
 
   // TODO: Look in to making these references instead of pointer returns
   /** @brief Get the Child's parent. */
-  Child *get_parent() const noexcept { return parent; }
+  [[nodiscard]] Child *get_parent() const noexcept { return parent; }
 
   template <class C>
   C get_parent_as() const noexcept {
@@ -103,23 +103,23 @@ class Child {
 
   /*--------- Formatter helper functions -----------*/
   // Check to see if the tree has a printer
-  const bool has_formatter() const noexcept;
+  [[nodiscard]] bool has_formatter() const noexcept;
 
   // Get the printer from the tree
-  Formatters::BaseFormatter &get_formatter() const noexcept;
+  [[nodiscard]] Formatters::BaseFormatter &get_formatter() const noexcept;
 
-  void set_formatter(const Formatters::BaseFormatter &formatter) {
-    this->formatter = &const_cast<Formatters::BaseFormatter &>(formatter);
+  void set_formatter(Formatters::BaseFormatter &formatter) {
+    this->formatter = &formatter;
   }
 
   /*--------- Primary member functions -------------*/
 
   /** @brief Get the status of the object (success/failure) */
-  const bool get_status() const noexcept { return this->status; }
+  [[nodiscard]]  bool get_status() const noexcept { return this->status; }
   void failed() noexcept;  // Report failure to the object.
 
   // Calculate the padding for printing this object
-  std::string padding() const noexcept;
+  [[nodiscard]] std::string padding() const noexcept;
 };
 
 /*>>>>>>>>>>>>>>>>>>>> Child <<<<<<<<<<<<<<<<<<<<<<<<<*/
@@ -133,7 +133,8 @@ class Child {
 inline void Child::failed() noexcept {
   this->status = false;
   // propogates the failure up the tree
-  if (this->has_parent()) this->get_parent()->failed();
+  if (this->has_parent()) { this->get_parent()->failed();
+}
 }
 
 /**
@@ -144,15 +145,19 @@ inline std::string Child::padding() const noexcept {
   return this->has_parent() ? this->get_parent()->padding() + "  " : "";
 }
 
-inline const bool Child::has_formatter() const noexcept {
-  if (this->formatter != nullptr) return true;
-  if (!this->has_parent()) return false;  // base case;
+inline bool Child::has_formatter() const noexcept {
+  if (this->formatter != nullptr) { return true;
+}
+  if (!this->has_parent()) { return false;  // base case;
+}
   return parent->has_formatter();
 }
 
 inline Formatters::BaseFormatter &Child::get_formatter() const noexcept {
-  if (this->formatter) return *formatter;
-  if (!this->has_parent()) std::terminate();
+  if (this->formatter != nullptr) { return *formatter;
+}
+  if (!this->has_parent()) { std::terminate();
+}
   return parent->get_formatter();
 }
 

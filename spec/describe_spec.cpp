@@ -8,6 +8,4 @@ describe describe_spec("Description", $ {
 });
 
 
-Runner::spec_group describe_spec_group([](Runner &r){
-  r.add_spec(describe_spec);
-});
+CPPSPEC_MAIN(describe_spec);

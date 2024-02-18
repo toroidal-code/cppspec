@@ -3,10 +3,12 @@
 #define CPPSPEC_MATCHERS_PRETTY_MATCHERS_HPP
 #pragma once
 
-#include <string>
-#include <vector>
 #include <algorithm>
 #include <regex>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "prettyprint.hpp"
 #include "util.hpp"
 
@@ -25,13 +27,13 @@ class MatcherBase;
  * that are used to generate human-readable information and output.
  */
 struct Pretty {
-  std::string _name = "";
-  std::string name(std::string name);
-  std::string name_to_sentance(std::string name);
-  static std::string split_words(std::string sym);
-  static std::string underscore(std::string camel_cased_word);
-  static std::string last(const std::string &s, const char delim);
-  static std::string improve_hash_formatting(std::string inspect_string);
+  std::string _name;
+  [[nodiscard]] std::string name(const std::string &name) const;
+  [[nodiscard]] std::string name_to_sentance(const std::string &name) const;
+  static std::string split_words(const std::string &sym);
+  static std::string underscore(const std::string &camel_cased_word);
+  static std::string last(const std::string &s, char delim);
+  static std::string improve_hash_formatting(const std::string &inspect_string);
 
   template <Util::is_streamable T>
   static std::string to_word(T &item);
@@ -169,9 +171,8 @@ inline std::string Pretty::to_word(Matchers::MatcherBase<A, E> &matcher) {
   std::string description = matcher.description();
   if (description.empty()) {
     return "[No description]";
-  } else {
-    return description;
   }
+  return description;
 }
 
 template <typename T>
@@ -183,32 +184,28 @@ inline std::string Pretty::to_word_type(T &item) {
   return word;
 }
 
-inline std::string Pretty::name_to_sentance(std::string n) {
+inline std::string Pretty::name_to_sentance(const std::string &n) const {
   return split_words(name(n));
 }
 
-inline std::string Pretty::name(std::string name) {
+inline std::string Pretty::name(const std::string &name) const {
   if (_name.empty()) {
     return last(name, ':');
-  } else {
-    return _name;
   }
+  return _name;
 }
 
-inline std::string Pretty::split_words(std::string sym) {
-  std::stringstream ss;
-  ss << sym;
-  sym = ss.str();
-  sym = std::regex_replace(sym, std::regex("_"), " ");
-  return sym;
+inline std::string Pretty::split_words(const std::string &sym) {
+  return std::regex_replace(sym, std::regex("_"), " ");
 }
 
-inline std::string Pretty::underscore(std::string word) {
-  word = std::regex_replace(word, std::regex("([A-Z]+)([A-Z][a-z])"), "$1_$2");
-  word = std::regex_replace(word, std::regex("([a-z\\d])([A-Z])"), "$1_$2");
-  word = std::regex_replace(word, std::regex("-"), "_");
-  std::transform(word.begin(), word.end(), word.begin(), ::tolower);
-  return word;
+inline std::string Pretty::underscore(const std::string &word) {
+  std::string str =
+      std::regex_replace(word, std::regex("([A-Z]+)([A-Z][a-z])"), "$1_$2");
+  str = std::regex_replace(str, std::regex("([a-z\\d])([A-Z])"), "$1_$2");
+  str = std::regex_replace(str, std::regex("-"), "_");
+  std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+  return str;
 }
 
 inline std::string Pretty::last(const std::string &s, const char delim) {
@@ -223,11 +220,11 @@ inline std::string Pretty::last(const std::string &s, const char delim) {
   return elems.back();
 }
 
-inline std::string Pretty::improve_hash_formatting(std::string inspect_string) {
-  inspect_string = std::regex_replace(inspect_string, std::regex("(\\S)=>(\\S)"), "$1 => $2");
-  return inspect_string;
+inline std::string Pretty::improve_hash_formatting(
+    const std::string &inspect_string) {
+  return std::regex_replace(inspect_string, std::regex("(\\S)=>(\\S)"),
+                            "$1 => $2");
 }
-
 
 /**
  * @brief Generate a string of the class and data of an object

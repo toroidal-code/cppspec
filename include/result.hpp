@@ -3,9 +3,11 @@
 #define CPPSPEC_RESULT_HPP
 #pragma once
 
-#include <string>
-#include <sstream>
 #include <ciso646>
+#include <sstream>
+#include <string>
+#include <utility>
+
 
 namespace CppSpec {
 
@@ -13,8 +15,7 @@ class Result {
   const bool value;
   std::string message;
   explicit Result(bool value, std::string message = "") noexcept
-      : value(value),
-        message(message) {}
+      : value(value), message(std::move(message)) {}
 
  public:
   // Default destructor
@@ -29,22 +30,20 @@ class Result {
   Result &operator=(Result &&) = delete;
 
   /*--------- Status helper functions --------------*/
-  const bool get_status() noexcept { return value; }
-  const bool get_status() const noexcept { return value; }
+  [[nodiscard]] bool get_status() const noexcept { return value; }
 
-  operator bool() noexcept { return this->get_status(); }
   operator bool() const noexcept { return this->get_status(); }
 
   /*--------- Message helper functions -------------*/
-  const std::string get_message() noexcept { return message; }
-  const std::string get_message() const noexcept { return message; }
-  Result &set_message(std::string message) noexcept;
+  std::string get_message() noexcept { return message; }
+  [[nodiscard]] std::string get_message() const noexcept { return message; }
+  Result &set_message(const std::string &message) noexcept;
 
   /*--------- Explicit constructor functions -------*/
   static Result success() noexcept;
   static Result failure() noexcept;
-  static Result success_with(std::string success_message) noexcept;
-  static Result failure_with(std::string failure_message) noexcept;
+  static Result success_with(const std::string &success_message) noexcept;
+  static Result failure_with(const std::string &failure_message) noexcept;
 
   /*-------------- Friend functions ----------------*/
 
@@ -52,18 +51,20 @@ class Result {
   friend std::ostream &operator<<(std::ostream &os, const Result &res);
 };
 
-inline Result &Result::set_message(std::string message) noexcept {
+inline Result &Result::set_message(const std::string &message) noexcept {
   this->message = message;
   return *this;
 }
 
 inline Result Result::success() noexcept { return Result(true); }
-inline Result Result::success_with(std::string success_message) noexcept {
+inline Result Result::success_with(
+    const std::string &success_message) noexcept {
   return Result(true, success_message);
 }
 
 inline Result Result::failure() noexcept { return Result(false); }
-inline Result Result::failure_with(std::string failure_message) noexcept {
+inline Result Result::failure_with(
+    const std::string &failure_message) noexcept {
   return Result(false, failure_message);
 }
 

@@ -112,6 +112,4 @@ describe expectation_spec("Expectation", $ {
   });
 });
 
-Runner::spec_group expectation_spec_group([](Runner &r){
-  r.add_spec(expectation_spec);
-});
+CPPSPEC_MAIN(expectation_spec);

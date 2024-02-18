@@ -35,10 +35,4 @@ describe be_between_spec("BeBetween", $ {
 
 });
 
-//int main() { return EXIT_SUCCESS; }
-//extern Runner runner;
-//auto nil = runner.add_spec(expectation_spec);
-
-Runner::spec_group be_between_spec_group([](Runner &r){
-  r.add_spec(be_between_spec);
-});
+CPPSPEC_MAIN(be_between_spec);

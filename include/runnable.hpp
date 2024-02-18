@@ -17,7 +17,7 @@ class Runnable : public Child {
  public:
   // Default constructor/destructor
   Runnable() = default;
-  virtual ~Runnable() = default;
+  ~Runnable() override = default;
 
   // Move constructor/operator
   Runnable(Runnable &&) = default;

@@ -1,12 +1,15 @@
 /** @file */
 #ifndef CPPSPEC_RUNNER_HPP
 #define CPPSPEC_RUNNER_HPP
-#include "formatters/formatters_base.hpp"
+#include <initializer_list>
 #pragma once
 
 #include <list>
+#include <utility>
 
-#include "argparse.hpp"
+#include "description.hpp"
+#include "formatters/formatters_base.hpp"
+#include "result.hpp"
 
 namespace CppSpec {
 
@@ -14,26 +17,14 @@ namespace CppSpec {
  * @brief A collection of Descriptions that are run in sequence
  */
 class Runner {
-  std::list<Description *> specs;
-  Formatters::BaseFormatter *formatter;
+  std::list<Description *> specs{};
+  std::shared_ptr<Formatters::BaseFormatter> formatter;
 
  public:
-  using spec_group = std::function<void(Runner &)>;
-  explicit Runner() = default;
+  explicit Runner(std::shared_ptr<Formatters::BaseFormatter> formatter)
+      : formatter{std::move(formatter)} {};
 
-  ~Runner() { delete formatter; }
-
-  /**
-   * @brief Add a describe_a suite to the list of suites to run
-   *
-   * @param spec the spec to be added
-   * @return a reference to the modified Runner
-   */
-  template <typename T>
-  Runner &add_spec(ClassDescription<T> &spec) {
-    specs.push_back(&spec);
-    return *this;
-  }
+  ~Runner() = default;
 
   /**
    * @brief Add a Description object
@@ -46,21 +37,19 @@ class Runner {
     return *this;
   }
 
-  Result run(Formatters::BaseFormatter &formatter) {
+  Result run() {
     bool success = true;
     for (auto *spec : specs) {
-      success &= static_cast<bool>(spec->run(formatter));
+      success &= static_cast<bool>(spec->run(*formatter));
     }
     return success ? Result::success() : Result::failure();
   }
 
-  template <typename Formatter>
   Result exec() {
-    Formatter formatter;
     if (specs.size() > 1) {
-      formatter.set_multiple(true);
+      formatter->set_multiple(true);
     }
-    Result result = run(formatter);
+    Result result = run();
     return result;
   }
 };

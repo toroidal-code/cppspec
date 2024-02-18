@@ -20,8 +20,8 @@
 
 #endif
 
-namespace CppSpec {
-namespace Util {
+
+namespace CppSpec::Util {
 
 /**
  * Demangle a symbol into a human-readable string.
@@ -129,6 +129,6 @@ inline std::string join(std::ranges::range auto &iterable, const std::string &se
   return oss.str();
 }
 
-}  // namespace Util
-}  // namespace CppSpec
+} // namespace CppSpec::Util
+
 #endif  // CPPSPEC_UTIL_HPP

@@ -5,8 +5,8 @@
 
 #include "matcher_base.hpp"
 
-namespace CppSpec {
-namespace Matchers {
+
+namespace CppSpec::Matchers {
 
 enum class RangeMode { exclusive, inclusive };
 
@@ -73,6 +73,6 @@ std::string BeBetween<A, E>::description() {
   return ss.str();
 }
 
-}  // namespace Matchers
-}  // namespace CppSpec
+} // namespace CppSpec::Matchers
+
 #endif // CPPSPEC_MATCHERS_BE_BETWEEN_HPP

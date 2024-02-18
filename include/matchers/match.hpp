@@ -5,8 +5,8 @@
 #include <string>
 #include <regex>
 #include "matcher_base.hpp"
-namespace CppSpec {
-namespace Matchers {
+
+namespace CppSpec::Matchers {
 
 template <typename A>
 class Match : MatcherBase<A, std::regex> {
@@ -22,7 +22,7 @@ class Match : MatcherBase<A, std::regex> {
     return "match " + Pretty::to_word(this->get_expected());
   }
 
-  virtual bool match() override {
+  bool match() override {
     std::smatch temp_match;
     return std::regex_match(this->get_actual(), temp_match,
                             this->get_expected());
@@ -49,7 +49,7 @@ class MatchPartial : public MatcherBase<A, std::regex> {
   }
 };
 
-}  // namespace Matchers
-}  // namespace CppSpec
+} // namespace CppSpec::Matchers
+
 
 #endif  // CPPSPEC_MATCHERS_BE_NULLPTR_HPP

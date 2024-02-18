@@ -11,12 +11,11 @@
 #include "formatters_base.hpp"
 #include "it_base.hpp"
 
-namespace CppSpec {
-namespace Formatters {
+namespace CppSpec::Formatters {
 
 class Verbose : public BaseFormatter {
   bool first = true;
-  std::list<std::string> failure_messages;
+  std::list<std::string> failure_messages{};
 
  public:
   Verbose() = default;
@@ -27,21 +26,29 @@ class Verbose : public BaseFormatter {
 
   void format(const Description &description) override;
   void format(const ItBase &description) override;
-  void format_failure(std::string message) override;
+  void format_failure(const std::string &message) override;
   void format_failure_messages();
 };
 
 inline void Verbose::format(const Description &description) {
-  if (!first && !description.has_parent()) out_stream << std::endl;
+  if (!first && !description.has_parent()) {
+    out_stream << std::endl;
+  }
   out_stream << description.padding() << description.get_description()
              << description.get_subject_type() << std::endl;
-  if (first) this->first = false;
+  if (first) {
+    this->first = false;
+  }
 }
 
 inline void Verbose::format(const ItBase &it) {
-  if (color_output) out_stream << (it.get_status() ? GREEN : RED);
+  if (color_output) {
+    out_stream << (it.get_status() ? GREEN : RED);
+  }
   out_stream << it.padding() << it.get_description() << std::endl;
-  if (color_output) out_stream << RESET;
+  if (color_output) {
+    out_stream << RESET;
+  }
 
   // Print any failures if we've got them
   // 'it' having a bad status necessarily
@@ -50,33 +57,28 @@ inline void Verbose::format(const ItBase &it) {
   get_and_increment_test_counter();
 }
 
-inline void Verbose::format_failure(std::string message) {
+inline void Verbose::format_failure(const std::string &message) {
   failure_messages.push_back(message);
 }
 
 // TODO: Compare this with Progress::format_failure_messages
 inline void Verbose::format_failure_messages() {
-  if (not failure_messages.empty()) {     // If we have any failures to format
-    if (color_output) out_stream << RED;  // make them red
+  if (not failure_messages.empty()) {  // If we have any failures to format
+    if (color_output) {
+      out_stream << RED;  // make them red
+    }
     out_stream << Util::join(failure_messages,
                              "\n")  // separated by a blank line
                << std::endl;        // newline
-    if (color_output) out_stream << RESET;
+    if (color_output) {
+      out_stream << RESET;
+    }
     failure_messages.clear();  // Finally, clear the failures list.
   }
 }
 
 static Verbose verbose;
 
-}  // namespace Formatters
+}  // namespace CppSpec::Formatters
 
-template <typename FormatterType = Formatters::Verbose>
-inline auto Description::as_main() {
-  Description description{*this};
-  return [=](int argc, char **argv) mutable -> int {
-    auto opts = parse(argc, argv);
-    return description.run(*opts.formatter) ? EXIT_SUCCESS : EXIT_FAILURE;
-  };
-}
-}  // namespace CppSpec
 #endif  // CPPSPEC_FORMATTERS_VERBOSE_HPP

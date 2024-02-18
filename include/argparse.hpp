@@ -2,6 +2,7 @@
 
 #include <argparse/argparse.hpp>
 #include <string_view>
+#include "runner.hpp"
 
 #include "formatters/progress.hpp"
 #include "formatters/tap.hpp"
@@ -22,14 +23,15 @@ constexpr std::string file_name(std::string_view path) {
 
 struct RuntimeOpts {
   bool verbose = false;
-  std::unique_ptr<Formatters::BaseFormatter> formatter = nullptr;
+  std::shared_ptr<Formatters::BaseFormatter> formatter = nullptr;
 };
 
-inline RuntimeOpts parse(int argc, char** argv) {
-  argparse::ArgumentParser program(file_name(__FILE__));
+inline Runner parse(int argc, char** argv) {
+  argparse::ArgumentParser program{file_name(argv[0])};
 
   program.add_argument("-f", "--format")
       .default_value(std::string{"p"})
+      .choices("progress", "p", "tap", "t", "detail", "d")
       .required()
       .help("set the output format");
 
@@ -48,22 +50,18 @@ inline RuntimeOpts parse(int argc, char** argv) {
 
   RuntimeOpts opts;
 
-  if (program["--verbose"] == true) {
-    opts.verbose = true;
-  }
-
   auto format_string = program.get<std::string>("--format");
-  if (format_string == "p" || format_string == "progress") {
+  if (format_string == "d" || format_string == "detail" || program["--verbose"] == true) {
+    opts.formatter = std::make_unique<Formatters::Verbose>();
+  } else if (format_string == "p" || format_string == "progress") {
     opts.formatter = std::make_unique<Formatters::Progress>();
   } else if (format_string == "t" || format_string == "tap") {
     opts.formatter = std::make_unique<Formatters::TAP>();
-  } else if (format_string == "d" || format_string == "detail") {
-    opts.formatter = std::make_unique<Formatters::Verbose>();
   } else {
     std::cerr << "Unrecognized format type" << std::endl;
     std::exit(-1);
   }
 
-  return opts;
+  return Runner{opts.formatter};
 }
 }  // namespace CppSpec
