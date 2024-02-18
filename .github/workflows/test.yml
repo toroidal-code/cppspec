@@ -43,11 +43,11 @@ jobs:
       if: ${{ matrix.compiler == 'llvm' && matrix.os == 'macos-latest' }}
 
     - name: Configure for native compiler
-      run: cmake -B build -DBUILD_TESTS=YES
+      run: cmake -B build -DCPPSPEC_BUILD_TESTS=YES
       if: ${{ matrix.compiler == 'native'}}
 
     - name: Configure for non-native compiler
-      run: cmake -B build -G Ninja -DBUILD_TESTS=YES -DCMAKE_C_COMPILER="$CC" -DCMAKE_CXX_COMPILER="$CXX"
+      run: cmake -B build -G Ninja -DCPPSPEC_BUILD_TESTS=YES -DCMAKE_C_COMPILER="$CC" -DCMAKE_CXX_COMPILER="$CXX"
       if: ${{ matrix.compiler != 'native'}}
 
     - name: Build
