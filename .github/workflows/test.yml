@@ -14,7 +14,9 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false
       matrix:
+        compiler: [native, llvm]
         os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
@@ -28,8 +30,10 @@ jobs:
       uses: KyleMayes/install-llvm-action@v1
       with:
         version: "15"
+        env: ${{ matrix.compiler == 'llvm' }}
+      if: ${{ matrix.compiler == 'llvm' }}
 
-    - name: Configure CMake
+    - name: Configure  
       run: cmake -Bbuild -DBUILD_TESTS=YES
 
     - name: Build
