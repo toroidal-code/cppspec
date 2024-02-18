@@ -1,7 +1,6 @@
 # C++Spec 
 [![version](https://img.shields.io/badge/version-v0.0.0-blue.svg)]()
-[![Travis](https://img.shields.io/travis/toroidal-code/cppspec/develop.svg)](https://travis-ci.org/toroidal-code/cppspec)&nbsp;
-[![AppVeyor](https://img.shields.io/appveyor/ci/toroidal-code/cppspec/develop.svg?label=msvcc)](https://ci.appveyor.com/project/toroidal-code/cppspec)&nbsp;
+[![GitHub Action](https://github.com/toroidal-code/cppspec/actions/workflows/test.yml/badge.svg)]()&nbsp;
 [![GitHub release](https://img.shields.io/github/release/toroidal-code/cppspec.svg)](https://github.com/toroidal-code/cppspec/releases/latest)&nbsp;
 [![Github Releases](https://img.shields.io/github/downloads/toroidal-code/cppspec/latest/total.svg)]()&nbsp;
 [![Documentation Status](https://readthedocs.org/projects/cppspec/badge/?version=latest)](http://cppspec.readthedocs.org/en/latest/?badge=latest)
