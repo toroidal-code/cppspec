@@ -9,14 +9,12 @@ cmake_policy(SET CMP0135 NEW)
 include(FetchContent)
 
 FetchContent_Declare(argparse
-  GIT_REPOSITORY https://github.com/p-ranav/argparse/
-  GIT_TAG v3.0
+  URL https://github.com/p-ranav/argparse/archive/refs/tags/v3.0.tar.gz
 )
 FetchContent_MakeAvailable(argparse)
 
 FetchContent_Declare(cxx-prettyprint
-  GIT_REPOSITORY https://github.com/louisdx/cxx-prettyprint
-  GIT_TAG master
+  URL https://github.com/louisdx/cxx-prettyprint/archive/refs/heads/master.tar.gz
 )
 FetchContent_MakeAvailable(cxx-prettyprint)
 
