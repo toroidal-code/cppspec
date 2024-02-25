@@ -64,9 +64,9 @@ function(discover_specs spec_folder)
 endfunction(discover_specs)
 
 # OPTIONS
-option(CPPSPEC_BUILD_TESTS "Build C++Spec tests" OFF)
-option(CPPSPEC_BUILD_EXAMPLES "Build C++Spec examples" OFF)
-option(CPPSPEC_BUILD_DOCS "Build C++Spec documentation" OFF)
+option(CPPSPEC_BUILD_TESTS "Build C++Spec tests")
+option(CPPSPEC_BUILD_EXAMPLES "Build C++Spec examples")
+option(CPPSPEC_BUILD_DOCS "Build C++Spec documentation")
 
 if(CPPSPEC_BUILD_TESTS)
   enable_testing()

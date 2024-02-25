@@ -75,6 +75,10 @@
     "xstring": "cpp",
     "xtree": "cpp"
   },
+  "cmake.configureArgs": [
+    "-DCPPSPEC_BUILD_TESTS=YES",
+    "-DCPPSPEC_BUILD_EXAMPLES=YES"
+  ],
   "C_Cpp.intelliSenseEngine": "disabled",
   "C_Cpp.autocomplete": "disabled",
   "C_Cpp.errorSquiggles": "disabled",

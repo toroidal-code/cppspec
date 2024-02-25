@@ -45,6 +45,13 @@
                                                             : EXIT_FAILURE; \
   }
 
+#define CPPSPEC_SPEC(spec_name)                                  \
+  int spec_name_spec(int argc, char **argv) {                    \
+    return CppSpec::parse(argc, argv).add_spec(spec_name).exec() \
+               ? EXIT_SUCCESS                                    \
+               : EXIT_FAILURE;                                   \
+  }
+
 #endif
 /*>>>>>>>>>>>>>>>>>>> TYPEDEFS <<<<<<<<<<<<<<<<<<<<<*/
 
