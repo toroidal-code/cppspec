@@ -46,7 +46,7 @@
   }
 
 #define CPPSPEC_SPEC(spec_name)                                  \
-  int spec_name_spec(int argc, char **const argv) {              \
+  int spec_name##_spec(int argc, char **const argv) {            \
     return CppSpec::parse(argc, argv).add_spec(spec_name).exec() \
                ? EXIT_SUCCESS                                    \
                : EXIT_FAILURE;                                   \
