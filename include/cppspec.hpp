@@ -37,16 +37,16 @@
 #define before_each self.before_each
 #define after_all self.after_all
 #define after_each self.after_each
-#define let(name, body) auto (name) = self.let(body);
+#define let(name, body) auto(name) = self.let(body);
 
 #define CPPSPEC_MAIN(spec)                                                  \
-  int main(int argc, char **argv) {                                         \
+  int main(int argc, char **const argv) {                                   \
     return CppSpec::parse(argc, argv).add_spec(spec).exec() ? EXIT_SUCCESS  \
                                                             : EXIT_FAILURE; \
   }
 
 #define CPPSPEC_SPEC(spec_name)                                  \
-  int spec_name_spec(int argc, char **argv) {                    \
+  int spec_name_spec(int argc, char **const argv) {              \
     return CppSpec::parse(argc, argv).add_spec(spec_name).exec() \
                ? EXIT_SUCCESS                                    \
                : EXIT_FAILURE;                                   \

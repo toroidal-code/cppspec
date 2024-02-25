@@ -35,9 +35,13 @@ target_link_libraries(c++spec INTERFACE
 )
 
 FILE(GLOB_RECURSE c++spec_headers ${CMAKE_CURRENT_LIST_DIR}/include/*.hpp)
-target_precompile_headers(c++spec INTERFACE
-  ${c++spec_headers}
-)
+
+option(CPPSPEC_PRECOMPILE_HEADERS "Precompile the C++Spec headers")
+if(CPPSPEC_PRECOMPILE_HEADERS)
+  target_precompile_headers(c++spec INTERFACE
+    ${c++spec_headers}
+  )
+endif()
 
 # HELPERS
 
@@ -79,7 +83,7 @@ if(CPPSPEC_BUILD_EXAMPLES)
   add_subdirectory(examples)
 endif(CPPSPEC_BUILD_EXAMPLES)
 
-##### Documentation generation #######
+# #### Documentation generation #######
 if(CPPSPEC_BUILD_DOCS)
   find_package(Doxygen
     OPTIONAL_COMPONENTS dot mscgen dia

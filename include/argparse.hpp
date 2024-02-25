@@ -26,7 +26,7 @@ struct RuntimeOpts {
   std::shared_ptr<Formatters::BaseFormatter> formatter = nullptr;
 };
 
-inline Runner parse(int argc, char** argv) {
+inline Runner parse(int argc, char** const argv) {
   argparse::ArgumentParser program{file_name(argv[0])};
 
   program.add_argument("-f", "--format")
