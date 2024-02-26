@@ -1,8 +1,6 @@
 /**
  * @file
  */
-#ifndef CPPSPEC_RUNNABLE_HPP
-#define CPPSPEC_RUNNABLE_HPP
 #pragma once
 
 #include "child.hpp"
@@ -38,4 +36,3 @@ class Runnable : public Child {
 };
 
 }  // namespace CppSpec
-#endif  // CPPSPEC_RUNNABLE_HPP

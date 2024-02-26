@@ -1,6 +1,4 @@
 /** @file */
-#ifndef CPPSPEC_LET_HPP
-#define CPPSPEC_LET_HPP
 #pragma once
 
 #include <functional>
@@ -23,9 +21,7 @@ class LetBase {
   constexpr LetBase() noexcept = default;
   LetBase(const LetBase &copy) = default;
   void reset() noexcept { delivered = false; }
-  [[nodiscard]] constexpr bool has_result() const noexcept {
-    return this->delivered;
-  }
+  [[nodiscard]] constexpr bool has_result() const noexcept { return this->delivered; }
 };
 
 /**
@@ -75,4 +71,3 @@ T &Let<T>::value() & {
 }
 
 }  // namespace CppSpec
-#endif  // CPPSPEC_LET_HPP

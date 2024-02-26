@@ -1,6 +1,4 @@
 /** @file */
-#ifndef CPPSPEC_TERM_COLORS_HPP
-#define CPPSPEC_TERM_COLORS_HPP
 #pragma once
 #include <string_view>
 
@@ -23,4 +21,3 @@ constexpr std::string_view BOLDMAGENTA("\033[1m\033[35m"); /* Bold Magenta */
 constexpr std::string_view BOLDCYAN("\033[1m\033[36m");    /* Bold Cyan */
 constexpr std::string_view BOLDWHITE("\033[1m\033[37m");   /* Bold White */
 
-#endif  // CPPSPEC_TERM_COLORS_HPP

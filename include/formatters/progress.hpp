@@ -1,6 +1,4 @@
 /** @file */
-#ifndef CPPSPEC_FORMATTERS_PROGRESS_HPP
-#define CPPSPEC_FORMATTERS_PROGRESS_HPP
 #pragma once
 
 #include <forward_list>
@@ -58,8 +56,7 @@ inline std::string Progress::prep_failure_helper(const ItBase &it) {
   do {
     helper_formatter.format(*parent);  // Format the node
     push_and_clear();
-  } while ((parent = dynamic_cast<const Description *>(parent->get_parent())) !=
-           nullptr);
+  } while ((parent = dynamic_cast<const Description *>(parent->get_parent())) != nullptr);
 
   return Util::join(list);  // squash the list of strings and return it.
 }
@@ -69,8 +66,7 @@ inline void Progress::prep_failure(const ItBase &it) {
   if (color_output) {
     string_builder << RED;  // if we're doing color, make it red
   }
-  string_builder << "Test number " << test_counter
-                 << " failed:";  // Tell us what test # failed
+  string_builder << "Test number " << test_counter << " failed:";  // Tell us what test # failed
   if (color_output) {
     string_builder << RESET;  // if we're doing color, reset the terminal
   }
@@ -106,9 +102,7 @@ inline void Progress::format(const ItBase &it) {
   get_and_increment_test_counter();
 }
 
-inline void Progress::format_failure(const std::string &message) {
-  raw_failure_messages.push_back(message);
-}
+inline void Progress::format_failure(const std::string &message) { raw_failure_messages.push_back(message); }
 
 inline void Progress::flush() {
   if (not multiple) {         // If we aren't executing through a runner
@@ -141,4 +135,3 @@ static Progress progress;
 
 }  // namespace CppSpec::Formatters
 
-#endif  // CPPSPEC_FORMATTERS_PROGRESS_HPP

@@ -1,16 +1,14 @@
 /** @file */
-#ifndef CPPSPEC_IT_BASE_HPP
-#define CPPSPEC_IT_BASE_HPP
 #pragma once
 
 #include <string>
-#include <utility>
 #include <utility>
 #include <vector>
 
 #include "let.hpp"
 #include "runnable.hpp"
 #include "util.hpp"
+
 
 namespace CppSpec {
 
@@ -37,8 +35,7 @@ class ItBase : public Runnable {
   ItBase() = delete;  // Don't allow a default constructor
 
   /** @brief Copy constructor */
-  ItBase(const ItBase &copy) noexcept
-       = default;
+  ItBase(const ItBase &copy) noexcept = default;
 
   /**
    * @brief Create an BaseIt without an explicit description
@@ -58,7 +55,7 @@ class ItBase : public Runnable {
    * @brief Get whether the object needs a description string
    * @return whether this object needs a description to be generated or not
    */
-   bool needs_description() noexcept { return description.empty(); }
+  bool needs_description() noexcept { return description.empty(); }
 
   /**
    * @brief Get the description string for the `it` statement
@@ -71,7 +68,7 @@ class ItBase : public Runnable {
    * @brief Set the description string
    * @return a reference to the modified ItBase
    */
-  ItBase &set_description(const std::string& description) noexcept {
+  ItBase &set_description(const std::string &description) noexcept {
     this->description = description;
     return *this;
   }
@@ -112,8 +109,7 @@ class ItBase : public Runnable {
    * @return a ExpectationValue object containing the given init_list.
    */
   template <typename T>
-  ExpectationValue<std::initializer_list<T>> expect(
-      std::initializer_list<T> init_list);
+  ExpectationValue<std::initializer_list<T>> expect(std::initializer_list<T> init_list);
 
   /**
    * @brief The `expect` object generator for Let
@@ -137,4 +133,3 @@ class ItBase : public Runnable {
 };
 
 }  // namespace CppSpec
-#endif  // CPPSPEC_IT_BASE_HPP

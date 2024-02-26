@@ -191,6 +191,24 @@ describe list_spec("A list spec", $ {
   });
 });
 
+#include <expected>
+
+describe expectation_spec("An expected", ${
+  class Error{};
+  std::expected<int, Error> expected{5};
+  it("has a value", _{
+    expect(expected).to_have_value();
+  });
+
+  it("does not have an error", _{
+    expect(expected).not_().to_have_error();
+  });
+
+  it("contains the value", _{
+    expect(expected.value()).to_equal(5);
+  });
+});
+
 /* Here is the declaration of fabs description defined in an other file (fabs_spec.c in this sample)*/
 int main(int argc, char **argv){
   return CppSpec::parse(argc, argv)
@@ -200,5 +218,6 @@ int main(int argc, char **argv){
              .add_spec(vector_spec)
              .add_spec(let_spec)
              .add_spec(list_spec)
+             .add_spec(expectation_spec)
              .exec() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

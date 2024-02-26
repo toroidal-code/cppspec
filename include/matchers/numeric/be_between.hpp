@@ -1,10 +1,7 @@
 /** @file */
-#ifndef CPPSPEC_MATCHERS_BE_BETWEEN_HPP
-#define CPPSPEC_MATCHERS_BE_BETWEEN_HPP
 #pragma once
 
-#include "matcher_base.hpp"
-
+#include "matchers/matcher_base.hpp"
 
 namespace CppSpec::Matchers {
 
@@ -22,8 +19,7 @@ class BeBetween : public MatcherBase<A, E> {
   //  BeBetween(Expectation<A> &expectation, E min, E max)
   //      : BaseMatcher<A, E>(expectation), min(min), max(max) {}
 
-  BeBetween(Expectation<A> &expectation, E min, E max,
-            RangeMode mode = RangeMode::inclusive)
+  BeBetween(Expectation<A> &expectation, E min, E max, RangeMode mode = RangeMode::inclusive)
       : MatcherBase<A, E>(expectation), min(min), max(max), mode(mode) {
     switch (mode) {
       case RangeMode::inclusive:
@@ -43,7 +39,7 @@ class BeBetween : public MatcherBase<A, E> {
 
 template <typename A, typename E>
 bool BeBetween<A, E>::match() {
-  auto actual = this->get_actual();
+  auto actual = this->actual();
   bool result1;
   switch (gt_op) {
     case GtOp::gt:
@@ -68,11 +64,10 @@ bool BeBetween<A, E>::match() {
 template <typename A, typename E>
 std::string BeBetween<A, E>::description() {
   std::stringstream ss;
-  ss << "be between " << min << " and " << max << " ("
-     << (mode == RangeMode::exclusive ? "exclusive" : "inclusive") << ")";
+  ss << "be between " << min << " and " << max << " (" << (mode == RangeMode::exclusive ? "exclusive" : "inclusive")
+     << ")";
   return ss.str();
 }
 
-} // namespace CppSpec::Matchers
+}  // namespace CppSpec::Matchers
 
-#endif // CPPSPEC_MATCHERS_BE_BETWEEN_HPP

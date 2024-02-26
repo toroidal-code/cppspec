@@ -1,6 +1,4 @@
 /** @file */
-#ifndef CPPSPEC_FORMATTERS_VERBOSE_HPP
-#define CPPSPEC_FORMATTERS_VERBOSE_HPP
 #pragma once
 
 #include <list>
@@ -20,8 +18,7 @@ class Verbose : public BaseFormatter {
  public:
   Verbose() = default;
   explicit Verbose(std::ostream &out_stream) : BaseFormatter(out_stream) {}
-  Verbose(const BaseFormatter &base, std::ostream &out_stream)
-      : BaseFormatter(base, out_stream) {}
+  Verbose(const BaseFormatter &base, std::ostream &out_stream) : BaseFormatter(base, out_stream) {}
   explicit Verbose(const BaseFormatter &base) : BaseFormatter(base) {}
 
   void format(const Description &description) override;
@@ -34,8 +31,7 @@ inline void Verbose::format(const Description &description) {
   if (!first && !description.has_parent()) {
     out_stream << std::endl;
   }
-  out_stream << description.padding() << description.get_description()
-             << description.get_subject_type() << std::endl;
+  out_stream << description.padding() << description.get_description() << description.get_subject_type() << std::endl;
   if (first) {
     this->first = false;
   }
@@ -57,9 +53,7 @@ inline void Verbose::format(const ItBase &it) {
   get_and_increment_test_counter();
 }
 
-inline void Verbose::format_failure(const std::string &message) {
-  failure_messages.push_back(message);
-}
+inline void Verbose::format_failure(const std::string &message) { failure_messages.push_back(message); }
 
 // TODO: Compare this with Progress::format_failure_messages
 inline void Verbose::format_failure_messages() {
@@ -81,4 +75,3 @@ static Verbose verbose;
 
 }  // namespace CppSpec::Formatters
 
-#endif  // CPPSPEC_FORMATTERS_VERBOSE_HPP

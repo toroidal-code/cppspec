@@ -4,7 +4,7 @@ describe be_between_spec("BeBetween", $ {
 //  class SizeMatters : public Matchers::BaseMatcher<std::string, std::string> {
 //    SizeMatters(Expectation<std::string> &expectation, std::string expected)
 //        : Matchers::BaseMatcher<std::string,std::string>(expectation, expected){};
-//    bool match() { return this->get_actual() == this->get_expected(); }
+//    bool match() { return this->actual() == this->expected(); }
 //  };
 
   context("expect(...).to_be_between(min, max) (inclusive)", _ {

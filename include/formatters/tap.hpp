@@ -1,6 +1,4 @@
 /** @file */
-#ifndef CPPSPEC_FORMATTERS_TAP_HPP
-#define CPPSPEC_FORMATTERS_TAP_HPP
 #pragma once
 
 #include <list>
@@ -40,8 +38,7 @@ inline void TAP::format(const ItBase &it) {
   // Build up the description for the test by ascending the
   // execution tree and chaining the individual descriptions together
 
-  for (const auto *parent = it.get_parent_as<const Description *>();
-       parent != nullptr;
+  for (const auto *parent = it.get_parent_as<const Description *>(); parent != nullptr;
        parent = parent->get_parent_as<const Description *>()) {
     description = parent->get_description() + " " + description;
   }
@@ -53,8 +50,7 @@ inline void TAP::format(const ItBase &it) {
   if (color_output) {
     buffer << RESET;
   }
-  buffer << " " << get_and_increment_test_counter() << " - " << description
-         << std::endl;
+  buffer << " " << get_and_increment_test_counter() << " - " << description << std::endl;
   if (not failure_messages.empty()) {
     for (const auto &failure : failure_messages) {
       buffer << failure;
@@ -63,9 +59,7 @@ inline void TAP::format(const ItBase &it) {
   }
 }
 
-inline void TAP::format(const std::string &message) {
-  buffer << message << std::endl;
-}
+inline void TAP::format(const std::string &message) { buffer << message << std::endl; }
 
 inline void TAP::format_failure(const std::string &message) {
   std::ostringstream oss;
@@ -81,9 +75,7 @@ inline void TAP::flush() {
   std::string str = buffer.str();
   std::ostringstream oss;
   if (str[0] == '\n') {
-    oss << str.substr(0, 1) << GREEN << "1.." << test_counter - 1 << RESET
-        << std::endl
-        << str.substr(1);
+    oss << str.substr(0, 1) << GREEN << "1.." << test_counter - 1 << RESET << std::endl << str.substr(1);
   } else {
     oss << GREEN << "1.." << test_counter - 1 << RESET << std::endl << str;
   }
@@ -97,4 +89,3 @@ static TAP tap;
 
 }  // namespace CppSpec::Formatters
 
-#endif  // CPPSPEC_FORMATTERS_TAP_HPP

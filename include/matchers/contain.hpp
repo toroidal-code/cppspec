@@ -1,8 +1,6 @@
 /** @file */
-#ifndef CPPSPEC_MATCHERS_INCLUDE_HPP
-#define CPPSPEC_MATCHERS_INCLUDE_HPP
+#pragma once
 #include "matcher_base.hpp"
-
 
 namespace CppSpec::Matchers {
 
@@ -12,7 +10,7 @@ namespace CppSpec::Matchers {
  */
 template <typename A, typename E, typename U>
 class ContainBase : public MatcherBase<A, E> {
-  A actual;
+  A actual_;
 
  public:
   std::string description() override;
@@ -21,10 +19,9 @@ class ContainBase : public MatcherBase<A, E> {
   virtual bool diffable() { return true; }
 
   ContainBase(Expectation<A> &expectation, std::initializer_list<U> expected)
-      : MatcherBase<A, std::vector<U>>(expectation, std::vector<U>(expected)),
-        actual(this->get_actual()){};
+      : MatcherBase<A, std::vector<U>>(expectation, std::vector<U>(expected)), actual_(this->actual()){};
   ContainBase(Expectation<A> &expectation, U expected)
-      : MatcherBase<A, U>(expectation, expected), actual(this->get_actual()){};
+      : MatcherBase<A, U>(expectation, expected), actual_(this->actual()){};
 
  protected:
   bool actual_collection_includes(U expected_item);
@@ -33,8 +30,7 @@ class ContainBase : public MatcherBase<A, E> {
 template <typename A, typename E, typename U>
 std::string ContainBase<A, E, U>::description() {
   // std::vector<E> described_items;
-  return Pretty::improve_hash_formatting(
-      "contain" + Pretty::to_sentance(this->get_expected()));
+  return Pretty::improve_hash_formatting("contain" + Pretty::to_sentence(this->expected()));
 }
 
 template <typename A, typename E, typename U>
@@ -44,17 +40,15 @@ std::string ContainBase<A, E, U>::failure_message() {
 
 template <typename A, typename E, typename U>
 std::string ContainBase<A, E, U>::failure_message_when_negated() {
-  return Pretty::improve_hash_formatting(
-      MatcherBase<A, E>::failure_message_when_negated());
+  return Pretty::improve_hash_formatting(MatcherBase<A, E>::failure_message_when_negated());
 }
 
 template <typename A, typename E, typename U>
 bool ContainBase<A, E, U>::actual_collection_includes(U expected_item) {
-  auto actual = this->get_actual();
+  auto actual = this->actual();
   auto last = *(actual.begin());
-  static_assert(
-      Util::verbose_assert<std::is_same_v<decltype(last), U>>::value,
-      "Expected item is not the same type as what is inside container.");
+  static_assert(Util::verbose_assert<std::is_same_v<decltype(last), U>>::value,
+                "Expected item is not the same type as what is inside container.");
   return std::find(actual.begin(), actual.end(), expected_item) != actual.end();
 }
 
@@ -87,10 +81,9 @@ bool Contain<A, E, U>::negated_match() {
 
 // TODO: support std::map<E,_>
 template <typename A, typename E, typename U>
-bool Contain<A, E, U>::perform_match(Predicate predicate,
-                                     Predicate /*hash_subset_predicate*/) {
+bool Contain<A, E, U>::perform_match(Predicate predicate, Predicate /*hash_subset_predicate*/) {
   bool retval = true;  // start off true
-  for (U expected_item : this->get_expected()) {
+  for (U expected_item : this->expected()) {
     retval = retval && this->actual_collection_includes(expected_item);
 
     // Based on our main predicate
@@ -125,17 +118,15 @@ bool Contain<A, E, U>::perform_match(Predicate predicate,
 template <typename A, typename U>
 class Contain<A, U, U> : public ContainBase<A, U, U> {
  public:
-  Contain(Expectation<A> &expectation, U expected)
-      : ContainBase<A, U, U>(expectation, expected){};
+  Contain(Expectation<A> &expectation, U expected) : ContainBase<A, U, U>(expectation, expected){};
 
   bool match() override;
 };
 
 template <typename A, typename U>
 bool Contain<A, U, U>::match() {
-  return this->actual_collection_includes(this->get_expected());
+  return this->actual_collection_includes(this->expected());
 }
 
-} // namespace CppSpec::Matchers
+}  // namespace CppSpec::Matchers
 
-#endif  // CPPSPEC_MATCHERS_INCLUDE_HPP

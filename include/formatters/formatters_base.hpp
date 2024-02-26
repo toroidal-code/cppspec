@@ -1,11 +1,11 @@
 /** @file */
-#ifndef CPPSPEC_FORMATTERS_FORMATTERS_BASE
-#define CPPSPEC_FORMATTERS_FORMATTERS_BASE
 #pragma once
 
 #include <iostream>
 #include <string>
+
 #include "term_colors.hpp"
+
 
 namespace CppSpec {
 class Description;
@@ -21,8 +21,7 @@ class BaseFormatter {
   bool color_output;
 
  public:
-  explicit BaseFormatter(std::ostream &out_stream = std::cout,
-                         bool color = true)
+  explicit BaseFormatter(std::ostream &out_stream = std::cout, bool color = true)
       : out_stream(out_stream), color_output(color) {}
   BaseFormatter(const BaseFormatter &) = default;
   BaseFormatter(const BaseFormatter &copy, std::ostream &out_stream)
@@ -35,10 +34,8 @@ class BaseFormatter {
 
   virtual void format(const Description &description) {}
   virtual void format(const ItBase &it) {}
-  virtual void format(const std::string& message) {
-    out_stream << message << std::endl;
-  }
-  virtual void format_failure(const std::string& message) {}
+  virtual void format(const std::string &message) { out_stream << message << std::endl; }
+  virtual void format_failure(const std::string &message) {}
   virtual void flush() {}
   virtual void cleanup() {}
 
@@ -61,4 +58,3 @@ inline BaseFormatter &BaseFormatter::set_color_output(bool value) {
 
 }  // namespace Formatters
 }  // namespace CppSpec
-#endif  // CPPSPEC_FORMATTERS_FORMATTERS_BASE

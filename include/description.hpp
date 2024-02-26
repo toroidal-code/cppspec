@@ -2,8 +2,6 @@
  * @file
  * @brief Defines the Description class and associated functions
  */
-#ifndef CPPSPEC_DESCRIPTION_HPP
-#define CPPSPEC_DESCRIPTION_HPP
 #pragma once
 
 #include <deque>
@@ -13,7 +11,6 @@
 #include <utility>
 
 #include "it.hpp"
-
 
 namespace CppSpec {
 
@@ -43,14 +40,10 @@ class Description : public Runnable {
   // field initialized. They should only be used by subclasses
   // of Description.
   Description() = default;
-  explicit Description(std::string description) noexcept
-      : description(std::move(description)) {}
+  explicit Description(std::string description) noexcept : description(std::move(description)) {}
 
-  Description(const Child &parent, std::string description,
-              Block block) noexcept
-      : Runnable(parent),
-        block(std::move(block)),
-        description(std::move(description)) {}
+  Description(const Child &parent, std::string description, Block block) noexcept
+      : Runnable(parent), block(std::move(block)), description(std::move(description)) {}
 
   void exec_before_eaches();
   void exec_after_eaches();
@@ -78,12 +71,10 @@ class Description : public Runnable {
   Result context(T subject, std::function<void(ClassDescription<T> &)> block);
 
   template <class T>
-  Result context(std::string description, T subject,
-                 std::function<void(ClassDescription<T> &)> block);
+  Result context(std::string description, T subject, std::function<void(ClassDescription<T> &)> block);
 
   template <class T, typename U>
-  Result context(std::initializer_list<U> init_list,
-                 std::function<void(ClassDescription<T> &)> block);
+  Result context(std::initializer_list<U> init_list, std::function<void(ClassDescription<T> &)> block);
 
   /********* Each/All *********/
 
@@ -100,12 +91,8 @@ class Description : public Runnable {
 
   /********* Standard getters *********/
 
-  [[nodiscard]] virtual std::string get_description() const noexcept {
-    return description;
-  }
-  [[nodiscard]] virtual std::string get_subject_type() const noexcept {
-    return "";
-  }
+  [[nodiscard]] virtual std::string get_description() const noexcept { return description; }
+  [[nodiscard]] virtual std::string get_subject_type() const noexcept { return ""; }
 
   /********* Run *********/
 
@@ -241,4 +228,3 @@ inline Result ItD::run(Formatters::BaseFormatter &printer) {
 }
 
 }  // namespace CppSpec
-#endif  // CPPSPEC_DESCRIPTION_HPP

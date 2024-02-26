@@ -7,8 +7,6 @@
  * @author Katherine Whitlock (toroidalcode)
  */
 
-#ifndef CPPSPEC_MATCHERS_MATCHER_BASE_HPP
-#define CPPSPEC_MATCHERS_MATCHER_BASE_HPP
 #pragma once
 
 #include <string>
@@ -17,7 +15,6 @@
 #include "formatters/formatters_base.hpp"
 #include "it_base.hpp"
 #include "pretty_matchers.hpp"
-
 
 namespace CppSpec {
 
@@ -41,10 +38,10 @@ class MatcherBase : public Runnable, public Pretty {
   std::string custom_failure_message;
 
  protected:
-  Expected expected;  // The expected object contained by the matcher
+  Expected expected_;  // The expected object contained by the matcher
 
   // A reference to the Expectation (i.e. `expect(2)`)
-  Expectation<Actual> &expectation;
+  Expectation<Actual> &expectation_;
 
  public:
   // Copy constructor
@@ -56,14 +53,12 @@ class MatcherBase : public Runnable, public Pretty {
                                               // matcher to be the `it` block,
                                               // not the
                                               // Expectation.
-        expectation(expectation) {}
+        expectation_(expectation) {}
 
   // Constructor when the matcher has an object to match for. This is the most
   // commonly used constructor
   MatcherBase(Expectation<Actual> &expectation, Expected expected)
-      : Runnable(*expectation.get_parent()),
-        expected(expected),
-        expectation(expectation) {}
+      : Runnable(*expectation.get_parent()), expected_(expected), expectation_(expectation) {}
 
   /*--------- Helper functions -------------*/
 
@@ -72,13 +67,13 @@ class MatcherBase : public Runnable, public Pretty {
   virtual std::string description();
 
   // Get the 'actual' object from the Expectation
-  Actual &get_actual() { return expectation.get_target(); }
+  constexpr Actual &actual() { return expectation_.get_target(); }
 
   // Get the 'expected' object from the Matcher
-  Expected &get_expected() { return expected; }
+  Expected &expected() { return expected_; }
 
   // Get the Expectation itself
-  Expectation<Actual> &get_expectation() { return expectation; }
+  Expectation<Actual> &expectation() { return expectation_; }
 
   // Set the message to give on match failure
   virtual MatcherBase &set_message(const std::string &message);
@@ -119,7 +114,7 @@ std::string MatcherBase<A, E>::failure_message() {
     return this->custom_failure_message;
   }
   std::stringstream ss;
-  ss << "expected " << Pretty::to_word(get_actual()) << " to " << description();
+  ss << "expected " << Pretty::to_word(actual()) << " to " << description();
   return ss.str();
 }
 
@@ -134,8 +129,7 @@ std::string MatcherBase<A, E>::failure_message_when_negated() {
     return this->custom_failure_message;
   }
   std::stringstream ss;
-  ss << "expected " << Pretty::to_word(get_actual()) << " to not "
-     << description();
+  ss << "expected " << Pretty::to_word(actual()) << " to not " << description();
   return ss.str();
 }
 
@@ -147,11 +141,11 @@ std::string MatcherBase<A, E>::failure_message_when_negated() {
 template <typename A, typename E>
 std::string MatcherBase<A, E>::description() {
   std::stringstream ss;
-  std::string pretty_expected = this->to_sentance(expected);
+  std::string pretty_expected = this->to_sentence(expected_);
   //  ss << "match " <<
-  //  this->name_to_sentance(Util::demangle(typeid(*this).name()))
+  //  this->name_to_sentence(Util::demangle(typeid(*this).name()))
   //     << "(" << pretty_expected.substr(1, pretty_expected.length()) << ")";
-  ss << "match" << Pretty::to_sentance(expected);
+  ss << "match" << Pretty::to_sentence(expected_);
   return ss.str();
 }
 
@@ -167,22 +161,20 @@ Result MatcherBase<A, E>::run(Formatters::BaseFormatter &printer) {
   auto *par = static_cast<ItBase *>(this->get_parent());
   // If we need a description for our test, generate it
   // unless we're ignoring the output.
-  if (par->needs_description() && !expectation.get_ignore_failure()) {
+  if (par->needs_description() && !expectation_.ignore_failure()) {
     std::stringstream ss;
-    ss << (expectation.get_sign() ? PositiveExpectationHandler::verb()
-                                  : NegativeExpectationHandler::verb())
-       << " " << this->description();
+    ss << (expectation_.sign() ? PositiveExpectationHandler::verb() : NegativeExpectationHandler::verb()) << " "
+       << this->description();
     std::string ss_str = ss.str();
     par->set_description(ss_str);
   }
 
-  Result matched = expectation.get_sign()
-                       ? PositiveExpectationHandler::handle_matcher(*this)
-                       : NegativeExpectationHandler::handle_matcher(*this);
+  Result matched = expectation_.sign() ? PositiveExpectationHandler::handle_matcher(*this)
+                                       : NegativeExpectationHandler::handle_matcher(*this);
 
   // If our items didn't match, we obviously failed.
   // Only report the failure if we aren't actively ignoring it.
-  if (!matched && !expectation.get_ignore_failure()) {
+  if (!matched && !expectation_.ignore_failure()) {
     this->failed();
     std::string message = matched.get_message();
     if (message.empty()) {
@@ -199,4 +191,3 @@ Result MatcherBase<A, E>::run(Formatters::BaseFormatter &printer) {
 
 }  // namespace Matchers
 }  // namespace CppSpec
-#endif  // CPPSPEC_MATCHERS_MATCHER_BASE_HPP

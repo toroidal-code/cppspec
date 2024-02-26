@@ -6,7 +6,7 @@ using namespace CppSpec;
 struct CustomMatcher : public Matchers::MatcherBase<int, int> {
   CustomMatcher(Expectation<int> &expectation, int expected)
       : Matchers::MatcherBase<int,int>(expectation, expected){};
-  bool match() { return get_expected() == get_actual(); }
+  bool match() { return expected() == actual(); }
 };
 
 describe expectation_spec("Expectation", $ {
@@ -82,8 +82,8 @@ describe expectation_spec("Expectation", $ {
 #define expect self.expect
 
     it("flips the ignore_failure flag", _ {
-      expect(e->get_ignore_failure()).to_be_false();
-      expect(e->ignore().get_ignore_failure()).to_be_true();
+      expect(e->ignore_failure()).to_be_false();
+      expect(e->ignore().ignore_failure()).to_be_true();
     });
 
     it("makes it so that matches do not alter the status of the parent", _ {
@@ -103,7 +103,7 @@ describe expectation_spec("Expectation", $ {
   context("ExpectationFunc", _ {
 	it("is lazy", _{
 	  // MSVCC optimizes this away into an int, when
-	  // we explicitly want a function. Any other time 
+	  // we explicitly want a function. Any other time
 	  // that would be perfectly okay.
       std::function<int()> foo = [] { return 1 + 2; };
       ExpectationFunc<decltype(foo)> expectation(self, foo);

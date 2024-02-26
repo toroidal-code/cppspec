@@ -7,12 +7,12 @@
  * @author Katherine Whitlock (toroidalcode)
  */
 
-#ifndef CPPSPEC_EXPECTATIONS_HANDLER_HPP
-#define CPPSPEC_EXPECTATIONS_HANDLER_HPP
 #pragma once
 
 #include <string>
+
 #include "result.hpp"
+
 
 namespace CppSpec {
 
@@ -41,25 +41,21 @@ struct NegativeExpectationHandler {
 template <class Matcher>
 Result PositiveExpectationHandler::handle_matcher(Matcher &matcher) {
   // TODO: handle expectation failure here
-  return !matcher.match() ? Result::failure_with(matcher.failure_message())
-                          : Result::success();
+  return !matcher.match() ? Result::failure_with(matcher.failure_message()) : Result::success();
 }
 
 /**
-* @brief runs a negative expectation
-*
-* @tparam Matcher the class of Matcher to use
-* @param matcher the matcher to use
-*
-* @return the Result of the expectation
-*/
+ * @brief runs a negative expectation
+ *
+ * @tparam Matcher the class of Matcher to use
+ * @param matcher the matcher to use
+ *
+ * @return the Result of the expectation
+ */
 template <class Matcher>
 Result NegativeExpectationHandler::handle_matcher(Matcher &matcher) {
   // TODO: handle expectation failure here
-  return !matcher.negated_match()
-             ? Result::failure_with(matcher.failure_message_when_negated())
-             : Result::success();
+  return !matcher.negated_match() ? Result::failure_with(matcher.failure_message_when_negated()) : Result::success();
 }
 
 }  // namespace CppSpec
-#endif  // CPPSPEC_EXPECTATIONS_HANDLER_HPP

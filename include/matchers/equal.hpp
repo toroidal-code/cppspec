@@ -1,11 +1,9 @@
 /** @file */
-#ifndef CPPSPEC_MATCHERS_EQUAL_HPP
-#define CPPSPEC_MATCHERS_EQUAL_HPP
 #pragma once
 
 #include <string>
-#include "matcher_base.hpp"
 
+#include "matcher_base.hpp"
 
 namespace CppSpec::Matchers {
 
@@ -18,8 +16,7 @@ namespace CppSpec::Matchers {
 template <typename A, typename E>
 class Equal : public MatcherBase<A, E> {
  public:
-  Equal(Expectation<A> &expectation, E expected)
-      : MatcherBase<A, E>(expectation, expected) {}
+  Equal(Expectation<A> &expectation, E expected) : MatcherBase<A, E>(expectation, expected) {}
 
   std::string description() override;
   std::string failure_message() override;
@@ -37,7 +34,7 @@ class Equal : public MatcherBase<A, E> {
 template <typename A, typename E>
 std::string Equal<A, E>::description() {
   std::stringstream ss;
-  ss << "equal" << Pretty::to_sentance<E>(this->expected);
+  ss << "equal" << Pretty::to_sentence<E>(this->expected());
   return ss.str();
 }
 
@@ -54,8 +51,7 @@ std::string Equal<A, E>::failure_message() {
 template <typename A, typename E>
 std::string Equal<A, E>::failure_message_when_negated() {
   std::stringstream ss;
-  ss << "expected not "
-     << Pretty::inspect_object(MatcherBase<A, E>::get_expected()) << "\n"
+  ss << "expected not " << Pretty::inspect_object(MatcherBase<A, E>::expected()) << "\n"
      << "         got " << actual_inspected() << "\n"
      << "Compared using `==`" << std::endl;
   return ss.str();
@@ -64,8 +60,7 @@ std::string Equal<A, E>::failure_message_when_negated() {
 template <typename A, typename E>
 std::string Equal<A, E>::simple_failure_message() {
   std::stringstream ss;
-  ss << "expected " << Pretty::inspect_object(MatcherBase<A, E>::get_expected())
-     << "\n"
+  ss << "expected " << Pretty::inspect_object(MatcherBase<A, E>::expected()) << "\n"
      << "     got " << actual_inspected() << "\n"
      << "Compared using `==`" << std::endl;
   return ss.str();
@@ -78,7 +73,7 @@ bool Equal<A, E>::diffable() {
 
 template <typename A, typename E>
 bool Equal<A, E>::match() {
-  return this->get_expected() == this->get_actual();
+  return this->expected() == this->actual();
 }
 
 template <typename A, typename E>
@@ -89,20 +84,20 @@ bool Equal<A, E>::expected_is_a_literal() {
 // template <typename E>
 // std::string Equal<bool, E>::actual_inspected() {
 //   std::stringstream ss;
-//   ss << std::boolalpha << BaseMatcher<bool,E>::get_actual();
+//   ss << std::boolalpha << BaseMatcher<bool,E>::actual();
 //   return ss.str();
 // }
 
 template <typename A, typename E>
 std::string Equal<A, E>::actual_inspected() {
-  return Pretty::inspect_object(MatcherBase<A, E>::get_actual());
+  return Pretty::inspect_object(MatcherBase<A, E>::actual());
 }
 
 // template <typename A, bool E>
 // std::string Equal<A, bool>::simple_failure_message() {
 //   std::stringstream ss;
 //   ss << "\nexpected " << std::boolalpha <<
-//   BaseMatcher<A,bool>::get_expected() << "\n"
+//   BaseMatcher<A,bool>::expected() << "\n"
 //       "     got " << Equal<A,bool>::actual_inspected() << "\n";
 //   return ss.str();
 // }
@@ -115,6 +110,5 @@ std::string Equal<A, E>::actual_inspected() {
 //   return ss.str();
 // }
 
-} // namespace CppSpec::Matchers
+}  // namespace CppSpec::Matchers
 
-#endif  // CPPSPEC_MATCHERS_EQUAL_HPP

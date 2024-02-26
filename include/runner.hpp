@@ -1,6 +1,5 @@
 /** @file */
-#ifndef CPPSPEC_RUNNER_HPP
-#define CPPSPEC_RUNNER_HPP
+#pragma once
 #include <initializer_list>
 #pragma once
 
@@ -21,8 +20,7 @@ class Runner {
   std::shared_ptr<Formatters::BaseFormatter> formatter;
 
  public:
-  explicit Runner(std::shared_ptr<Formatters::BaseFormatter> formatter)
-      : formatter{std::move(formatter)} {};
+  explicit Runner(std::shared_ptr<Formatters::BaseFormatter> formatter) : formatter{std::move(formatter)} {};
 
   ~Runner() = default;
 
@@ -55,4 +53,3 @@ class Runner {
 };
 
 }  // namespace CppSpec
-#endif  // CPPSPEC_RUNNER_HPP

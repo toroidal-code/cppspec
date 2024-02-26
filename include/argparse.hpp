@@ -2,12 +2,11 @@
 
 #include <argparse/argparse.hpp>
 #include <string_view>
-#include "runner.hpp"
 
 #include "formatters/progress.hpp"
 #include "formatters/tap.hpp"
 #include "formatters/verbose.hpp"
-
+#include "runner.hpp"
 
 namespace CppSpec {
 
@@ -35,10 +34,7 @@ inline Runner parse(int argc, char** const argv) {
       .required()
       .help("set the output format");
 
-  program.add_argument("--verbose")
-      .help("increase output verbosity")
-      .default_value(false)
-      .implicit_value(true);
+  program.add_argument("--verbose").help("increase output verbosity").default_value(false).implicit_value(true);
 
   try {
     program.parse_args(argc, argv);

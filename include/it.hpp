@@ -1,6 +1,4 @@
 /** @file */
-#ifndef CPPSPEC_IT_HPP
-#define CPPSPEC_IT_HPP
 #pragma once
 
 #include <string>
@@ -109,8 +107,7 @@ class ItCD : public ItBase {
   ItCD(const Child &parent, T &subject, std::string description, Block block)
       : ItBase(parent, description), block(block), subject(subject) {}
 
-  ItCD(const Child &parent, T &subject, Block block)
-      : ItBase(parent), block(block), subject(subject) {}
+  ItCD(const Child &parent, T &subject, Block block) : ItBase(parent), block(block), subject(subject) {}
 
   ExpectationValue<T> is_expected();
   Result run(Formatters::BaseFormatter &printer) override;
@@ -148,8 +145,7 @@ ExpectationValue<T> ItBase::expect(Let<T> &let) {
  * @endcode
  */
 template <typename T>
-ExpectationValue<std::initializer_list<T>> ItBase::expect(
-    std::initializer_list<T> init_list) {
+ExpectationValue<std::initializer_list<T>> ItBase::expect(std::initializer_list<T> init_list) {
   return ExpectationValue<std::initializer_list<T>>(*this, init_list);
 }
 
@@ -158,4 +154,3 @@ inline ExpectationValue<std::string> ItBase::expect(const char *str) {
 }
 
 }  // namespace CppSpec
-#endif  // CPPSPEC_IT_HPP

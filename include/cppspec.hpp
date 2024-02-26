@@ -2,8 +2,6 @@
  * @file
  * @brief The core header file for Cppspec
  */
-#ifndef CPPSPEC_HPP
-#define CPPSPEC_HPP
 #pragma once
 
 #include "argparse.hpp"
@@ -39,17 +37,14 @@
 #define after_each self.after_each
 #define let(name, body) auto(name) = self.let(body);
 
-#define CPPSPEC_MAIN(spec)                                                  \
-  int main(int argc, char **const argv) {                                   \
-    return CppSpec::parse(argc, argv).add_spec(spec).exec() ? EXIT_SUCCESS  \
-                                                            : EXIT_FAILURE; \
+#define CPPSPEC_MAIN(spec)                                                                 \
+  int main(int argc, char **const argv) {                                                  \
+    return CppSpec::parse(argc, argv).add_spec(spec).exec() ? EXIT_SUCCESS : EXIT_FAILURE; \
   }
 
-#define CPPSPEC_SPEC(spec_name)                                  \
-  int spec_name##_spec(int argc, char **const argv) {            \
-    return CppSpec::parse(argc, argv).add_spec(spec_name).exec() \
-               ? EXIT_SUCCESS                                    \
-               : EXIT_FAILURE;                                   \
+#define CPPSPEC_SPEC(spec_name)                                                                 \
+  int spec_name##_spec(int argc, char **const argv) {                                           \
+    return CppSpec::parse(argc, argv).add_spec(spec_name).exec() ? EXIT_SUCCESS : EXIT_FAILURE; \
   }
 
 #endif
@@ -63,4 +58,3 @@ using describe_a = CppSpec::ClassDescription<T>;
 template <class T>
 using describe_an = CppSpec::ClassDescription<T>;
 
-#endif  // CPPSPEC_HPP

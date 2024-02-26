@@ -50,7 +50,7 @@ function(add_spec source_file)
   target_link_libraries(${spec_name} c++spec)
 
   set_target_properties(${spec_name} PROPERTIES
-    CXX_STANDARD 20
+    CXX_STANDARD 23
     CXX_STANDARD_REQUIRED YES
   )
   add_test(NAME ${spec_name} COMMAND ${spec_name} --verbose)

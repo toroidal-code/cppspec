@@ -1,0 +1,19 @@
+/** @file */
+#pragma once
+#include <string>
+
+#include "matchers/matcher_base.hpp"
+
+
+namespace CppSpec::Matchers {
+
+template <typename A, typename E>
+class BeLessThan : public MatcherBase<A, E> {
+ public:
+  BeLessThan(Expectation<A> &expectation, E expected) : MatcherBase<A, E>(expectation, expected) {}
+  bool match() override { return this->actual() < this->expected(); }
+  std::string description() override { return "be less than" + Pretty::to_word(this->expected()); }
+};
+
+}  // namespace CppSpec::Matchers
+

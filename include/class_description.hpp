@@ -1,6 +1,4 @@
 /** @file */
-#ifndef CPPSPEC_CLASS_DESCRIPTION_HPP
-#define CPPSPEC_CLASS_DESCRIPTION_HPP
 #pragma once
 #include <string>
 
@@ -34,15 +32,11 @@ class ClassDescription : public Description {
   // if there's no explicit subject given, then use
   // the default constructor of the given type as the implicit subject.
   ClassDescription(Block block)
-      : Description(),
-        block(block),
-        type(" : " + Util::demangle(typeid(T).name())),
-        subject(T()) {
+      : Description(), block(block), type(" : " + Util::demangle(typeid(T).name())), subject(T()) {
     this->description = Pretty::to_word(subject);
   }
 
-  ClassDescription(std::string description, Block block)
-      : Description(description), block(block), subject(T()) {}
+  ClassDescription(std::string description, Block block) : Description(description), block(block), subject(T()) {}
 
   ClassDescription(T subject, Block block)
       : Description(Pretty::to_word(subject)),
@@ -61,37 +55,28 @@ class ClassDescription : public Description {
 
   template <typename U>
   ClassDescription(std::initializer_list<U> init_list, Block block)
-      : block(block),
-        type(" : " + Util::demangle(typeid(T).name())),
-        subject(T(init_list)) {
+      : block(block), type(" : " + Util::demangle(typeid(T).name())), subject(T(init_list)) {
     this->description = Pretty::to_word(subject);
   }
 
   template <typename U>
-  ClassDescription(std::string description, std::initializer_list<U> init_list,
-                   Block block)
+  ClassDescription(std::string description, std::initializer_list<U> init_list, Block block)
       : Description(description), block(block), subject(T(init_list)) {}
 
   Result it(std::string description, std::function<void(ItCD<T> &)> block);
   Result it(std::function<void(ItCD<T> &)> block);
   /** @brief an alias for it */
-  Result specify(std::string description,
-                 std::function<void(ItCD<T> &)> block) {
-    return it(description, block);
-  }
+  Result specify(std::string description, std::function<void(ItCD<T> &)> block) { return it(description, block); }
   /** @brief an alias for it */
   Result specify(std::function<void(ItCD<T> &)> block) { return it(block); }
 
   template <class U = std::nullptr_t>
-  Result context(std::string description,
-                 std::function<void(ClassDescription<T> &)> block);
+  Result context(std::string description, std::function<void(ClassDescription<T> &)> block);
 
   template <class U>
-  Result context(std::string description, U subject,
-                 std::function<void(ClassDescription<U> &)> block);
+  Result context(std::string description, U subject, std::function<void(ClassDescription<U> &)> block);
   template <class U>
-  Result context(std::string description, U &subject,
-                 std::function<void(ClassDescription<U> &)> block);
+  Result context(std::string description, U &subject, std::function<void(ClassDescription<U> &)> block);
   template <class U>
   Result context(U subject, std::function<void(ClassDescription<U> &)> block);
   template <class U>
@@ -99,9 +84,7 @@ class ClassDescription : public Description {
 
   Result run(Formatters::BaseFormatter &printer) override;
 
-  [[nodiscard]] std::string get_subject_type() const noexcept override {
-    return type;
-  }
+  [[nodiscard]] std::string get_subject_type() const noexcept override { return type; }
 };
 
 template <class T>
@@ -109,9 +92,8 @@ using ClassContext = ClassDescription<T>;
 
 template <class T>
 template <class U>
-Result ClassDescription<T>::context(
-    std::string description, U subject,
-    std::function<void(ClassDescription<U> &)> block) {
+Result ClassDescription<T>::context(std::string description, U subject,
+                                    std::function<void(ClassDescription<U> &)> block) {
   ClassContext<U> context(description, subject, block);
   context.set_parent(this);
   context.ClassContext<U>::before_eaches = this->before_eaches;
@@ -121,16 +103,14 @@ Result ClassDescription<T>::context(
 
 template <class T>
 template <class U>
-Result ClassDescription<T>::context(
-    U subject, std::function<void(ClassDescription<U> &)> block) {
+Result ClassDescription<T>::context(U subject, std::function<void(ClassDescription<U> &)> block) {
   return this->context("", std::forward<U>(subject), block);
 }
 
 template <class T>
 template <class U>
-Result ClassDescription<T>::context(
-    std::string description, U &subject,
-    std::function<void(ClassDescription<U> &)> block) {
+Result ClassDescription<T>::context(std::string description, U &subject,
+                                    std::function<void(ClassDescription<U> &)> block) {
   ClassContext<U> context(description, subject, block);
   context.set_parent(this);
   context.ClassContext<U>::before_eaches = this->before_eaches;
@@ -140,15 +120,13 @@ Result ClassDescription<T>::context(
 
 template <class T>
 template <class U>
-Result ClassDescription<T>::context(
-    U &subject, std::function<void(ClassDescription<U> &)> block) {
+Result ClassDescription<T>::context(U &subject, std::function<void(ClassDescription<U> &)> block) {
   return this->context("", std::forward<U>(subject), block);
 }
 
 template <class T>
 template <class U>
-Result ClassDescription<T>::context(
-    std::string description, std::function<void(ClassDescription<T> &)> block) {
+Result ClassDescription<T>::context(std::string description, std::function<void(ClassDescription<T> &)> block) {
   ClassContext<T> context(description, this->subject, block);
   context.set_parent(this);
   context.before_eaches = this->before_eaches;
@@ -157,14 +135,12 @@ Result ClassDescription<T>::context(
 }
 
 template <class T>
-Result Description::context(T subject,
-                            std::function<void(ClassDescription<T> &)> block) {
+Result Description::context(T subject, std::function<void(ClassDescription<T> &)> block) {
   return this->context("", subject, block);
 }
 
 template <class T>
-Result Description::context(std::string description, T subject,
-                            std::function<void(ClassDescription<T> &)> block) {
+Result Description::context(std::string description, T subject, std::function<void(ClassDescription<T> &)> block) {
   ClassContext<T> context(description, subject, block);
   context.set_parent(this);
   context.before_eaches = this->before_eaches;
@@ -173,8 +149,7 @@ Result Description::context(std::string description, T subject,
 }
 
 template <class T, typename U>
-Result Description::context(std::initializer_list<U> init_list,
-                            std::function<void(ClassDescription<T> &)> block) {
+Result Description::context(std::initializer_list<U> init_list, std::function<void(ClassDescription<T> &)> block) {
   ClassContext<T> context(T(init_list), block);
   context.set_parent(this);
   context.before_eaches = this->before_eaches;
@@ -204,8 +179,7 @@ Result Description::context(std::initializer_list<U> init_list,
  * @return the result of the test
  */
 template <class T>
-Result ClassDescription<T>::it(std::string name,
-                               std::function<void(ItCD<T> &)> block) {
+Result ClassDescription<T>::it(std::string name, std::function<void(ItCD<T> &)> block) {
   ItCD<T> it(*this, this->subject, name, block);
   Result result = it.run(this->get_formatter());
   exec_after_eaches();
@@ -276,4 +250,3 @@ Result ItCD<T>::run(Formatters::BaseFormatter &printer) {
 }
 
 }  // namespace CppSpec
-#endif  // CPPSPEC_CLASS_DESCRIPTION_HPP

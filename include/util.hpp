@@ -2,24 +2,18 @@
  * @file
  * @brief Utility functions and classes
  */
-#ifndef CPPSPEC_UTIL_HPP
-#define CPPSPEC_UTIL_HPP
-#include <type_traits>
 #pragma once
-
 #include <functional>
 #include <ranges>
 #include <sstream>
 #include <string>
+#include <type_traits>
 
 
 #ifdef __GNUG__
 #include <cxxabi.h>
-
 #include <memory>
-
 #endif
-
 
 namespace CppSpec::Util {
 
@@ -33,8 +27,7 @@ namespace CppSpec::Util {
 #ifdef __GNUG__
 inline std::string demangle(const char *mangled) {
   int status;
-  std::unique_ptr<char[], void (*)(void *)> result{
-      abi::__cxa_demangle(mangled, NULL, NULL, &status), std::free};
+  std::unique_ptr<char[], void (*)(void *)> result{abi::__cxa_demangle(mangled, NULL, NULL, &status), std::free};
 
   return (status == 0) ? result.get() : mangled;
 }
@@ -50,7 +43,6 @@ struct verbose_assert {
   static_assert(result, "Assertion failed (see below for more information)");
   static bool const value = result;
 };
-
 
 /**
  * @brief Concept for checking whether T is a container type.
@@ -81,27 +73,26 @@ concept is_container = requires(C c) {
  * @tparam C a type to check
  */
 template <typename C>
-concept is_streamable = requires(std::ostream& os, const C& obj) {
-    { os << obj } -> std::same_as<std::ostream&>;
+concept is_streamable = requires(std::ostream &os, const C &obj) {
+  { os << obj } -> std::same_as<std::ostream &>;
 };
-
 
 template <typename C>
-concept is_functional = 
-// The C++ reference says that all "functions" (not FunctionObjects) respond to
-// std::is_function<T>
-std::is_function_v<C> ||
+concept is_functional =
+    // The C++ reference says that all "functions" (not FunctionObjects) respond to
+    // std::is_function<T>
+    std::is_function_v<C> ||
 
-// An alternative from Stack Overflow question 18107368. Anything that could
-// possibly be "functional" should be able to be cast to std::function<void()>
-std::is_convertible_v<C, std::function<void()>> || 
+    // An alternative from Stack Overflow question 18107368. Anything that could
+    // possibly be "functional" should be able to be cast to std::function<void()>
+    std::is_convertible_v<C, std::function<void()>> ||
 
-// The C++ reference also says that something qualifies as a FunctionObject iff
-// std::is_object_v<T> is true and the object responds to the call operator()
-requires(C func) {
-  requires std::is_object_v<C>;
-  { func() } -> std::invocable<>;
-};
+    // The C++ reference also says that something qualifies as a FunctionObject iff
+    // std::is_object_v<T> is true and the object responds to the call operator()
+    requires(C func) {
+      requires std::is_object_v<C>;
+      { func() } -> std::invocable<>;
+    };
 
 template <typename C>
 concept is_not_functional = !is_functional<C>;
@@ -129,6 +120,4 @@ inline std::string join(std::ranges::range auto &iterable, const std::string &se
   return oss.str();
 }
 
-} // namespace CppSpec::Util
-
-#endif  // CPPSPEC_UTIL_HPP
+}  // namespace CppSpec::Util

@@ -7,8 +7,6 @@
  * @author Katherine Whitlock (toroidalcode)
  */
 
-#ifndef CPPSPEC_CHILD_HPP
-#define CPPSPEC_CHILD_HPP
 #pragma once
 
 #ifndef CPPSPEC_DEBUG
@@ -72,9 +70,7 @@ class Child {
   Child &operator=(const Child &) = default;
 
   // Custom constructors
-  static Child of(const Child &parent) noexcept {
-    return Child().set_parent(&parent);
-  }
+  static Child of(const Child &parent) noexcept { return Child().set_parent(&parent); }
 
   /*--------- Parent helper functions -------------*/
 
@@ -108,14 +104,12 @@ class Child {
   // Get the printer from the tree
   [[nodiscard]] Formatters::BaseFormatter &get_formatter() const noexcept;
 
-  void set_formatter(Formatters::BaseFormatter &formatter) {
-    this->formatter = &formatter;
-  }
+  void set_formatter(Formatters::BaseFormatter &formatter) { this->formatter = &formatter; }
 
   /*--------- Primary member functions -------------*/
 
   /** @brief Get the status of the object (success/failure) */
-  [[nodiscard]]  bool get_status() const noexcept { return this->status; }
+  [[nodiscard]] bool get_status() const noexcept { return this->status; }
   void failed() noexcept;  // Report failure to the object.
 
   // Calculate the padding for printing this object
@@ -133,8 +127,9 @@ class Child {
 inline void Child::failed() noexcept {
   this->status = false;
   // propogates the failure up the tree
-  if (this->has_parent()) { this->get_parent()->failed();
-}
+  if (this->has_parent()) {
+    this->get_parent()->failed();
+  }
 }
 
 /**
@@ -146,20 +141,23 @@ inline std::string Child::padding() const noexcept {
 }
 
 inline bool Child::has_formatter() const noexcept {
-  if (this->formatter != nullptr) { return true;
-}
-  if (!this->has_parent()) { return false;  // base case;
-}
+  if (this->formatter != nullptr) {
+    return true;
+  }
+  if (!this->has_parent()) {
+    return false;  // base case;
+  }
   return parent->has_formatter();
 }
 
 inline Formatters::BaseFormatter &Child::get_formatter() const noexcept {
-  if (this->formatter != nullptr) { return *formatter;
-}
-  if (!this->has_parent()) { std::terminate();
-}
+  if (this->formatter != nullptr) {
+    return *formatter;
+  }
+  if (!this->has_parent()) {
+    std::terminate();
+  }
   return parent->get_formatter();
 }
 
 }  // namespace CppSpec
-#endif  // CPPSPEC_CHILD_HPP

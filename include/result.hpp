@@ -1,6 +1,4 @@
 /** @file */
-#ifndef CPPSPEC_RESULT_HPP
-#define CPPSPEC_RESULT_HPP
 #pragma once
 
 #include <ciso646>
@@ -8,14 +6,12 @@
 #include <string>
 #include <utility>
 
-
 namespace CppSpec {
 
 class Result {
   const bool value;
   std::string message;
-  explicit Result(bool value, std::string message = "") noexcept
-      : value(value), message(std::move(message)) {}
+  explicit Result(bool value, std::string message = "") noexcept : value(value), message(std::move(message)) {}
 
  public:
   // Default destructor
@@ -57,14 +53,12 @@ inline Result &Result::set_message(const std::string &message) noexcept {
 }
 
 inline Result Result::success() noexcept { return Result(true); }
-inline Result Result::success_with(
-    const std::string &success_message) noexcept {
+inline Result Result::success_with(const std::string &success_message) noexcept {
   return Result(true, success_message);
 }
 
 inline Result Result::failure() noexcept { return Result(false); }
-inline Result Result::failure_with(
-    const std::string &failure_message) noexcept {
+inline Result Result::failure_with(const std::string &failure_message) noexcept {
   return Result(false, failure_message);
 }
 
@@ -79,5 +73,10 @@ inline std::ostream &operator<<(std::ostream &os, const Result &res) {
   return os << ss.str();
 }
 
+template <typename T>
+constexpr bool is_result_v = std::is_same_v<Result,T>;
+
+template <typename T>
+concept is_result = is_result_v<T>;
+
 }  // namespace CppSpec
-#endif  // CPPSPEC_RESULT_HPP
