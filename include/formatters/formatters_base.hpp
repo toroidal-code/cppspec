@@ -18,7 +18,11 @@ class Description;
 class ItBase;
 
 inline bool is_terminal() {
+#ifdef _WIN32
   return _isatty(_fileno(stdout)) != 0;
+#else
+  return isatty(fileno(stdout)) != 0;
+#endif
 }
 namespace Formatters {
 
