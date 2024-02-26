@@ -6,6 +6,7 @@
 
 #include "class_description.hpp"
 #include "formatters_base.hpp"
+#include "term_colors.hpp"
 
 namespace CppSpec::Formatters {
 

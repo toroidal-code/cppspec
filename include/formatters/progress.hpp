@@ -6,6 +6,7 @@
 #include <string>
 
 #include "verbose.hpp"
+#include "term_colors.hpp"
 
 namespace CppSpec::Formatters {
 

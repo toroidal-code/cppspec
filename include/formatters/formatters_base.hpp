@@ -1,16 +1,25 @@
 /** @file */
 #pragma once
 
+#include <cstdio>
 #include <iostream>
 #include <string>
 
-#include "term_colors.hpp"
-
+extern "C" {
+#ifdef _WIN32
+#include <io.h>
+#else
+#include <unistd.h>
+#endif
+}
 
 namespace CppSpec {
 class Description;
 class ItBase;
 
+inline bool is_terminal() {
+  return _isatty(_fileno(stdout)) != 0;
+}
 namespace Formatters {
 
 class BaseFormatter {
@@ -21,7 +30,7 @@ class BaseFormatter {
   bool color_output;
 
  public:
-  explicit BaseFormatter(std::ostream &out_stream = std::cout, bool color = true)
+  explicit BaseFormatter(std::ostream &out_stream = std::cout, bool color = is_terminal())
       : out_stream(out_stream), color_output(color) {}
   BaseFormatter(const BaseFormatter &) = default;
   BaseFormatter(const BaseFormatter &copy, std::ostream &out_stream)
