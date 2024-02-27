@@ -141,7 +141,7 @@ std::string MatcherBase<A, E>::failure_message_when_negated() {
 template <typename A, typename E>
 std::string MatcherBase<A, E>::description() {
   std::stringstream ss;
-  std::string pretty_expected = this->to_sentence(expected_);
+  //std::string pretty_expected = this->to_sentence(expected_);
   //  ss << "match " <<
   //  this->name_to_sentence(Util::demangle(typeid(*this).name()))
   //     << "(" << pretty_expected.substr(1, pretty_expected.length()) << ")";

@@ -76,10 +76,20 @@ inline void TAP::flush() {
   std::string str = buffer.str();
   std::ostringstream oss;
   if (str[0] == '\n') {
-    oss << str.substr(0, 1) << GREEN << "1.." << test_counter - 1 << RESET << std::endl << str.substr(1);
-  } else {
-    oss << GREEN << "1.." << test_counter - 1 << RESET << std::endl << str;
+    oss << str[0];
   }
+
+  if (color_output) {
+    oss << GREEN;
+  }
+  oss << "1.." << test_counter - 1;
+  if (color_output) {
+    oss << RESET;
+  }
+  oss << std::endl;
+
+  oss << ((str[0] == '\n') ? str.substr(1) : str);
+
   std::cout << oss.str() << std::flush;
   first = false;
   test_counter = 1;
@@ -89,4 +99,3 @@ inline void TAP::flush() {
 static TAP tap;
 
 }  // namespace CppSpec::Formatters
-
