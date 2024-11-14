@@ -16,7 +16,9 @@ class HaveError : public MatcherBase<T, void *> {
  public:
   HaveError(Expectation<T> &expectation) : MatcherBase<T, void *>(expectation) {}
 
-  bool match() { return (!this->actual().has_value()); }
+  std::string description() override {return "have an error"; }
+
+  bool match() override { return (!this->actual().has_value()); }
 };
 
 template <expected T, typename E>

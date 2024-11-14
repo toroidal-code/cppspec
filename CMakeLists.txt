@@ -9,12 +9,16 @@ cmake_policy(SET CMP0135 NEW)
 include(FetchContent)
 
 FetchContent_Declare(argparse
-  URL https://github.com/p-ranav/argparse/archive/refs/tags/v3.0.tar.gz
+  GIT_REPOSITORY https://github.com/p-ranav/argparse/
+  GIT_TAG v3.1
+  GIT_SHALLOW 1
 )
 FetchContent_MakeAvailable(argparse)
 
 FetchContent_Declare(cxx-prettyprint
-  URL https://github.com/louisdx/cxx-prettyprint/archive/refs/heads/master.tar.gz
+  GIT_REPOSITORY https://github.com/louisdx/cxx-prettyprint/
+  GIT_TAG master
+  GIT_SHALLOW 1
 )
 FetchContent_MakeAvailable(cxx-prettyprint)
 
@@ -31,6 +35,7 @@ target_link_libraries(c++spec INTERFACE
   cxx-prettyprint
   argparse
 )
+target_compile_options(c++spec INTERFACE -Wno-missing-template-arg-list-after-template-kw)
 
 FILE(GLOB_RECURSE c++spec_headers ${CMAKE_CURRENT_LIST_DIR}/include/*.hpp)
 

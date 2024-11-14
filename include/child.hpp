@@ -9,10 +9,6 @@
 
 #pragma once
 
-#ifndef CPPSPEC_DEBUG
-#define CPPSPEC_DEBUG false
-#endif
-
 #include <iostream>
 #include <memory>
 #include <string>
