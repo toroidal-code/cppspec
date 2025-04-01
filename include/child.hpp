@@ -71,8 +71,8 @@ class Child {
   /*--------- Parent helper functions -------------*/
 
   /** @brief Check to see if the Child has a parent. */
-  const bool has_parent() noexcept { return parent != nullptr; }
-  [[nodiscard]] const bool has_parent() const noexcept { return parent != nullptr; }
+  bool has_parent() noexcept { return parent != nullptr; }
+  [[nodiscard]] bool has_parent() const noexcept { return parent != nullptr; }
 
   // TODO: Look in to making these references instead of pointer returns
   /** @brief Get the Child's parent. */

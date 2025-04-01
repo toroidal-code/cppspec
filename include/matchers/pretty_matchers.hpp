@@ -129,12 +129,12 @@ inline std::string Pretty::to_word<bool>(bool &item) {
 }
 
 template <>
-inline std::string Pretty::to_word<std::true_type>(std::true_type &item) {
+inline std::string Pretty::to_word<std::true_type>(std::true_type & /* item */) {
   return "true";
 }
 
 template <>
-inline std::string Pretty::to_word<std::false_type>(std::false_type &item) {
+inline std::string Pretty::to_word<std::false_type>(std::false_type & /* item */) {
   return "false";
 }
 

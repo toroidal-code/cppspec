@@ -35,7 +35,7 @@ target_link_libraries(c++spec INTERFACE
   cxx-prettyprint
   argparse
 )
-target_compile_options(c++spec INTERFACE -Wno-missing-template-arg-list-after-template-kw)
+target_compile_options(c++spec INTERFACE -Wno-missing-template-arg-list-after-template-kw -Wno-dollar-in-identifier-extension)
 
 FILE(GLOB_RECURSE c++spec_headers ${CMAKE_CURRENT_LIST_DIR}/include/*.hpp)
 
@@ -79,7 +79,7 @@ if(CPPSPEC_BUILD_TESTS)
   enable_testing()
 
   # Tests
-  discover_specs(spec)
+  add_subdirectory(spec)
 endif(CPPSPEC_BUILD_TESTS)
 
 if(CPPSPEC_BUILD_EXAMPLES)

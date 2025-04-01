@@ -55,8 +55,6 @@ class Expectation : public Child {
   bool ignore_failure_ = false;
 
  public:
-  Expectation(const Expectation &) = default;
-
   /**
    * @brief Create an Expectation using a value.
    *
@@ -399,8 +397,6 @@ class ExpectationValue : public Expectation<A> {
   A value;
 
  public:
-  ExpectationValue(ExpectationValue const &copy) : Expectation<A>(copy), value(copy.value) {}
-
   /**
    * @brief Create an ExpectationValue using a value.
    *

@@ -19,13 +19,8 @@
 #define specify it
 
 // Apparently MSVC++ doesn't conform to C++14 14.2/4. Annoying.
-#if defined(_MSC_VER) && !defined(__clang__)
 #define context self.context
 #define expect self.expect
-#else
-#define context self.template context
-#define expect self.template expect
-#endif
 #define explain context  // Piggybacks off of the `context` macro
 
 #define is_expected self.is_expected

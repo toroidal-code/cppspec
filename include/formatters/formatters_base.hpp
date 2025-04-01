@@ -45,10 +45,10 @@ class BaseFormatter {
 
   virtual ~BaseFormatter() = default;
 
-  virtual void format(const Description &description) {}
-  virtual void format(const ItBase &it) {}
+  virtual void format(const Description & /* description */) {}
+  virtual void format(const ItBase & /* it */) {}
   virtual void format(const std::string &message) { out_stream << message << std::endl; }
-  virtual void format_failure(const std::string &message) {}
+  virtual void format_failure(const std::string & /* message */) {}
   virtual void flush() {}
   virtual void cleanup() {}
 
