@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.27 FATAL_ERROR)
 
-project(c++spec)
+project(c++spec
+  VERSION 1.2.0
+  DESCRIPTION "BDD testing for C++"
+  LANGUAGES CXX
+)
 
 set(CMAKE_COLOR_DIAGNOSTICS ON)
 
@@ -77,6 +81,7 @@ option(CPPSPEC_BUILD_DOCS "Build C++Spec documentation")
 
 if(CPPSPEC_BUILD_TESTS)
   enable_testing()
+  include(CTest)
 
   # Tests
   add_subdirectory(spec)

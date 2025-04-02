@@ -6,7 +6,6 @@
 
 #include <deque>
 #include <forward_list>
-#include <queue>
 #include <string>
 #include <utility>
 
@@ -40,10 +39,11 @@ class Description : public Runnable {
   // field initialized. They should only be used by subclasses
   // of Description.
   Description() = default;
-  explicit Description(std::string description) noexcept : description(std::move(description)) {}
+  explicit Description(std::string&& description) noexcept : description(std::move(description)) {}
+  explicit Description(const char* description) noexcept : description(description) {}
 
-  Description(const Child &parent, std::string description, Block block) noexcept
-      : Runnable(parent), block(std::move(block)), description(std::move(description)) {}
+  Description(const Child &parent, const char* description, Block block) noexcept
+      : Runnable(parent), block(std::move(block)), description(description) {}
 
   void exec_before_eaches();
   void exec_after_eaches();
@@ -54,24 +54,25 @@ class Description : public Runnable {
   Description(Description &&copy) = default;
 
   // Primary constructor. Entry of all specs.
-  Description(std::string description, Block block) noexcept
+  Description(const char* description, Block block) noexcept
       : block(std::move(block)), description(std::move(description)) {}
 
   /********* Specify/It *********/
 
-  Result it(std::string description, ItD::Block body);
+  Result it(const char* description, ItD::Block body);
   Result it(ItD::Block body);
 
   /********* Context ***********/
 
   template <class T = std::nullptr_t>
-  Result context(std::string name, Block body);
+  Result context(const char* name, Block body);
 
-  template <class T>
-  Result context(T subject, std::function<void(ClassDescription<T> &)> block);
+  template <class T, class B>
+  requires (!std::is_same_v<T, const char*>)
+  Result context(T subject, B block);
 
-  template <class T>
-  Result context(std::string description, T subject, std::function<void(ClassDescription<T> &)> block);
+  template <class T, class B>
+  Result context(const char* description, T subject, B block);
 
   template <class T, typename U>
   Result context(std::initializer_list<U> init_list, std::function<void(ClassDescription<T> &)> block);
@@ -108,7 +109,7 @@ using Context = Description;
 
 /*========= Description::it =========*/
 
-inline Result Description::it(std::string description, ItD::Block block) {
+inline Result Description::it(const char* description, ItD::Block block) {
   ItD it(*this, description, block);
   Result result = it.run(this->get_formatter());
   exec_after_eaches();
@@ -127,7 +128,7 @@ inline Result Description::it(ItD::Block block) {
 /*========= Description::context =========*/
 
 template <class T>
-inline Result Description::context(std::string description, Block body) {
+inline Result Description::context(const char* description, Block body) {
   Context context(*this, description, body);
   context.before_eaches = this->before_eaches;
   context.after_eaches = this->after_eaches;

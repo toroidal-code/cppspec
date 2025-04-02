@@ -34,14 +34,14 @@ inline void TAP::format(const Description &description) {
 }
 
 inline void TAP::format(const ItBase &it) {
-  std::string description = it.get_description();
+  std::string description{it.get_description()};
 
   // Build up the description for the test by ascending the
   // execution tree and chaining the individual descriptions together
 
   for (const auto *parent = it.get_parent_as<const Description *>(); parent != nullptr;
        parent = parent->get_parent_as<const Description *>()) {
-    description = parent->get_description() + " " + description;
+    description = std::string(parent->get_description()) + " " + description;
   }
 
   if (color_output) {

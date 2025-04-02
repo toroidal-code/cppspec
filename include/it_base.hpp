@@ -48,7 +48,7 @@ class ItBase : public Runnable {
    * @param description the documentation string of the `it` statement
    * @return the constructed BaseIt
    */
-  explicit ItBase(const Child &parent, std::string description) noexcept
+  explicit ItBase(const Child &parent, const char* description) noexcept
       : Runnable(parent), description(std::move(description)) {}
 
   /**
@@ -61,14 +61,13 @@ class ItBase : public Runnable {
    * @brief Get the description string for the `it` statement
    * @return the description string
    */
-  std::string get_description() noexcept { return description; }
   [[nodiscard]] std::string get_description() const noexcept { return description; }
 
   /**
    * @brief Set the description string
    * @return a reference to the modified ItBase
    */
-  ItBase &set_description(const std::string &description) noexcept {
+  ItBase &set_description(std::string_view description) noexcept {
     this->description = description;
     return *this;
   }
