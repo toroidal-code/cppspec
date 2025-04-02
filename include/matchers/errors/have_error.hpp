@@ -3,12 +3,11 @@
 
 #include "matchers/matcher_base.hpp"
 
-
 namespace CppSpec::Matchers {
 
 template <typename T>
 concept expected = requires(T t) {
-  { t.error() } -> std::same_as<typename T::error_type&>;
+  { t.error() } -> std::same_as<typename T::error_type &>;
 };
 
 template <expected T>
@@ -16,7 +15,8 @@ class HaveError : public MatcherBase<T, void *> {
  public:
   HaveError(Expectation<T> &expectation) : MatcherBase<T, void *>(expectation) {}
 
-  std::string description() override {return "have an error"; }
+  std::string verb() override { return "have an error"; }
+  std::string description() override { return verb(); }
 
   bool match() override { return (!this->actual().has_value()); }
 };

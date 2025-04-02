@@ -100,7 +100,7 @@ class Expectation : public Child {
   Result to_be_less_than(E rhs, std::string msg = "");
 
   template <typename E>
-  Matchers::BeWithin<A, E> to_be_within(E expected, std::string msg = "");
+  Matchers::BeWithinHelper<A, E> to_be_within(E expected, std::string msg = "");
 
   /*-------- to... ----------*/
 
@@ -302,8 +302,8 @@ Result Expectation<A>::to_equal(E expected, std::string msg) {
  */
 template <typename A>
 template <typename E>
-Matchers::BeWithin<A, E> Expectation<A>::to_be_within(E expected, std::string msg) {
-  Matchers::BeWithin<A, E> matcher(*this, expected);
+Matchers::BeWithinHelper<A, E> Expectation<A>::to_be_within(E expected, std::string msg) {
+  Matchers::BeWithinHelper<A, E> matcher(*this, expected);
   matcher.set_message(msg);
   return matcher;
 }

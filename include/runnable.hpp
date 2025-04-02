@@ -1,12 +1,8 @@
-/**
- * @file
- */
 #pragma once
-
 #include "child.hpp"
-#include "result.hpp"
 
 namespace CppSpec {
+class Result;
 
 /**
  * @brief Abstract base class for executable objects

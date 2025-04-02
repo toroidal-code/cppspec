@@ -13,7 +13,7 @@ class StartWith : public MatcherBase<A, E> {
  public:
   StartWith(Expectation<A> &expectation, E start) : MatcherBase<A, E>(expectation, start) {}
 
-  std::string description() override { return "start with " + Pretty::to_word(this->expected()); }
+  std::string verb() override { return "start with"; }
 
   bool match() override {
     A &actual = this->actual();

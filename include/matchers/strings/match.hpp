@@ -17,7 +17,7 @@ class Match : MatcherBase<A, std::regex> {
   explicit Match(Expectation<A> &expectation, std::regex expected)
       : MatcherBase<A, std::regex>(expectation, expected) {}
 
-  std::string description() override { return "match " + Pretty::to_word(this->expected()); }
+  std::string verb() override { return "match"; }
 
   bool match() override {
     std::smatch temp_match;

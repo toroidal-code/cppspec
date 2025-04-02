@@ -12,7 +12,7 @@ class BeGreaterThan : public MatcherBase<A, E> {
  public:
   BeGreaterThan(Expectation<A> &expectation, E expected) : MatcherBase<A, E>(expectation, expected) {}
   bool match() override { return this->actual() > this->expected(); }
-  std::string description() override { return "be greater than" + Pretty::to_word(this->expected()); }
+  std::string verb() override { return "be greater than"; }
 };
 
 }  // namespace CppSpec::Matchers

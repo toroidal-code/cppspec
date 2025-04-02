@@ -1,7 +1,4 @@
-/** @file */
 #pragma once
-
-#include <string>
 
 #include "matchers/matcher_base.hpp"
 
