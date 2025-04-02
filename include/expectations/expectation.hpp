@@ -395,6 +395,7 @@ Result Expectation<A>::to_have_error(std::string msg) {
 template <typename A>
 class ExpectationValue : public Expectation<A> {
   A value;
+  std::source_location location;
 
  public:
   /**
@@ -404,7 +405,8 @@ class ExpectationValue : public Expectation<A> {
    *
    * @return The constructed ExpectationValue.
    */
-  ExpectationValue(ItBase &it, A value) : Expectation<A>(it), value(value) {}
+  ExpectationValue(ItBase &it, A value, std::source_location location)
+      : Expectation<A>(it), value(value), location{location} {}
 
   /**
    * @brief Create an Expectation using an initializer list.
@@ -414,8 +416,8 @@ class ExpectationValue : public Expectation<A> {
    * @return The constructed Expectation.
    */
   template <typename U>
-  ExpectationValue(ItBase &it, std::initializer_list<U> init_list)
-      : Expectation<A>(it), value(std::vector<U>(init_list)) {}
+  ExpectationValue(ItBase &it, std::initializer_list<U> init_list, std::source_location location)
+      : Expectation<A>(it), value(std::vector<U>(init_list)), location{location} {}
 
   /** @brief Get the target of the expectation. */
   A &get_target() & override { return value; }
@@ -436,9 +438,10 @@ class ExpectationFunc : public Expectation<decltype(std::declval<F>()())> {
   using block_ret_t = decltype(std::declval<F>()());
   F block;
   std::shared_ptr<block_ret_t> computed = nullptr;
+  std::source_location location;
 
  public:
-  ExpectationFunc(ExpectationFunc<F> const &copy) : Expectation<block_ret_t>(copy), block(copy.block) {}
+  ExpectationFunc(ExpectationFunc<F> const &copy, std::source_location location) : Expectation<block_ret_t>(copy), block(copy.block), location{location} {}
 
   /**
    * @brief Create an ExpectationValue using a value.
@@ -447,7 +450,7 @@ class ExpectationFunc : public Expectation<decltype(std::declval<F>()())> {
    *
    * @return The constructed ExpectationValue.
    */
-  ExpectationFunc(ItBase &it, F block) : Expectation<block_ret_t>(it), block(block) {}
+  ExpectationFunc(ItBase &it, F block, std::source_location location) : Expectation<block_ret_t>(it), block(block), location{location} {}
 
   /**
    * @brief Create an Expectation using a function.

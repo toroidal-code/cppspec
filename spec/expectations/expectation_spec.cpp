@@ -106,7 +106,7 @@ describe expectation_spec("Expectation", $ {
 	  // we explicitly want a function. Any other time
 	  // that would be perfectly okay.
       std::function<int()> foo = [] { return 1 + 2; };
-      ExpectationFunc<decltype(foo)> expectation(self, foo);
+      ExpectationFunc<decltype(foo)> expectation(self, foo, std::source_location::current());
       expect(expectation.get_target()).to_equal(3);
     });
   });

@@ -1,6 +1,7 @@
 /** @file */
 #pragma once
 
+#include <source_location>
 #include <string>
 #include <utility>
 #include <vector>
@@ -84,7 +85,7 @@ class ItBase : public Runnable {
    * @return a ExpectationValue object containing the given value.
    */
   template <Util::is_not_functional T>
-  ExpectationValue<T> expect(T value);
+  ExpectationValue<T> expect(T value, std::source_location location = std::source_location::current());
 
   /**
    * @brief The `expect` object generator for lambdas
@@ -96,7 +97,7 @@ class ItBase : public Runnable {
    * @return a ExpectationFunc object containing the given value.
    */
   template <Util::is_functional T>
-  ExpectationFunc<T> expect(T block);
+  ExpectationFunc<T> expect(T block, std::source_location location = std::source_location::current());
 
   /**
    * @brief The `expect` object generator for initializer lists
@@ -108,7 +109,7 @@ class ItBase : public Runnable {
    * @return a ExpectationValue object containing the given init_list.
    */
   template <typename T>
-  ExpectationValue<std::initializer_list<T>> expect(std::initializer_list<T> init_list);
+  ExpectationValue<std::initializer_list<T>> expect(std::initializer_list<T> init_list, std::source_location location = std::source_location::current());
 
   /**
    * @brief The `expect` object generator for Let
@@ -120,7 +121,7 @@ class ItBase : public Runnable {
    * @return a ExpectationValue object containing the given value.
    */
   template <typename T>
-  ExpectationValue<T> expect(Let<T> &let);
+  ExpectationValue<T> expect(Let<T> &let, std::source_location location = std::source_location::current());
 
   /**
    * @brief The `expect` object generator for const char*
@@ -128,7 +129,7 @@ class ItBase : public Runnable {
    * @param string the string to wrap
    * @return a ExpectationValue object containing a C++ string
    */
-  ExpectationValue<std::string> expect(const char *string);
+  ExpectationValue<std::string> expect(const char *string, std::source_location location = std::source_location::current());
 };
 
 }  // namespace CppSpec
