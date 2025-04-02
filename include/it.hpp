@@ -48,8 +48,8 @@ class ItD : public ItBase {
    *
    * @return the constructed ItD object
    */
-  ItD(const Child &parent, std::string description, Block block)
-      : ItBase(parent, std::move(description)), block(std::move(block)) {}
+  ItD(const Child &parent, const char* description, Block block)
+      : ItBase(parent, description), block(std::move(block)) {}
 
   /**
    * @brief The anonymous ItD constructor
@@ -104,7 +104,7 @@ class ItCD : public ItBase {
   T &subject;
 
   // This is only ever instantiated by ClassDescription<T>
-  ItCD(const Child &parent, T &subject, std::string description, Block block)
+  ItCD(const Child &parent, T &subject, const char* description, Block block)
       : ItBase(parent, description), block(block), subject(subject) {}
 
   ItCD(const Child &parent, T &subject, Block block) : ItBase(parent), block(block), subject(subject) {}

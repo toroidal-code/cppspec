@@ -68,11 +68,11 @@ describe bool_spec("Some Tests", $ {
   });
 
 
-  explain <std::list<int>> ({1,2,3}, _ {
+  explain(std::list<int>{1,2,3}, _ {
     it(_ { is_expected().to_contain(1); });
 
     it("includes [1,2,3]", _ {
-      expect<std::list<int>>({1,2,3}).to_contain({1,2,3});
+      expect(std::list<int>{1,2,3}).to_contain({1,2,3});
     });
 
     it( _ { is_expected().not_().to_contain(4); });
@@ -185,7 +185,7 @@ describe let_spec("let", $ {
 //   });
 
 describe list_spec("A list spec", $ {
-  explain <std::list<int>> ({1,2,3,4}, _ {
+  explain(std::list<int>{1,2,3,4}, _ {
     it( _ { is_expected().to_contain(8); });
     it( _ { is_expected().to_start_with({1,2,3}); });
   });

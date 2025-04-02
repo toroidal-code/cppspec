@@ -4,7 +4,7 @@ using namespace CppSpec;
 
 describe describe_spec("Description", $ {
   it("responds to it", _ { });
-  context<int>("can create ClassContexts", 1, _{});
+  context("can create ClassContexts", 1, _{});
 });
 
 
