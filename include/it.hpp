@@ -48,7 +48,7 @@ class ItD : public ItBase {
    *
    * @return the constructed ItD object
    */
-  ItD(const Child &parent, const char* description, Block block)
+  ItD(const Child &parent, const char *description, Block block)
       : ItBase(parent, description), block(std::move(block)) {}
 
   /**
@@ -104,7 +104,7 @@ class ItCD : public ItBase {
   T &subject;
 
   // This is only ever instantiated by ClassDescription<T>
-  ItCD(const Child &parent, T &subject, const char* description, Block block)
+  ItCD(const Child &parent, T &subject, const char *description, Block block)
       : ItBase(parent, description), block(block), subject(subject) {}
 
   ItCD(const Child &parent, T &subject, Block block) : ItBase(parent), block(block), subject(subject) {}
@@ -123,18 +123,18 @@ class ItCD : public ItBase {
  * @endcode
  */
 template <Util::is_not_functional T>
-ExpectationValue<T> ItBase::expect(T value) {
-  return ExpectationValue<T>(*this, value);
+ExpectationValue<T> ItBase::expect(T value, std::source_location location) {
+  return ExpectationValue<T>(*this, value, location);
 }
 
 template <Util::is_functional T>
-ExpectationFunc<T> ItBase::expect(T block) {
-  return ExpectationFunc<T>(*this, block);
+ExpectationFunc<T> ItBase::expect(T block, std::source_location location) {
+  return ExpectationFunc<T>(*this, block, location);
 }
 
 template <typename T>
-ExpectationValue<T> ItBase::expect(Let<T> &let) {
-  return ExpectationValue<T>(*this, let.value());
+ExpectationValue<T> ItBase::expect(Let<T> &let, std::source_location location) {
+  return ExpectationValue<T>(*this, let.value(), location);
 }
 
 /**
@@ -145,12 +145,13 @@ ExpectationValue<T> ItBase::expect(Let<T> &let) {
  * @endcode
  */
 template <typename T>
-ExpectationValue<std::initializer_list<T>> ItBase::expect(std::initializer_list<T> init_list) {
-  return ExpectationValue<std::initializer_list<T>>(*this, init_list);
+ExpectationValue<std::initializer_list<T>> ItBase::expect(std::initializer_list<T> init_list,
+                                                          std::source_location location) {
+  return ExpectationValue<std::initializer_list<T>>(*this, init_list, location);
 }
 
-inline ExpectationValue<std::string> ItBase::expect(const char *str) {
-  return ExpectationValue<std::string>(*this, std::string(str));
+inline ExpectationValue<std::string> ItBase::expect(const char *str, std::source_location location) {
+  return ExpectationValue<std::string>(*this, std::string(str), location);
 }
 
 }  // namespace CppSpec
