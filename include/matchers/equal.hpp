@@ -18,7 +18,7 @@ class Equal : public MatcherBase<A, E> {
  public:
   Equal(Expectation<A> &expectation, E expected) : MatcherBase<A, E>(expectation, expected) {}
 
-  std::string description() override;
+  std::string verb() override { return "equal"; }
   std::string failure_message() override;
   std::string failure_message_when_negated() override;
   bool diffable();
@@ -30,13 +30,6 @@ class Equal : public MatcherBase<A, E> {
   std::string simple_failure_message();
   // std::string detailed_failure_message();
 };
-
-template <typename A, typename E>
-std::string Equal<A, E>::description() {
-  std::stringstream ss;
-  ss << "equal" << Pretty::to_sentence<E>(this->expected());
-  return ss.str();
-}
 
 template <typename A, typename E>
 std::string Equal<A, E>::failure_message() {

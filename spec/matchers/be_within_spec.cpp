@@ -1,5 +1,7 @@
 #include <source_location>
+
 #include "cppspec.hpp"
+#include "formatters/formatters_base.hpp"
 
 using namespace CppSpec;
 
@@ -11,6 +13,7 @@ using namespace CppSpec;
  * to the RSpec team from 2005-2016
  */
 
+// clang-format off
 describe be_within_spec("expect(actual).to_be_within(delta).of(expected)", $  {
   it("passes when actual == expected", _ {
     expect(5.0).to_be_within(0.5).of(5.0);
@@ -57,10 +60,9 @@ describe be_within_spec("expect(actual).to_be_within(delta).of(expected)", $  {
 //  });
 
   it("provides a description", _ {
-    auto d = 5.1;
-    ExpectationValue<double> ex(self, d, std::source_location::current());
-    Matchers::BeWithin<double, double> matcher(ex, 0.5);
-    matcher.of(5.0);
+    double d = 5.1;
+    ExpectationValue ex(self, d, std::source_location::current());
+    Matchers::BeWithin matcher = Matchers::BeWithinHelper(ex, 0.5).of(5.0);
     expect(matcher.description()).to_equal("be within 0.5 of 5");
   });
 
@@ -71,22 +73,17 @@ describe be_within_spec("expect(actual).to_be_within(delta).of(expected)", $  {
       expect(11).to_be_within(10).percent_of(10);
     });
 
-    // TODO: PEDNING
-    // it("fails when actual is outside the given percent variance", _ {
-    //   expect([]{
-    //     expect(8.9).to_be_within(10).percent_of(10.0)();
-    //   }).to_fail_with("expected 8.9 to be within 10% of 10.0")();
-
-    //   expect([]{
-    //     expect(11.1).to_be_within(10).percent_of(10.0)();
-    //   }).to_fail_with("expected 11.1 to be within 10% of 10.0")();
-    // });
+    it("fails when actual is outside the given percent variance", _ {
+      auto base_formatter = Formatters::BaseFormatter();
+      auto ex = ExpectationValue(self, 20.1, std::source_location::current());
+      auto result = Matchers::BeWithinHelper(ex, 10).percent_of(10.0).run(base_formatter);
+      expect(result).to_fail_with("expected 20.1 to be within 10% of 10");
+    });
 
     it("provides a description", _ {
       auto d = 5.1;
       ExpectationValue<double> ex(self, d, std::source_location::current());
-      Matchers::BeWithin<double, double> matcher(ex, 0.5);
-      matcher.percent_of(5.0);
+      Matchers::BeWithin matcher = Matchers::BeWithinHelper(ex, 0.5).percent_of(5.0);
       expect(matcher.description()).to_equal("be within 0.5% of 5");
     });
   });

@@ -34,6 +34,7 @@ class BeBetween : public MatcherBase<A, E> {
   }
 
   bool match() override;
+  std::string verb() override { return "be between"; }
   std::string description() override;
 };
 
@@ -63,11 +64,7 @@ bool BeBetween<A, E>::match() {
 
 template <typename A, typename E>
 std::string BeBetween<A, E>::description() {
-  std::stringstream ss;
-  ss << "be between " << min << " and " << max << " (" << (mode == RangeMode::exclusive ? "exclusive" : "inclusive")
-     << ")";
-  return ss.str();
+  return std::format("be between {} and {} ({})", min, max, (mode == RangeMode::exclusive ? "exclusive" : "inclusive"));
 }
 
 }  // namespace CppSpec::Matchers
-

@@ -12,7 +12,7 @@ class BeLessThan : public MatcherBase<A, E> {
  public:
   BeLessThan(Expectation<A> &expectation, E expected) : MatcherBase<A, E>(expectation, expected) {}
   bool match() override { return this->actual() < this->expected(); }
-  std::string description() override { return "be less than" + Pretty::to_word(this->expected()); }
+  std::string verb() override { return "be less than"; }
 };
 
 }  // namespace CppSpec::Matchers

@@ -13,7 +13,7 @@ class EndWith : public MatcherBase<A, E> {
  public:
   EndWith(Expectation<A> &expectation, E start) : MatcherBase<A, E>(expectation, start) {}
 
-  std::string description() override { return "end with " + Pretty::to_word(this->expected()); }
+  std::string verb() override { return "end with"; }
 
   bool match() override {
     A &actual = this->actual();

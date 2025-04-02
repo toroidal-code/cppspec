@@ -24,32 +24,21 @@ class Satisfy : public MatcherBase<A, bool>  //, BeHelpers<Satisfy<A>>
  public:
   Satisfy(Expectation<A> &expectation, std::function<bool(A)> test) : MatcherBase<A, bool>(expectation), test(test) {}
 
-  std::string description() override;
   std::string failure_message() override;
   std::string failure_message_when_negated() override;
+  std::string verb() override { return "be"; }
 
   bool match() override;
 };
 
 template <typename A>
-std::string Satisfy<A>::description() {
-  std::stringstream ss;
-  ss << "be" << Pretty::to_sentence(this->expected());
-  return ss.str();
-}
-
-template <typename A>
 std::string Satisfy<A>::failure_message() {
-  std::stringstream ss;
-  ss << "expected " << MatcherBase<A, bool>::actual() << " to evaluate to true";
-  return ss.str();
+  return std::format("expected {} to evaluate to true", MatcherBase<A, bool>::actual());
 }
 
 template <typename A>
 std::string Satisfy<A>::failure_message_when_negated() {
-  std::stringstream ss;
-  ss << "expected " << MatcherBase<A, bool>::actual() << " to evaluate to false";
-  return ss.str();
+  return std::format("expected {} to evaluate to false", MatcherBase<A, bool>::actual());
 }
 
 template <typename A>

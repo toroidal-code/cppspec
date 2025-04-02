@@ -1,51 +1,60 @@
-/** @file */
 #pragma once
 
 #include "matchers/matcher_base.hpp"
 
 namespace CppSpec::Matchers {
+template <typename A, typename E>
+class BeWithin;
+
+template <typename A, typename E>
+class BeWithinHelper {
+  E tolerance;
+  Expectation<A>& expectation;
+  std::string msg;
+
+ public:
+  BeWithinHelper(Expectation<A>& expectation, E tolerance) : expectation(expectation), tolerance(tolerance) {}
+
+  BeWithin<A, E> of(E expected);
+  BeWithin<A, E> percent_of(E expected);
+  void set_message(const std::string& msg) { this->msg = msg; }
+  std::string get_message() { return this->msg; }
+};
 
 template <typename A, typename E>
 class BeWithin : public MatcherBase<A, E> {
-  E delta;
   std::string unit;
   E tolerance;
 
  public:
-  BeWithin(Expectation<A> &expectation, E delta) : MatcherBase<A, E>(expectation, 0), delta(delta) {}
-
-  bool of(E expected);
-  bool percent_of(E expected);
+  BeWithin(Expectation<A>& expectation, E tolerance, E value, std::string_view unit)
+      : MatcherBase<A, E>(expectation, value), tolerance{tolerance}, unit{unit} {}
 
   bool match() override;
 
   std::string failure_message() override;
   std::string failure_message_when_negated() override;
   std::string description() override;
+  std::string verb() override { return "be within"; }
 };
 
 template <typename A, typename E>
-bool BeWithin<A, E>::of(E expected) {
-  this->expected_ = expected;
-  this->tolerance = this->delta;
-  this->unit = "";
-  return this->run(this->get_formatter());
+BeWithin<A, E> BeWithinHelper<A, E>::of(E expected) {
+  BeWithin<A, E> matcher(expectation, tolerance, expected, "");  // No unit specified
+  matcher.set_message(msg);
+  return matcher;
 }
 
 template <typename A, typename E>
-bool BeWithin<A, E>::percent_of(E expected) {
-  this->expected_ = expected;
-  this->tolerance = this->delta;
-  this->unit = "%";
-  return this->run(this->get_formatter());
+BeWithin<A, E> BeWithinHelper<A, E>::percent_of(E expected) {
+  BeWithin<A, E> matcher(expectation, tolerance, expected, "%");  // Percent unit specified
+  matcher.set_message(msg);
+  return matcher;
 }
 
 template <typename A, typename E>
 bool BeWithin<A, E>::match() {
   if (!this->expected()) {
-    std::stringstream ss;
-    ss << "You must set an expected value using #of: be_within(" << this->delta << ").of(expected_value)";
-
     return false;
   }
   return std::abs(this->actual() - this->expected()) <= this->tolerance;
@@ -53,24 +62,17 @@ bool BeWithin<A, E>::match() {
 
 template <typename A, typename E>
 std::string BeWithin<A, E>::failure_message() {
-  std::stringstream ss;
-  ss << "expected " << this->actual() << " to " << description();
-  return ss.str();
+  return std::format("expected {} to {}", this->actual(), description());
 }
 
 template <typename A, typename E>
 std::string BeWithin<A, E>::failure_message_when_negated() {
-  std::stringstream ss;
-  ss << "expected " << this->actual() << " not to " << description();
-  return ss.str();
+  return std::format("expected {} not to {}", this->actual(), description());
 }
 
 template <typename A, typename E>
 std::string BeWithin<A, E>::description() {
-  std::stringstream ss;
-  ss << "be within " << this->delta << this->unit << " of " << this->expected();
-  return ss.str();
+  return std::format("be within {}{} of {}", this->tolerance, this->unit, this->expected());
 }
 
 }  // namespace CppSpec::Matchers
-

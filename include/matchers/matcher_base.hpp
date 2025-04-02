@@ -65,6 +65,7 @@ class MatcherBase : public Runnable, public Pretty {
   virtual std::string failure_message();
   virtual std::string failure_message_when_negated();
   virtual std::string description();
+  virtual std::string verb() { return "match"; }
 
   // Get the 'actual' object from the Expectation
   constexpr Actual &actual() { return expectation_.get_target(); }
@@ -113,9 +114,7 @@ std::string MatcherBase<A, E>::failure_message() {
   if (not custom_failure_message.empty()) {
     return this->custom_failure_message;
   }
-  std::stringstream ss;
-  ss << "expected " << Pretty::to_word(actual()) << " to " << description();
-  return ss.str();
+  return std::format("expected {} to {}", Pretty::to_word(actual()), description());
 }
 
 /**
@@ -128,9 +127,7 @@ std::string MatcherBase<A, E>::failure_message_when_negated() {
   if (not custom_failure_message.empty()) {
     return this->custom_failure_message;
   }
-  std::stringstream ss;
-  ss << "expected " << Pretty::to_word(actual()) << " to not " << description();
-  return ss.str();
+  return std::format("expected {} to not {}", Pretty::to_word(actual()), description());
 }
 
 /**
@@ -140,13 +137,11 @@ std::string MatcherBase<A, E>::failure_message_when_negated() {
  */
 template <typename A, typename E>
 std::string MatcherBase<A, E>::description() {
-  std::stringstream ss;
-  //std::string pretty_expected = this->to_sentence(expected_);
-  //  ss << "match " <<
-  //  this->name_to_sentence(Util::demangle(typeid(*this).name()))
-  //     << "(" << pretty_expected.substr(1, pretty_expected.length()) << ")";
-  ss << "match" << Pretty::to_sentence(expected_);
-  return ss.str();
+  // std::string pretty_expected = this->to_sentence(expected_);
+  //   ss << "match " <<
+  //   this->name_to_sentence(Util::demangle(typeid(*this).name()))
+  //      << "(" << pretty_expected.substr(1, pretty_expected.length()) << ")";
+  return std::format("{} {}", verb(), Pretty::to_sentence(expected_));
 }
 
 /**
@@ -158,15 +153,14 @@ std::string MatcherBase<A, E>::description() {
  */
 template <typename A, typename E>
 Result MatcherBase<A, E>::run(Formatters::BaseFormatter &printer) {
-  auto *par = static_cast<ItBase *>(this->get_parent());
+  auto *parent = static_cast<ItBase *>(this->get_parent());
   // If we need a description for our test, generate it
   // unless we're ignoring the output.
-  if (par->needs_description() && !expectation_.ignore_failure()) {
+  if (parent->needs_description() && !expectation_.ignore_failure()) {
     std::stringstream ss;
     ss << (expectation_.sign() ? PositiveExpectationHandler::verb() : NegativeExpectationHandler::verb()) << " "
        << this->description();
-    std::string ss_str = ss.str();
-    par->set_description(ss_str);
+    parent->set_description(ss.str());
   }
 
   Result matched = expectation_.sign() ? PositiveExpectationHandler::handle_matcher(*this)
