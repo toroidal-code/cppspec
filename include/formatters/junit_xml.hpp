@@ -38,6 +38,7 @@ struct Result {
       case Status::Skipped:
         return "skipped";
     }
+    return "failure";  // Default to failure if status is unknown
   }
 
   [[nodiscard]] std::string to_xml() const {
