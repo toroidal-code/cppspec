@@ -76,8 +76,8 @@ describe be_within_spec("expect(actual).to_be_within(delta).of(expected)", $  {
     it("fails when actual is outside the given percent variance", _ {
       auto base_formatter = Formatters::BaseFormatter();
       auto ex = ExpectationValue(self, 20.1, std::source_location::current());
-      auto result = Matchers::BeWithinHelper(ex, 10).percent_of(10.0).run(base_formatter);
-      expect(result).to_fail_with("expected 20.1 to be within 10% of 10");
+      auto matcher = Matchers::BeWithinHelper(ex, 10).percent_of(10.0);
+      expect(matcher.run()).to_fail_with("expected 20.1 to be within 10% of 10");
     });
 
     it("provides a description", _ {

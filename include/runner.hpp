@@ -16,7 +16,7 @@ namespace CppSpec {
  * @brief A collection of Descriptions that are run in sequence
  */
 class Runner {
-  std::list<Description *> specs{};
+  std::list<Description*> specs{};
   std::shared_ptr<Formatters::BaseFormatter> formatter;
 
  public:
@@ -30,17 +30,25 @@ class Runner {
    * @param spec the spec to be added
    * @return a reference to the modified Runner
    */
-  Runner &add_spec(Description &spec) {
+  Runner& add_spec(Description& spec) {
     specs.push_back(&spec);
     return *this;
   }
 
-  Result run() {
+  template <typename... Specs>
+  Runner& add_specs(Specs... specs) {
+    (add_spec(specs), ...);  // Fold expression to add all specs
+    return *this;
+  }
+
+  Result run(std::source_location location = std::source_location::current()) {
     bool success = true;
-    for (auto *spec : specs) {
-      success &= static_cast<bool>(spec->run(*formatter));
+    for (Description* spec : specs) {
+      spec->timed_run();
+      formatter->format(static_cast<Runnable&>(*spec));
+      success &= spec->get_result().status();
     }
-    return success ? Result::success() : Result::failure();
+    return success ? Result::success(location) : Result::failure(location);
   }
 
   Result exec() {

@@ -26,33 +26,33 @@ class MatcherBase;
  */
 struct Pretty {
   std::string _name;
-  [[nodiscard]] std::string name(const std::string &name) const;
-  [[nodiscard]] std::string name_to_sentence(const std::string &name) const;
-  static std::string split_words(const std::string &sym);
-  static std::string underscore(const std::string &camel_cased_word);
-  static std::string last(const std::string &s, char delim);
-  static std::string improve_hash_formatting(const std::string &inspect_string);
+  [[nodiscard]] std::string name(const std::string& name) const;
+  [[nodiscard]] std::string name_to_sentence(const std::string& name) const;
+  static std::string split_words(const std::string& sym);
+  static std::string underscore(const std::string& camel_cased_word);
+  static std::string last(const std::string& s, char delim);
+  static std::string improve_hash_formatting(const std::string& inspect_string);
 
   template <Util::is_streamable T>
-  static std::string to_word(const T &item);
+  static std::string to_word(const T& item);
 
   template <typename T>
-  static std::string to_word(const T &item);
+  static std::string to_word(const T& item);
 
   template <typename T>
-  static std::string to_word_type(const T &item);
+  static std::string to_word_type(const T& item);
 
   template <typename A, typename E>
-  static std::string to_word(const Matchers::MatcherBase<A, E> &matcher);
+  static std::string to_word(const Matchers::MatcherBase<A, E>& matcher);
 
   template <class T>
-  static std::string to_sentence(const T &item);
+  static std::string to_sentence(const T& item);
 
   template <class T>
-  static std::string to_sentence(const std::vector<T> &words);
+  static std::string to_sentence(const std::vector<T>& words);
 
   template <typename T>
-  static std::string inspect_object(const T &object);
+  static std::string inspect_object(const T& object);
 };
 
 /**
@@ -64,9 +64,9 @@ struct Pretty {
  * @return a human-readable comma-delimited list
  */
 template <typename T>
-inline std::string Pretty::to_sentence(const std::vector<T> &objects) {
+inline std::string Pretty::to_sentence(const std::vector<T>& objects) {
   std::vector<std::string> words;
-  for (const auto &object : objects) {
+  for (const auto& object : objects) {
     words.push_back(to_word(object));
   }
 
@@ -103,7 +103,7 @@ inline std::string Pretty::to_sentence(const std::vector<T> &objects) {
  * @return a human-readable representation of the object (as a list)
  */
 template <typename T>
-inline std::string Pretty::to_sentence(const T &item) {
+inline std::string Pretty::to_sentence(const T& item) {
   return to_sentence(std::vector{item});
 }
 
@@ -119,24 +119,24 @@ inline std::string Pretty::to_sentence(const T &item) {
  * @return the string representation
  */
 template <Util::is_streamable T>
-inline std::string Pretty::to_word(const T &item) {
+inline std::string Pretty::to_word(const T& item) {
   std::ostringstream oss;
   oss << item;  // use operator<< to convert and append
   return oss.str();
 }
 
 template <>
-inline std::string Pretty::to_word<bool>(const bool &item) {
+inline std::string Pretty::to_word<bool>(const bool& item) {
   return item ? "true" : "false";
 }
 
 template <>
-inline std::string Pretty::to_word<std::true_type>(const std::true_type & /* item */) {
+inline std::string Pretty::to_word<std::true_type>(const std::true_type& /* item */) {
   return "true";
 }
 
 template <>
-inline std::string Pretty::to_word<std::false_type>(const std::false_type & /* item */) {
+inline std::string Pretty::to_word<std::false_type>(const std::false_type& /* item */) {
   return "false";
 }
 
@@ -148,7 +148,7 @@ inline std::string Pretty::to_word<std::false_type>(const std::false_type & /* i
  * @return the string representation
  */
 template <typename T>
-inline std::string Pretty::to_word(const T &item) {
+inline std::string Pretty::to_word(const T& item) {
   std::stringstream ss;
   // Ruby-style inspect for objects without an overloaded operator<<
   ss << "#<" << Util::demangle(typeid(item).name()) << ":" << &item << ">";
@@ -167,7 +167,7 @@ inline std::string Pretty::to_word(const T &item) {
  * @return a string representation of the Matcher
  */
 template <typename A, typename E>
-inline std::string Pretty::to_word(const Matchers::MatcherBase<A, E> &matcher) {
+inline std::string Pretty::to_word(const Matchers::MatcherBase<A, E>& matcher) {
   std::string description = matcher.description();
   if (description.empty()) {
     return "[No description]";
@@ -176,7 +176,7 @@ inline std::string Pretty::to_word(const Matchers::MatcherBase<A, E> &matcher) {
 }
 
 template <typename T>
-inline std::string Pretty::to_word_type(const T &item) {
+inline std::string Pretty::to_word_type(const T& item) {
   std::string word = to_word(item);
   if constexpr (Util::is_streamable<T>) {
     word += " : " + Util::demangle(typeid(T).name());
@@ -184,18 +184,22 @@ inline std::string Pretty::to_word_type(const T &item) {
   return word;
 }
 
-inline std::string Pretty::name_to_sentence(const std::string &n) const { return split_words(name(n)); }
+inline std::string Pretty::name_to_sentence(const std::string& n) const {
+  return split_words(name(n));
+}
 
-inline std::string Pretty::name(const std::string &name) const {
+inline std::string Pretty::name(const std::string& name) const {
   if (_name.empty()) {
     return last(name, ':');
   }
   return _name;
 }
 
-inline std::string Pretty::split_words(const std::string &sym) { return std::regex_replace(sym, std::regex("_"), " "); }
+inline std::string Pretty::split_words(const std::string& sym) {
+  return std::regex_replace(sym, std::regex("_"), " ");
+}
 
-inline std::string Pretty::underscore(const std::string &word) {
+inline std::string Pretty::underscore(const std::string& word) {
   std::string str = std::regex_replace(word, std::regex("([A-Z]+)([A-Z][a-z])"), "$1_$2");
   str = std::regex_replace(str, std::regex("([a-z\\d])([A-Z])"), "$1_$2");
   str = std::regex_replace(str, std::regex("-"), "_");
@@ -203,7 +207,7 @@ inline std::string Pretty::underscore(const std::string &word) {
   return str;
 }
 
-inline std::string Pretty::last(const std::string &s, const char delim) {
+inline std::string Pretty::last(const std::string& s, const char delim) {
   std::vector<std::string> elems;
   std::stringstream ss(s);
   std::string item;
@@ -215,7 +219,7 @@ inline std::string Pretty::last(const std::string &s, const char delim) {
   return elems.back();
 }
 
-inline std::string Pretty::improve_hash_formatting(const std::string &inspect_string) {
+inline std::string Pretty::improve_hash_formatting(const std::string& inspect_string) {
   return std::regex_replace(inspect_string, std::regex("(\\S)=>(\\S)"), "$1 => $2");
 }
 
@@ -227,7 +231,7 @@ inline std::string Pretty::improve_hash_formatting(const std::string &inspect_st
  * @return the generated string
  */
 template <typename O>
-inline std::string Pretty::inspect_object(const O &o) {
+inline std::string Pretty::inspect_object(const O& o) {
   return std::format("({}) => {}", Util::demangle(typeid(o).name()), to_word(o));
 }
 
@@ -239,7 +243,7 @@ inline std::string Pretty::inspect_object(const O &o) {
  * @return the generated string
  */
 template <>
-inline std::string Pretty::inspect_object<const char *>(const char *const &o) {
+inline std::string Pretty::inspect_object<const char*>(const char* const& o) {
   return std::format("(const char *) => \"{}\"", o);
 }
 
@@ -251,12 +255,12 @@ inline std::string Pretty::inspect_object<const char *>(const char *const &o) {
  * @return the generated string
  */
 template <>
-inline std::string Pretty::inspect_object<std::string>(const std::string &o) {
+inline std::string Pretty::inspect_object<std::string>(const std::string& o) {
   return std::format("(std::string) => \"{}\"", o);
 }
 
 template <>
-inline std::string Pretty::inspect_object<std::string_view>(const std::string_view &o) {
+inline std::string Pretty::inspect_object<std::string_view>(const std::string_view& o) {
   return std::format("(std::string_view) => \"{}\"", o);
 }
 

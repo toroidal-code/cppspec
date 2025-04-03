@@ -19,10 +19,10 @@ class ContainBase : public MatcherBase<A, E> {
   std::string failure_message_when_negated() override;
   virtual bool diffable() { return true; }
 
-  ContainBase(Expectation<A> &expectation, std::initializer_list<U> expected)
-      : MatcherBase<A, std::vector<U>>(expectation, std::vector<U>(expected)), actual_(this->actual()){};
-  ContainBase(Expectation<A> &expectation, U expected)
-      : MatcherBase<A, U>(expectation, expected), actual_(this->actual()){};
+  ContainBase(Expectation<A>& expectation, std::initializer_list<U> expected)
+      : MatcherBase<A, std::vector<U>>(expectation, std::vector<U>(expected)), actual_(this->actual()) {};
+  ContainBase(Expectation<A>& expectation, U expected)
+      : MatcherBase<A, U>(expectation, expected), actual_(this->actual()) {};
 
  protected:
   bool actual_collection_includes(U expected_item);
@@ -119,7 +119,7 @@ bool Contain<A, E, U>::perform_match(Predicate predicate, Predicate /*hash_subse
 template <typename A, typename U>
 class Contain<A, U, U> : public ContainBase<A, U, U> {
  public:
-  Contain(Expectation<A> &expectation, U expected) : ContainBase<A, U, U>(expectation, expected){};
+  Contain(Expectation<A>& expectation, U expected) : ContainBase<A, U, U>(expectation, expected) {};
 
   bool match() override;
 };
@@ -130,4 +130,3 @@ bool Contain<A, U, U>::match() {
 }
 
 }  // namespace CppSpec::Matchers
-

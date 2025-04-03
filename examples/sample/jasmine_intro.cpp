@@ -1,7 +1,6 @@
 // Copyright 2016 Katherine Whitlock
 
 #include "cppspec.hpp"
-#include "formatters/verbose.hpp"
 
 describe a_suite("A suite", $ {
   it("contains a spec with an expectation", _ {
@@ -266,5 +265,5 @@ int main(int argc, char** argv) {
              .add_spec(a_spec_before_each)
              .add_spec(a_spec_nesting)
              .add_spec(to_include_matcher)
-             .exec() ? EXIT_SUCCESS : EXIT_FAILURE;
+             .exec().is_success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

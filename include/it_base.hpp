@@ -1,15 +1,15 @@
 /** @file */
 #pragma once
 
+#include <algorithm>
+#include <functional>
 #include <source_location>
 #include <string>
 #include <utility>
-#include <vector>
 
 #include "let.hpp"
 #include "runnable.hpp"
 #include "util.hpp"
-
 
 namespace CppSpec {
 
@@ -31,26 +31,24 @@ class ExpectationFunc;
 class ItBase : public Runnable {
   /** @brief The documentation string for this `it` */
   std::string description;
+  std::list<Result> results{};  // The results of the `it` statement
 
  public:
   ItBase() = delete;  // Don't allow a default constructor
-
-  /** @brief Copy constructor */
-  ItBase(const ItBase &copy) noexcept = default;
 
   /**
    * @brief Create an BaseIt without an explicit description
    * @return the constructed BaseIt
    */
-  explicit ItBase(const Child &parent) noexcept : Runnable(parent) {}
+  explicit ItBase(Runnable& parent, std::source_location location) noexcept : Runnable(parent, location) {}
 
   /**
    * @brief Create an BaseIt with an explicit description.
    * @param description the documentation string of the `it` statement
    * @return the constructed BaseIt
    */
-  explicit ItBase(const Child &parent, const char* description) noexcept
-      : Runnable(parent), description(std::move(description)) {}
+  explicit ItBase(Runnable& parent, std::source_location location, const char* description) noexcept
+      : Runnable(parent, location), description(std::move(description)) {}
 
   /**
    * @brief Get whether the object needs a description string
@@ -68,7 +66,7 @@ class ItBase : public Runnable {
    * @brief Set the description string
    * @return a reference to the modified ItBase
    */
-  ItBase &set_description(std::string_view description) noexcept {
+  ItBase& set_description(std::string_view description) noexcept {
     this->description = description;
     return *this;
   }
@@ -109,7 +107,8 @@ class ItBase : public Runnable {
    * @return a ExpectationValue object containing the given init_list.
    */
   template <typename T>
-  ExpectationValue<std::initializer_list<T>> expect(std::initializer_list<T> init_list, std::source_location location = std::source_location::current());
+  ExpectationValue<std::initializer_list<T>> expect(std::initializer_list<T> init_list,
+                                                    std::source_location location = std::source_location::current());
 
   /**
    * @brief The `expect` object generator for Let
@@ -121,7 +120,7 @@ class ItBase : public Runnable {
    * @return a ExpectationValue object containing the given value.
    */
   template <typename T>
-  ExpectationValue<T> expect(Let<T> &let, std::source_location location = std::source_location::current());
+  ExpectationValue<T> expect(Let<T>& let, std::source_location location = std::source_location::current());
 
   /**
    * @brief The `expect` object generator for const char*
@@ -129,7 +128,21 @@ class ItBase : public Runnable {
    * @param string the string to wrap
    * @return a ExpectationValue object containing a C++ string
    */
-  ExpectationValue<std::string> expect(const char *string, std::source_location location = std::source_location::current());
+  ExpectationValue<std::string> expect(const char* string,
+                                       std::source_location location = std::source_location::current());
+
+  void add_result(const Result& result) { results.push_back(result); }
+  std::list<Result>& get_results() noexcept { return results; }
+  const std::list<Result>& get_results() const noexcept { return results; }
+  void clear_results() noexcept { results.clear(); }
+
+  [[nodiscard]] Result get_result() const override {
+    if (results.empty()) {
+      return Result::success(this->get_location());
+    }
+
+    return *std::ranges::fold_left_first(results, std::logical_and<>{});
+  }
 };
 
 }  // namespace CppSpec

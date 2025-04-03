@@ -3,7 +3,6 @@
 #include <cstring>
 #include <list>
 #include "cppspec.hpp"
-#include "formatters/verbose.hpp"
 
 describe bool_spec("Some Tests", $ {
   context("true is", _ {
@@ -219,5 +218,5 @@ int main(int argc, char **argv){
              .add_spec(let_spec)
              .add_spec(list_spec)
              .add_spec(expectation_spec)
-             .exec() ? EXIT_SUCCESS : EXIT_FAILURE;
+             .exec().is_success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -9,10 +9,11 @@
 #include <string>
 #include <type_traits>
 
-
 #ifdef __GNUG__
 #include <cxxabi.h>
+
 #include <memory>
+
 #endif
 
 namespace CppSpec::Util {
@@ -25,14 +26,18 @@ namespace CppSpec::Util {
  * @return a human-readable translation of the given symbol
  */
 #ifdef __GNUG__
-inline std::string demangle(const char *mangled) {
+inline std::string demangle(const char* mangled) {
   int status;
-  std::unique_ptr<char[], void (*)(void *)> result{abi::__cxa_demangle(mangled, NULL, NULL, &status), std::free};
-
+  std::unique_ptr<char[], void (*)(void*)> result{
+      abi::__cxa_demangle(mangled, nullptr, nullptr, &status),
+      std::free,
+  };
   return (status == 0) ? result.get() : mangled;
 }
 #else
-inline std::string demangle(const char *name) { return name; }
+inline std::string demangle(const char* name) {
+  return name;
+}
 #endif
 
 /**
@@ -73,8 +78,8 @@ concept is_container = requires(C c) {
  * @tparam C a type to check
  */
 template <typename C>
-concept is_streamable = requires(std::ostream &os, const C &obj) {
-  { os << obj } -> std::same_as<std::ostream &>;
+concept is_streamable = requires(std::ostream& os, const C& obj) {
+  { os << obj } -> std::same_as<std::ostream&>;
 };
 
 template <typename C>
@@ -107,10 +112,10 @@ concept is_not_functional = !is_functional<C>;
  *
  * @return the joined string
  */
-inline std::string join(std::ranges::range auto &iterable, const std::string &separator = "") {
+[[nodiscard]] inline std::string join(std::ranges::range auto& iterable, const std::string& separator = "") {
   std::ostringstream oss;
   bool first = true;
-  for (auto &thing : iterable) {
+  for (auto& thing : iterable) {
     if (!first) {
       oss << separator;
     }

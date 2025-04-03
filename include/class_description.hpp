@@ -1,5 +1,6 @@
 /** @file */
 #pragma once
+#include <source_location>
 #include <string>
 
 #include "description.hpp"
@@ -19,7 +20,7 @@ namespace CppSpec {
  */
 template <class T>
 class ClassDescription : public Description {
-  using Block = std::function<void(ClassDescription<T> &)>;
+  using Block = std::function<void(ClassDescription<T>&)>;
 
   Block block;
   std::string type;
@@ -31,56 +32,75 @@ class ClassDescription : public Description {
   // Constructor
   // if there's no explicit subject given, then use
   // the default constructor of the given type as the implicit subject.
-  ClassDescription(Block block)
-      : Description(), block(block), type(" : " + Util::demangle(typeid(T).name())), subject(T()) {
+  ClassDescription(Block block, std::source_location location = std::source_location::current())
+      : block(block), type(" : " + Util::demangle(typeid(T).name())), subject(T()) {
     this->description = Pretty::to_word(subject);
+    this->set_location(location);
   }
 
-  ClassDescription(const char* description, Block block) : Description(description), block(block), subject(T()) {}
+  ClassDescription(const char* description,
+                   Block block,
+                   std::source_location location = std::source_location::current())
+      : Description(location, description), block(block), subject(T()) {}
 
-  ClassDescription(T subject, Block block)
-      : Description(Pretty::to_word(subject)),
+  ClassDescription(T subject, Block block, std::source_location location = std::source_location::current())
+      : Description(location, Pretty::to_word(subject)),
         block(block),
         type(" : " + Util::demangle(typeid(T).name())),
         subject(subject) {}
 
-  ClassDescription(const char* description, T subject, Block block)
-      : Description(description), block(block), subject(subject) {}
+  ClassDescription(const char* description,
+                   T subject,
+                   Block block,
+                   std::source_location location = std::source_location::current())
+      : Description(location, description), block(block), subject(subject) {}
 
-  ClassDescription(T &subject, Block block)
-      : Description(Pretty::to_word(subject)),
+  ClassDescription(T&& subject, Block block, std::source_location location = std::source_location::current())
+      : Description(location, Pretty::to_word(subject)),
         block(block),
         type(" : " + Util::demangle(typeid(T).name())),
-        subject(subject) {}
+        subject(std::move(subject)) {}
 
   template <typename U>
-  ClassDescription(std::initializer_list<U> init_list, Block block)
-      : block(block), type(" : " + Util::demangle(typeid(T).name())), subject(T(init_list)) {
-    this->description = Pretty::to_word(subject);
-  }
+  ClassDescription(std::initializer_list<U> init_list,
+                   Block block,
+                   std::source_location location = std::source_location::current())
+      : Description(location, Pretty::to_word(subject)),
+        block(block),
+        type(" : " + Util::demangle(typeid(T).name())),
+        subject(T(init_list)) {}
 
   template <typename U>
-  ClassDescription(const char* description, std::initializer_list<U> init_list, Block block)
-      : Description(description), block(block), subject(T(init_list)) {}
+  ClassDescription(const char* description,
+                   std::initializer_list<U> init_list,
+                   Block block,
+                   std::source_location location = std::source_location::current())
+      : Description(location, description), block(block), subject(T(init_list)) {}
 
-  Result it(const char* description, std::function<void(ItCD<T> &)> block);
-  Result it(std::function<void(ItCD<T> &)> block);
-  /** @brief an alias for it */
-  Result specify(const char* description, std::function<void(ItCD<T> &)> block) { return it(description, block); }
-  /** @brief an alias for it */
-  Result specify(std::function<void(ItCD<T> &)> block) { return it(block); }
+  ItCD<T>& it(const char* description,
+              std::function<void(ItCD<T>&)> block,
+              std::source_location location = std::source_location::current());
+  ItCD<T>& it(std::function<void(ItCD<T>&)> block, std::source_location location = std::source_location::current());
 
   template <class U = std::nullptr_t, class B>
-  Result context(const char* description, B block);
+  ClassDescription<T>& context(const char* description,
+                               B block,
+                               std::source_location location = std::source_location::current());
 
   template <class U, class B>
-  Result context(const char* description, U subject, B block);
+  ClassDescription<U>& context(const char* description,
+                               U subject,
+                               B block,
+                               std::source_location location = std::source_location::current());
   template <class U, class B>
-  Result context(const char* description, U &subject, B block);
+  ClassDescription<U>& context(const char* description,
+                               U& subject,
+                               B block,
+                               std::source_location location = std::source_location::current());
   template <class U, class B>
-  Result context(U subject, B block);
+  ClassDescription<U>& context(U subject, B block, std::source_location location = std::source_location::current());
 
-  Result run(Formatters::BaseFormatter &printer) override;
+  void run() override;
 
   [[nodiscard]] std::string get_subject_type() const noexcept override { return type; }
 };
@@ -90,64 +110,82 @@ using ClassContext = ClassDescription<T>;
 
 template <class T>
 template <class U, class B>
-Result ClassDescription<T>::context(const char* description, U subject,
-                                    B block) {
-  ClassContext<U> context(description, subject, block);
-  context.set_parent(this);
-  context.ClassContext<U>::before_eaches = this->before_eaches;
-  context.ClassContext<U>::after_eaches = this->after_eaches;
-  return context.run(this->get_formatter());
+ClassContext<U>& ClassDescription<T>::context(const char* description,
+                                              U subject,
+                                              B block,
+                                              std::source_location location) {
+  auto* context = new ClassContext<U>(description, subject, block, location);
+  context->set_parent(this);
+  context->ClassContext<U>::before_eaches = this->before_eaches;
+  context->ClassContext<U>::after_eaches = this->after_eaches;
+  context->timed_run();
+  return *context;
 }
 
 template <class T>
 template <class U, class B>
-Result ClassDescription<T>::context(U subject, B block) {
-  return this->context("", std::forward<U>(subject), block);
+ClassContext<U>& ClassDescription<T>::context(U subject, B block, std::source_location location) {
+  return this->context("", std::forward<U>(subject), block, location);
 }
 
 template <class T>
 template <class U, class B>
-Result ClassDescription<T>::context(const char* description, U &subject,
-                                    B block) {
-  ClassContext<U> context(description, subject, block);
-  context.set_parent(this);
-  context.ClassContext<U>::before_eaches = this->before_eaches;
-  context.ClassContext<U>::after_eaches = this->after_eaches;
-  return context.run(this->get_formatter());
+ClassContext<U>& ClassDescription<T>::context(const char* description,
+                                              U& subject,
+                                              B block,
+                                              std::source_location location) {
+  auto* context = new ClassContext<U>(description, subject, block, location);
+  context->set_parent(this);
+  context->ClassContext<U>::before_eaches = this->before_eaches;
+  context->ClassContext<U>::after_eaches = this->after_eaches;
+  context->timed_run();
+  return *context;
 }
 
 template <class T>
 template <class U, class B>
-Result ClassDescription<T>::context(const char* description, B block) {
-  ClassContext<T> context(description, this->subject, block);
-  context.set_parent(this);
-  context.before_eaches = this->before_eaches;
-  context.after_eaches = this->after_eaches;
-  return context.run(this->get_formatter());
+ClassContext<T>& ClassDescription<T>::context(const char* description, B block, std::source_location location) {
+  auto* context = new ClassContext<T>(description, this->subject, block, location);
+  context->set_parent(this);
+  context->before_eaches = this->before_eaches;
+  context->after_eaches = this->after_eaches;
+  context->timed_run();
+  return *context;
 }
 
 template <class T, class B>
-requires (!std::is_same_v<T, const char*>)
-Result Description::context(T subject, B block) {
-  return this->context("", subject, block);
+  requires(!std::is_same_v<T, const char*>)
+ClassContext<T>& Description::context(T subject, B block, std::source_location location) {
+  auto* context = new ClassContext<T>(subject, block, location);
+  context->set_parent(this);
+  context->set_location(location);
+  context->before_eaches = this->before_eaches;
+  context->after_eaches = this->after_eaches;
+  context->timed_run();
+  return *context;
 }
 
 template <class T, class B>
-Result Description::context(const char* description, T subject, B block) {
-  ClassContext<T> context(description, subject, block);
-  context.set_parent(this);
-  context.before_eaches = this->before_eaches;
-  context.after_eaches = this->after_eaches;
-  return context.run(this->get_formatter());
+ClassContext<T>& Description::context(const char* description, T subject, B block, std::source_location location) {
+  auto* context = new ClassContext<T>(description, subject, block, location);
+  context->set_parent(this);
+  context->set_location(location);
+  context->before_eaches = this->before_eaches;
+  context->after_eaches = this->after_eaches;
+  context->timed_run();
+  return *context;
 }
 
 template <class T, typename U>
-Result Description::context(std::initializer_list<U> init_list, std::function<void(ClassDescription<T> &)> block) {
-  ClassContext<T> context(T(init_list), block);
-  context.set_parent(this);
-  context.before_eaches = this->before_eaches;
-  context.after_eaches = this->after_eaches;
-  return context.run(this->get_formatter());
+ClassContext<T>& Description::context(std::initializer_list<U> init_list,
+                                      std::function<void(ClassDescription<T>&)> block,
+                                      std::source_location location) {
+  auto* context = new ClassContext<T>(T(init_list), block, location);
+  context->set_parent(this);
+  context->before_eaches = this->before_eaches;
+  context->after_eaches = this->after_eaches;
+  context->timed_run();
+  return *context;
 }
 
 /**
@@ -172,12 +210,12 @@ Result Description::context(std::initializer_list<U> init_list, std::function<vo
  * @return the result of the test
  */
 template <class T>
-Result ClassDescription<T>::it(const char* name, std::function<void(ItCD<T> &)> block) {
-  ItCD<T> it(*this, this->subject, name, block);
-  Result result = it.run(this->get_formatter());
+ItCD<T>& ClassDescription<T>::it(const char* name, std::function<void(ItCD<T>&)> block, std::source_location location) {
+  auto* it = new ItCD<T>(*this, location, this->subject, name, block);
+  it->timed_run();
   exec_after_eaches();
   exec_before_eaches();
-  return result;
+  return *it;
 }
 
 /**
@@ -202,44 +240,34 @@ Result ClassDescription<T>::it(const char* name, std::function<void(ItCD<T> &)> 
  * @return the result of the test
  */
 template <class T>
-Result ClassDescription<T>::it(std::function<void(ItCD<T> &)> block) {
-  ItCD<T> it(*this, this->subject, block);
-  Result result = it.run(this->get_formatter());
+ItCD<T>& ClassDescription<T>::it(std::function<void(ItCD<T>&)> block, std::source_location location) {
+  auto* it = new ItCD<T>(*this, location, this->subject, block);
+  it->timed_run();
   exec_after_eaches();
   exec_before_eaches();
-  return result;
+  return *it;
 }
 
 template <class T>
-Result ClassDescription<T>::run(Formatters::BaseFormatter &printer) {
-  if (not this->has_formatter()) {
-    this->set_formatter(printer);
-  }
-  printer.format(*this);
+void ClassDescription<T>::run() {
   this->block(*this);
-  for (const auto &a : after_alls) {
+  for (const auto& a : after_alls) {
     a();
   }
-  if (this->get_parent() == nullptr) {
-    printer.flush();
-  }
-  return this->get_status() ? Result::success() : Result::failure();
 }
 
 template <class T>
 ExpectationValue<T> ItCD<T>::is_expected() {
-  auto cd = static_cast<ClassDescription<T> *>(this->get_parent());
+  auto cd = this->get_parent_as<ClassDescription<T>>();
   ExpectationValue<T> expectation(*this, cd->subject, std::source_location::current());
   return expectation;
 }
 
 template <class T>
-Result ItCD<T>::run(Formatters::BaseFormatter &printer) {
+void ItCD<T>::run() {
   this->block(*this);
-  printer.format(*this);
-  auto cd = static_cast<ClassDescription<T> *>(this->get_parent());
+  auto cd = this->get_parent_as<ClassDescription<T>>();
   cd->reset_lets();
-  return this->get_status() ? Result::success() : Result::failure();
 }
 
 }  // namespace CppSpec

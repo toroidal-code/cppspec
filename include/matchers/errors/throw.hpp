@@ -6,9 +6,9 @@
 namespace CppSpec::Matchers {
 
 template <class A, class Ex>
-class Throw : public MatcherBase<A, void *> {
+class Throw : public MatcherBase<A, void*> {
  public:
-  explicit Throw(Expectation<A> &expectation) : MatcherBase<A, void *>(expectation, nullptr) {}
+  explicit Throw(Expectation<A>& expectation) : MatcherBase<A, void*>(expectation, nullptr) {}
   bool match() override;
   std::string verb() override { return "throw"; }
   std::string description() override;
@@ -21,7 +21,7 @@ bool Throw<A, Ex>::match() {
   bool caught = false;
   try {
     this->actual();
-  } catch (Ex &ex) {
+  } catch (Ex& ex) {
     caught = true;
   }
   return caught;
