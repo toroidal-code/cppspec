@@ -19,7 +19,7 @@ class LetBase {
 
  public:
   constexpr LetBase() noexcept = default;
-  LetBase(const LetBase &copy) = default;
+  LetBase(const LetBase& copy) = default;
   void reset() noexcept { delivered = false; }
   [[nodiscard]] constexpr bool has_result() const noexcept { return this->delivered; }
 };
@@ -42,13 +42,13 @@ class Let : public LetBase {
  public:
   explicit Let(block_t body) noexcept : LetBase(), body(body) {}
 
-  T *operator->() {
+  T* operator->() {
     value();
     return result.operator->();
   }
 
-  T &operator*() & { return value(); }
-  T &value() &;
+  T& operator*() & { return value(); }
+  T& value() &;
 };
 
 /** @brief Executes the block of the let statment */
@@ -65,7 +65,7 @@ void Let<T>::exec() {
  * @return a reference to the returned object of the let statement
  */
 template <typename T>
-T &Let<T>::value() & {
+T& Let<T>::value() & {
   exec();
   return result.value();
 }

@@ -19,7 +19,7 @@ class BeBetween : public MatcherBase<A, E> {
   //  BeBetween(Expectation<A> &expectation, E min, E max)
   //      : BaseMatcher<A, E>(expectation), min(min), max(max) {}
 
-  BeBetween(Expectation<A> &expectation, E min, E max, RangeMode mode = RangeMode::inclusive)
+  BeBetween(Expectation<A>& expectation, E min, E max, RangeMode mode = RangeMode::inclusive)
       : MatcherBase<A, E>(expectation), min(min), max(max), mode(mode) {
     switch (mode) {
       case RangeMode::inclusive:

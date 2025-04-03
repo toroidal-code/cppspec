@@ -16,7 +16,7 @@ namespace CppSpec::Matchers {
 template <typename A, typename E>
 class Equal : public MatcherBase<A, E> {
  public:
-  Equal(Expectation<A> &expectation, E expected) : MatcherBase<A, E>(expectation, expected) {}
+  Equal(Expectation<A>& expectation, E expected) : MatcherBase<A, E>(expectation, expected) {}
 
   std::string verb() override { return "equal"; }
   std::string failure_message() override;
@@ -104,4 +104,3 @@ std::string Equal<A, E>::actual_inspected() {
 // }
 
 }  // namespace CppSpec::Matchers
-

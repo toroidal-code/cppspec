@@ -3,6 +3,7 @@
 #include <argparse/argparse.hpp>
 #include <string_view>
 
+#include "formatters/junit_xml.hpp"
 #include "formatters/progress.hpp"
 #include "formatters/tap.hpp"
 #include "formatters/verbose.hpp"
@@ -30,7 +31,7 @@ inline Runner parse(int argc, char** const argv) {
 
   program.add_argument("-f", "--format")
       .default_value(std::string{"p"})
-      .choices("progress", "p", "tap", "t", "detail", "d")
+      .choices("progress", "p", "tap", "t", "detail", "d", "junit", "j")
       .required()
       .help("set the output format");
 
@@ -53,6 +54,8 @@ inline Runner parse(int argc, char** const argv) {
     opts.formatter = std::make_unique<Formatters::Progress>();
   } else if (format_string == "t" || format_string == "tap") {
     opts.formatter = std::make_unique<Formatters::TAP>();
+  } else if (format_string == "j" || format_string == "junit") {
+    opts.formatter = std::make_unique<Formatters::JUnitXML>();
   } else {
     std::cerr << "Unrecognized format type" << std::endl;
     std::exit(-1);

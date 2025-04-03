@@ -5,6 +5,7 @@
 #pragma once
 
 #include "argparse.hpp"
+#include "class_description.hpp"
 
 #ifndef CPPSPEC_MACROLESS
 /*>>>>>>>>>>>>>>>>>>>> MACROS <<<<<<<<<<<<<<<<<<<<<<*/
@@ -12,8 +13,8 @@
 // For *some* reason, MSVC++ refuses to correctly deduce the types of
 // Description blocks unless the void return type is explicitly stated.
 // GCC and clang have no problem with it being omitted. Weird.
-#define $ [](auto &self) -> void
-#define _ [=](auto &self) mutable -> void
+#define $ [](auto& self) -> void
+#define _ [=](auto& self) mutable -> void
 
 #define it self.it
 #define specify it
@@ -32,14 +33,14 @@
 #define after_each self.after_each
 #define let(name, body) auto(name) = self.let(body);
 
-#define CPPSPEC_MAIN(spec)                                                                 \
-  int main(int argc, char **const argv) {                                                  \
-    return CppSpec::parse(argc, argv).add_spec(spec).exec() ? EXIT_SUCCESS : EXIT_FAILURE; \
+#define CPPSPEC_MAIN(spec)                                                                              \
+  int main(int argc, char** const argv) {                                                               \
+    return CppSpec::parse(argc, argv).add_spec(spec).exec().is_success() ? EXIT_SUCCESS : EXIT_FAILURE; \
   }
 
-#define CPPSPEC_SPEC(spec_name)                                                                 \
-  int spec_name##_spec(int argc, char **const argv) {                                           \
-    return CppSpec::parse(argc, argv).add_spec(spec_name).exec() ? EXIT_SUCCESS : EXIT_FAILURE; \
+#define CPPSPEC_SPEC(spec_name)                                                                              \
+  int spec_name##_spec(int argc, char** const argv) {                                                        \
+    return CppSpec::parse(argc, argv).add_spec(spec_name).exec().is_success() ? EXIT_SUCCESS : EXIT_FAILURE; \
   }
 
 #endif
@@ -52,4 +53,3 @@ using describe_a = CppSpec::ClassDescription<T>;
 
 template <class T>
 using describe_an = CppSpec::ClassDescription<T>;
-

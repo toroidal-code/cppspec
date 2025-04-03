@@ -6,6 +6,7 @@
 
 #include <deque>
 #include <forward_list>
+#include <source_location>
 #include <string>
 #include <utility>
 
@@ -20,10 +21,10 @@ class Description : public Runnable {
   using VoidBlock = std::function<void()>;
 
  public:
-  using Block = std::function<void(Description &)>;
+  using Block = std::function<void(Description&)>;
 
   const bool has_subject = false;
-  std::forward_list<LetBase *> lets{};
+  std::forward_list<LetBase*> lets{};
   std::deque<VoidBlock> after_alls{};
   std::deque<VoidBlock> before_eaches{};
   std::deque<VoidBlock> after_eaches{};
@@ -34,48 +35,48 @@ class Description : public Runnable {
  protected:
   std::string description;
 
-  // These two constructors are the most basic ones,
-  // used to create Descriptions with only their description
-  // field initialized. They should only be used by subclasses
-  // of Description.
-  Description() = default;
-  explicit Description(std::string&& description) noexcept : description(std::move(description)) {}
-  explicit Description(const char* description) noexcept : description(description) {}
+  Description(std::source_location location, std::string&& description) noexcept
+      : Runnable(location), description(std::move(description)) {}
 
-  Description(const Child &parent, const char* description, Block block) noexcept
-      : Runnable(parent), block(std::move(block)), description(description) {}
+  Description(Runnable& parent, std::source_location location, const char* description, Block block) noexcept
+      : Runnable(parent, location), block(block), description(description) {}
 
   void exec_before_eaches();
   void exec_after_eaches();
 
  public:
-  // Copy constructor
-  Description(const Description &copy) = default;
-  Description(Description &&copy) = default;
-
   // Primary constructor. Entry of all specs.
-  Description(const char* description, Block block) noexcept
-      : block(std::move(block)), description(std::move(description)) {}
+  Description(const char* description,
+              Block block,
+              std::source_location location = std::source_location::current()) noexcept
+      : Runnable(location), block(block), description(description) {
+    this->set_location(location);
+  }
 
   /********* Specify/It *********/
 
-  Result it(const char* description, ItD::Block body);
-  Result it(ItD::Block body);
+  ItD& it(const char* description, ItD::Block body, std::source_location location = std::source_location::current());
+  ItD& it(ItD::Block body, std::source_location location = std::source_location::current());
 
   /********* Context ***********/
 
   template <class T = std::nullptr_t>
-  Result context(const char* name, Block body);
+  Description& context(const char* name, Block body, std::source_location location = std::source_location::current());
 
   template <class T, class B>
-  requires (!std::is_same_v<T, const char*>)
-  Result context(T subject, B block);
+    requires(!std::is_same_v<T, const char*>)
+  ClassDescription<T>& context(T subject, B block, std::source_location location = std::source_location::current());
 
   template <class T, class B>
-  Result context(const char* description, T subject, B block);
+  ClassDescription<T>& context(const char* description,
+                               T subject,
+                               B block,
+                               std::source_location location = std::source_location::current());
 
   template <class T, typename U>
-  Result context(std::initializer_list<U> init_list, std::function<void(ClassDescription<T> &)> block);
+  ClassDescription<T>& context(std::initializer_list<U> init_list,
+                               std::function<void(ClassDescription<T>&)> block,
+                               std::source_location location = std::source_location::current());
 
   /********* Each/All *********/
 
@@ -97,7 +98,7 @@ class Description : public Runnable {
 
   /********* Run *********/
 
-  Result run(Formatters::BaseFormatter &printer) override;
+  void run() override;
   // std::function<int(int, char **)>
   template <typename Formatter>
   inline auto as_main();
@@ -109,30 +110,31 @@ using Context = Description;
 
 /*========= Description::it =========*/
 
-inline Result Description::it(const char* description, ItD::Block block) {
-  ItD it(*this, description, block);
-  Result result = it.run(this->get_formatter());
+inline ItD& Description::it(const char* description, ItD::Block block, std::source_location location) {
+  auto* it = new ItD(*this, location, description, block);
+  it->timed_run();
   exec_after_eaches();
   exec_before_eaches();
-  return result;
+  return *it;
 }
 
-inline Result Description::it(ItD::Block block) {
-  ItD it(*this, block);
-  Result result = it.run(this->get_formatter());
+inline ItD& Description::it(ItD::Block block, std::source_location location) {
+  auto* it = new ItD(*this, location, block);
+  it->timed_run();
   exec_after_eaches();
   exec_before_eaches();
-  return result;
+  return *it;
 }
 
 /*========= Description::context =========*/
 
 template <class T>
-inline Result Description::context(const char* description, Block body) {
-  Context context(*this, description, body);
-  context.before_eaches = this->before_eaches;
-  context.after_eaches = this->after_eaches;
-  return context.run(this->get_formatter());
+inline Context& Description::context(const char* description, Block body, std::source_location location) {
+  auto* context = new Context(*this, location, description, body);
+  context->before_eaches = this->before_eaches;
+  context->after_eaches = this->after_eaches;
+  context->timed_run();
+  return *context;
 }
 
 /*========= Description:: each/alls =========*/
@@ -149,20 +151,28 @@ inline void Description::before_each(VoidBlock b) {
   b();
 }
 
-inline void Description::before_all(VoidBlock b) { b(); }
+inline void Description::before_all(VoidBlock b) {
+  b();
+}
 
-inline void Description::after_each(VoidBlock b) { after_eaches.push_back(b); }
+inline void Description::after_each(VoidBlock b) {
+  after_eaches.push_back(b);
+}
 
-inline void Description::after_all(VoidBlock b) { after_alls.push_back(b); }
+inline void Description::after_all(VoidBlock b) {
+  after_alls.push_back(b);
+}
 
 /*----------- private -------------*/
 
 inline void Description::exec_before_eaches() {
-  for (VoidBlock &b : before_eaches) b();
+  for (VoidBlock& b : before_eaches)
+    b();
 }
 
 inline void Description::exec_after_eaches() {
-  for (VoidBlock &b : after_eaches) b();
+  for (VoidBlock& b : after_eaches)
+    b();
 }
 
 /*========= Description::let =========*/
@@ -190,42 +200,30 @@ auto Description::let(T block) -> Let<decltype(block())> {
 // TODO: Should this be protected?
 inline void Description::reset_lets() noexcept {
   // For every let in our list, reset it.
-  for (auto &let : lets) let->reset();
+  for (auto& let : lets)
+    let->reset();
 
   // Recursively reset all the lets in the family tree
   if (this->has_parent()) {
-    this->get_parent_as<Description *>()->reset_lets();
+    this->get_parent_as<Description>()->reset_lets();
   }
 }
 
 /*========= Description::run =========*/
 
-inline Result Description::run(Formatters::BaseFormatter &formatter) {
-  // If there isn't already a formatter in the family tree, set ours.
-  if (!this->has_formatter()) {
-    this->set_formatter(formatter);
-  }
-
-  formatter.format(*this);              // Format our description in some way
-  block(*this);                         // Run the block
-  for (VoidBlock &a : after_alls) a();  // Run all our after_alls
-  if (!this->has_parent()) {
-    formatter.flush();  // Inform the printer we're done
-  }
-
-  // Return success or failure
-  return this->get_status() ? Result::success() : Result::failure();
+inline void Description::run() {
+  block(*this);  // Run the block
+  for (VoidBlock& a : after_alls)
+    a();  // Run all our after_alls
 }
 
 /*>>>>>>>>>>>>>>>>>>>> ItD <<<<<<<<<<<<<<<<<<<<<<<<<*/
 
 /*========= ItD::run =========*/
 
-inline Result ItD::run(Formatters::BaseFormatter &printer) {
+inline void ItD::run() {
   block(*this);
-  printer.format(*this);
-  this->get_parent_as<Description *>()->reset_lets();
-  return this->get_status() ? Result::success() : Result::failure();
+  this->get_parent_as<Description>()->reset_lets();
 }
 
 }  // namespace CppSpec

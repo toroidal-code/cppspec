@@ -13,20 +13,19 @@
 
 #include "result.hpp"
 
-
 namespace CppSpec {
 
 /** @brief Handles "positive" expectations (i.e. non-negated) */
 struct PositiveExpectationHandler {
   template <class Matcher>
-  static Result handle_matcher(Matcher &matcher);
+  static Result handle_matcher(Matcher& matcher);
   static std::string verb() { return "should"; }
 };
 
 /** @brief Handles "negative" expectations (i.e. negated with '.not_() */
 struct NegativeExpectationHandler {
   template <class Matcher>
-  static Result handle_matcher(Matcher &matcher);
+  static Result handle_matcher(Matcher& matcher);
   static std::string verb() { return "should not"; }
 };
 
@@ -39,9 +38,10 @@ struct NegativeExpectationHandler {
  * @return the Result of the expectation
  */
 template <class Matcher>
-Result PositiveExpectationHandler::handle_matcher(Matcher &matcher) {
+Result PositiveExpectationHandler::handle_matcher(Matcher& matcher) {
   // TODO: handle expectation failure here
-  return !matcher.match() ? Result::failure_with(matcher.failure_message()) : Result::success();
+  return !matcher.match() ? Result::failure_with(matcher.get_location(), matcher.failure_message())
+                          : Result::success(matcher.get_location());
 }
 
 /**
@@ -53,9 +53,10 @@ Result PositiveExpectationHandler::handle_matcher(Matcher &matcher) {
  * @return the Result of the expectation
  */
 template <class Matcher>
-Result NegativeExpectationHandler::handle_matcher(Matcher &matcher) {
+Result NegativeExpectationHandler::handle_matcher(Matcher& matcher) {
   // TODO: handle expectation failure here
-  return !matcher.negated_match() ? Result::failure_with(matcher.failure_message_when_negated()) : Result::success();
+  return !matcher.negated_match() ? Result::failure_with(matcher.get_location(), matcher.failure_message_when_negated())
+                                  : Result::success(matcher.get_location());
 }
 
 }  // namespace CppSpec

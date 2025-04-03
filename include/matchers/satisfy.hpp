@@ -22,7 +22,7 @@ class Satisfy : public MatcherBase<A, bool>  //, BeHelpers<Satisfy<A>>
   std::function<bool(A)> test;
 
  public:
-  Satisfy(Expectation<A> &expectation, std::function<bool(A)> test) : MatcherBase<A, bool>(expectation), test(test) {}
+  Satisfy(Expectation<A>& expectation, std::function<bool(A)> test) : MatcherBase<A, bool>(expectation), test(test) {}
 
   std::string failure_message() override;
   std::string failure_message_when_negated() override;
@@ -47,4 +47,3 @@ bool Satisfy<A>::match() {
 }
 
 }  // namespace CppSpec::Matchers
-

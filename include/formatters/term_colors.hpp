@@ -20,4 +20,3 @@ constexpr std::string_view BOLDBLUE("\033[1m\033[34m");    /* Bold Blue */
 constexpr std::string_view BOLDMAGENTA("\033[1m\033[35m"); /* Bold Magenta */
 constexpr std::string_view BOLDCYAN("\033[1m\033[36m");    /* Bold Cyan */
 constexpr std::string_view BOLDWHITE("\033[1m\033[37m");   /* Bold White */
-

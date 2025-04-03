@@ -2,15 +2,13 @@
 
 #include "cppspec.hpp"
 
-
 using namespace CppSpec;
 
 struct TestClass {
   std::string field1;
   std::string field2;
-  TestClass() : field1("foo"), field2("bar"){};
-  TestClass(std::string field1, std::string field2)
-      : field1(field1), field2(field2){};
+  TestClass() : field1("foo"), field2("bar") {};
+  TestClass(std::string field1, std::string field2) : field1(field1), field2(field2) {};
 };
 
 // clang-format off
@@ -42,12 +40,12 @@ describe_a<std::true_type> describe_a_syntax_spec("describe_a syntax", $ {
   });
 });
 
+// clang-format on
 int main(int argc, char **argv) {
-  return CppSpec ::parse(argc, argv)
-                 .add_spec(describe_a_implicit_spec)
-                 .add_spec(describe_a_explicit_spec)
-                 .add_spec(describe_a_syntax_spec)
+  return CppSpec::parse(argc, argv)
+                 .add_specs(describe_a_implicit_spec, describe_a_explicit_spec, describe_a_syntax_spec)
                  .exec()
+                 .status()
              ? EXIT_SUCCESS
              : EXIT_FAILURE;
 }

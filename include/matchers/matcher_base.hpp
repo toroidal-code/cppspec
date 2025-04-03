@@ -9,10 +9,10 @@
 
 #pragma once
 
+#include <source_location>
 #include <string>
 
 #include "expectations/handler.hpp"
-#include "formatters/formatters_base.hpp"
 #include "it_base.hpp"
 #include "pretty_matchers.hpp"
 
@@ -34,31 +34,27 @@ namespace Matchers {
  *                  it would be `float`
  */
 template <typename Actual, typename Expected>
-class MatcherBase : public Runnable, public Pretty {
+class MatcherBase : public Pretty {
   std::string custom_failure_message;
 
  protected:
   Expected expected_;  // The expected object contained by the matcher
 
   // A reference to the Expectation (i.e. `expect(2)`)
-  Expectation<Actual> &expectation_;
+  Expectation<Actual>& expectation_;
 
  public:
   // Copy constructor
-  MatcherBase(MatcherBase<Actual, Expected> const &copy) = default;
+  MatcherBase(MatcherBase<Actual, Expected> const& copy) = default;
 
   // Constructor when matcher has no 'object' to match for
-  explicit MatcherBase(Expectation<Actual> &expectation)
-      : Runnable(*expectation.get_parent()),  // We want the parent of the
-                                              // matcher to be the `it` block,
-                                              // not the
-                                              // Expectation.
-        expectation_(expectation) {}
+  explicit MatcherBase(Expectation<Actual>& expectation)
+      // We want the parent of the matcher to be the `it` block, not the Expectation.
+      : expectation_(expectation) {}
 
   // Constructor when the matcher has an object to match for. This is the most
   // commonly used constructor
-  MatcherBase(Expectation<Actual> &expectation, Expected expected)
-      : Runnable(*expectation.get_parent()), expected_(expected), expectation_(expectation) {}
+  MatcherBase(Expectation<Actual>& expectation, Expected expected) : expected_(expected), expectation_(expectation) {}
 
   /*--------- Helper functions -------------*/
 
@@ -68,21 +64,23 @@ class MatcherBase : public Runnable, public Pretty {
   virtual std::string verb() { return "match"; }
 
   // Get the 'actual' object from the Expectation
-  constexpr Actual &actual() { return expectation_.get_target(); }
+  constexpr Actual& actual() { return expectation_.get_target(); }
 
   // Get the 'expected' object from the Matcher
-  Expected &expected() { return expected_; }
+  Expected& expected() { return expected_; }
 
   // Get the Expectation itself
-  Expectation<Actual> &expectation() { return expectation_; }
+  Expectation<Actual>& expectation() { return expectation_; }
 
   // Set the message to give on match failure
-  virtual MatcherBase &set_message(const std::string &message);
+  virtual MatcherBase& set_message(const std::string& message);
+
+  std::source_location get_location() const { return expectation_.get_location(); }
 
   /*--------- Primary functions -------------*/
 
   // Run the matcher
-  Result run(Formatters::BaseFormatter &printer) override;
+  Result run();
 
   // TODO: match and negated match should return Result
   virtual bool match() = 0;
@@ -99,7 +97,7 @@ class MatcherBase : public Runnable, public Pretty {
  * @return the modified Matcher
  */
 template <typename A, typename E>
-MatcherBase<A, E> &MatcherBase<A, E>::set_message(const std::string &message) {
+MatcherBase<A, E>& MatcherBase<A, E>::set_message(const std::string& message) {
   this->custom_failure_message = message;
   return *this;
 }
@@ -152,35 +150,40 @@ std::string MatcherBase<A, E>::description() {
  * @return the Result of running the Matcher
  */
 template <typename A, typename E>
-Result MatcherBase<A, E>::run(Formatters::BaseFormatter &printer) {
-  auto *parent = static_cast<ItBase *>(this->get_parent());
-  // If we need a description for our test, generate it
-  // unless we're ignoring the output.
-  if (parent->needs_description() && !expectation_.ignore_failure()) {
-    std::stringstream ss;
-    ss << (expectation_.sign() ? PositiveExpectationHandler::verb() : NegativeExpectationHandler::verb()) << " "
-       << this->description();
-    parent->set_description(ss.str());
+Result MatcherBase<A, E>::run() {
+  ItBase* parent = static_cast<ItBase*>(expectation_.get_it());
+  if (parent) {
+    // If we need a description for our test, generate it
+    // unless we're ignoring the output.
+    if (parent->needs_description() && !expectation_.ignore_failure()) {
+      parent->set_description(
+          (expectation_.sign() ? PositiveExpectationHandler::verb() : NegativeExpectationHandler::verb()) + " " +
+          this->description());
+    }
   }
 
-  Result matched = expectation_.sign() ? PositiveExpectationHandler::handle_matcher(*this)
-                                       : NegativeExpectationHandler::handle_matcher(*this);
+  Result result = expectation_.sign() ? PositiveExpectationHandler::handle_matcher(*this)
+                                      : NegativeExpectationHandler::handle_matcher(*this);
+
+  result.set_type(Util::demangle(typeid(*this).name()));
 
   // If our items didn't match, we obviously failed.
   // Only report the failure if we aren't actively ignoring it.
-  if (!matched && !expectation_.ignore_failure()) {
-    this->failed();
-    std::string message = matched.get_message();
-    if (message.empty()) {
-      printer.format_failure(
+  if (result.is_failure()) {
+    if (expectation_.ignore_failure()) {
+      result = Result::success(result.get_location());
+    } else if (result.get_message().empty()) {
+      result.set_message(
           "Failure message is empty. Does your matcher define the "
           "appropriate failure_message[_when_negated] method to "
           "return a string?");
-    } else {
-      printer.format_failure(matched.get_message());
     }
   }
-  return matched;
+
+  if (parent) {
+    parent->add_result(result);
+  }
+  return result;
 }
 
 }  // namespace Matchers
