@@ -28,12 +28,19 @@ jobs:
     - name: Install CMake
       uses: lukka/get-cmake@latest
 
+    - name: Install LLVM and Clang
+      uses: KyleMayes/install-llvm-action@v2
+      with:
+        version: "20"
+        env: true
+      if: ${{ matrix.compiler == 'llvm'}}
+
     - name: Configure for native compiler
       run: cmake -B build -DCPPSPEC_BUILD_TESTS=YES
       if: ${{ matrix.compiler == 'native'}}
 
     - name: Configure for non-native compiler
-      run: cmake -B build -G Ninja -DCPPSPEC_BUILD_TESTS=YES -DCMAKE_C_COMPILER="clang" -DCMAKE_CXX_COMPILER="clang++"
+      run: cmake -B build -G Ninja -DCPPSPEC_BUILD_TESTS=YES -DCMAKE_C_COMPILER="$CC" -DCMAKE_CXX_COMPILER="$CXX"
       if: ${{ matrix.compiler != 'native'}}
 
     - name: Build
