@@ -28,26 +28,12 @@ jobs:
     - name: Install CMake
       uses: lukka/get-cmake@latest
 
-    - name: Install LLVM and Clang 17
-      uses: KyleMayes/install-llvm-action@v1
-      with:
-        version: "17"
-        env: true
-      if: ${{ matrix.compiler == 'llvm' && matrix.os != 'macos-latest' }}
-
-    - name: Install LLVM and Clang 15
-      uses: KyleMayes/install-llvm-action@v1
-      with:
-        version: "15.0.7"
-        env: true
-      if: ${{ matrix.compiler == 'llvm' && matrix.os == 'macos-latest' }}
-
     - name: Configure for native compiler
       run: cmake -B build -DCPPSPEC_BUILD_TESTS=YES
       if: ${{ matrix.compiler == 'native'}}
 
     - name: Configure for non-native compiler
-      run: cmake -B build -G Ninja -DCPPSPEC_BUILD_TESTS=YES -DCMAKE_C_COMPILER="$CC" -DCMAKE_CXX_COMPILER="$CXX"
+      run: cmake -B build -G Ninja -DCPPSPEC_BUILD_TESTS=YES -DCMAKE_C_COMPILER="clang" -DCMAKE_CXX_COMPILER="clang++"
       if: ${{ matrix.compiler != 'native'}}
 
     - name: Build
