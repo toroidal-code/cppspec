@@ -43,19 +43,27 @@ class ClassDescription : public Description {
                    std::source_location location = std::source_location::current())
       : Description(location, description), block(block), subject(T()) {}
 
-  ClassDescription(T subject, Block block, std::source_location location = std::source_location::current())
+  ClassDescription(const char* description,
+                   T& subject,
+                   Block block,
+                   std::source_location location = std::source_location::current())
+      : Description(location, description), block(block), subject(subject) {}
+
+  template <Util::not_c_string U>
+  ClassDescription(U& subject, Block block, std::source_location location = std::source_location::current())
       : Description(location, Pretty::to_word(subject)),
         block(block),
         type(" : " + Util::demangle(typeid(T).name())),
         subject(subject) {}
 
   ClassDescription(const char* description,
-                   T subject,
+                   T&& subject,
                    Block block,
                    std::source_location location = std::source_location::current())
-      : Description(location, description), block(block), subject(subject) {}
+      : Description(location, description), block(block), subject(std::move(subject)) {}
 
-  ClassDescription(T&& subject, Block block, std::source_location location = std::source_location::current())
+  template <Util::not_c_string U>
+  ClassDescription(U&& subject, Block block, std::source_location location = std::source_location::current())
       : Description(location, Pretty::to_word(subject)),
         block(block),
         type(" : " + Util::demangle(typeid(T).name())),
@@ -89,21 +97,35 @@ class ClassDescription : public Description {
 
   template <class U, class B>
   ClassDescription<U>& context(const char* description,
-                               U subject,
-                               B block,
-                               std::source_location location = std::source_location::current());
-  template <class U, class B>
-  ClassDescription<U>& context(const char* description,
                                U& subject,
                                B block,
                                std::source_location location = std::source_location::current());
-  template <class U, class B>
-  ClassDescription<U>& context(U subject, B block, std::source_location location = std::source_location::current());
 
+  template <class U, class B>
+  ClassDescription<U>& context(U& subject, B block, std::source_location location = std::source_location::current()) {
+    return this->context("", subject, block, location);
+  }
+
+  template <class U, class B>
+  ClassDescription<U>& context(const char* description,
+                               U&& subject,
+                               B block,
+                               std::source_location location = std::source_location::current());
+
+  template <class U, class B>
+  ClassDescription<U>& context(U&& subject, B block, std::source_location location = std::source_location::current()) {
+    return this->context("", subject, block, location);
+  }
   void run() override;
 
   [[nodiscard]] std::string get_subject_type() const noexcept override { return type; }
 };
+
+template <Util::not_c_string U>
+ClassDescription(U&, std::function<void(ClassDescription<U>&)>, std::source_location) -> ClassDescription<U>;
+
+template <Util::not_c_string U>
+ClassDescription(U&&, std::function<void(ClassDescription<U>&)>, std::source_location) -> ClassDescription<U>;
 
 template <class T>
 using ClassContext = ClassDescription<T>;
@@ -111,11 +133,10 @@ using ClassContext = ClassDescription<T>;
 template <class T>
 template <class U, class B>
 ClassContext<U>& ClassDescription<T>::context(const char* description,
-                                              U subject,
+                                              U& subject,
                                               B block,
                                               std::source_location location) {
-  auto* context = new ClassContext<U>(description, subject, block, location);
-  context->set_parent(this);
+  auto* context = this->make_child<ClassContext<U>>(description, subject, block, location);
   context->ClassContext<U>::before_eaches = this->before_eaches;
   context->ClassContext<U>::after_eaches = this->after_eaches;
   context->timed_run();
@@ -124,18 +145,11 @@ ClassContext<U>& ClassDescription<T>::context(const char* description,
 
 template <class T>
 template <class U, class B>
-ClassContext<U>& ClassDescription<T>::context(U subject, B block, std::source_location location) {
-  return this->context("", std::forward<U>(subject), block, location);
-}
-
-template <class T>
-template <class U, class B>
 ClassContext<U>& ClassDescription<T>::context(const char* description,
-                                              U& subject,
+                                              U&& subject,
                                               B block,
                                               std::source_location location) {
-  auto* context = new ClassContext<U>(description, subject, block, location);
-  context->set_parent(this);
+  auto* context = this->make_child<ClassContext<U>>(description, subject, block, location);
   context->ClassContext<U>::before_eaches = this->before_eaches;
   context->ClassContext<U>::after_eaches = this->after_eaches;
   context->timed_run();
@@ -145,8 +159,16 @@ ClassContext<U>& ClassDescription<T>::context(const char* description,
 template <class T>
 template <class U, class B>
 ClassContext<T>& ClassDescription<T>::context(const char* description, B block, std::source_location location) {
-  auto* context = new ClassContext<T>(description, this->subject, block, location);
-  context->set_parent(this);
+  auto* context = this->make_child<ClassContext<T>>(description, this->subject, block, location);
+  context->before_eaches = this->before_eaches;
+  context->after_eaches = this->after_eaches;
+  context->timed_run();
+  return *context;
+}
+
+template <Util::not_c_string T, class B>
+ClassContext<T>& Description::context(T& subject, B block, std::source_location location) {
+  auto* context = this->make_child<ClassContext<T>>(subject, block, location);
   context->before_eaches = this->before_eaches;
   context->after_eaches = this->after_eaches;
   context->timed_run();
@@ -154,11 +176,17 @@ ClassContext<T>& ClassDescription<T>::context(const char* description, B block, 
 }
 
 template <class T, class B>
-  requires(!std::is_same_v<T, const char*>)
-ClassContext<T>& Description::context(T subject, B block, std::source_location location) {
-  auto* context = new ClassContext<T>(subject, block, location);
-  context->set_parent(this);
-  context->set_location(location);
+ClassContext<T>& Description::context(const char* description, T& subject, B block, std::source_location location) {
+  auto* context = this->make_child<ClassContext<T>>(description, subject, block, location);
+  context->before_eaches = this->before_eaches;
+  context->after_eaches = this->after_eaches;
+  context->timed_run();
+  return *context;
+}
+
+template <Util::not_c_string T, class B>
+ClassContext<T>& Description::context(T&& subject, B block, std::source_location location) {
+  auto* context = this->make_child<ClassContext<T>>(subject, block, location);
   context->before_eaches = this->before_eaches;
   context->after_eaches = this->after_eaches;
   context->timed_run();
@@ -166,10 +194,8 @@ ClassContext<T>& Description::context(T subject, B block, std::source_location l
 }
 
 template <class T, class B>
-ClassContext<T>& Description::context(const char* description, T subject, B block, std::source_location location) {
-  auto* context = new ClassContext<T>(description, subject, block, location);
-  context->set_parent(this);
-  context->set_location(location);
+ClassContext<T>& Description::context(const char* description, T&& subject, B block, std::source_location location) {
+  auto* context = this->make_child<ClassContext<T>>(description, subject, block, location);
   context->before_eaches = this->before_eaches;
   context->after_eaches = this->after_eaches;
   context->timed_run();
@@ -180,8 +206,7 @@ template <class T, typename U>
 ClassContext<T>& Description::context(std::initializer_list<U> init_list,
                                       std::function<void(ClassDescription<T>&)> block,
                                       std::source_location location) {
-  auto* context = new ClassContext<T>(T(init_list), block, location);
-  context->set_parent(this);
+  auto* context = this->make_child<ClassContext<T>>(T(init_list), block, location);
   context->before_eaches = this->before_eaches;
   context->after_eaches = this->after_eaches;
   context->timed_run();
@@ -211,7 +236,7 @@ ClassContext<T>& Description::context(std::initializer_list<U> init_list,
  */
 template <class T>
 ItCD<T>& ClassDescription<T>::it(const char* name, std::function<void(ItCD<T>&)> block, std::source_location location) {
-  auto* it = new ItCD<T>(*this, location, this->subject, name, block);
+  auto* it = this->make_child<ItCD<T>>(location, this->subject, name, block);
   it->timed_run();
   exec_after_eaches();
   exec_before_eaches();
@@ -241,7 +266,7 @@ ItCD<T>& ClassDescription<T>::it(const char* name, std::function<void(ItCD<T>&)>
  */
 template <class T>
 ItCD<T>& ClassDescription<T>::it(std::function<void(ItCD<T>&)> block, std::source_location location) {
-  auto* it = new ItCD<T>(*this, location, this->subject, block);
+  auto* it = this->make_child<ItCD<T>>(location, this->subject, block);
   it->timed_run();
   exec_after_eaches();
   exec_before_eaches();
@@ -257,16 +282,9 @@ void ClassDescription<T>::run() {
 }
 
 template <class T>
-ExpectationValue<T> ItCD<T>::is_expected() {
-  auto cd = this->get_parent_as<ClassDescription<T>>();
-  ExpectationValue<T> expectation(*this, cd->subject, std::source_location::current());
-  return expectation;
-}
-
-template <class T>
 void ItCD<T>::run() {
   this->block(*this);
-  auto cd = this->get_parent_as<ClassDescription<T>>();
+  auto* cd = this->get_parent_as<ClassDescription<T>>();
   cd->reset_lets();
 }
 

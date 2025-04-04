@@ -49,8 +49,8 @@ class ItD : public ItBase {
    *
    * @return the constructed ItD object
    */
-  ItD(Runnable& parent, std::source_location location, const char* description, Block block)
-      : ItBase(parent, location, description), block(std::move(block)) {}
+  ItD(std::source_location location, const char* description, Block block)
+      : ItBase(location, description), block(std::move(block)) {}
 
   /**
    * @brief The anonymous ItD constructor
@@ -69,7 +69,7 @@ class ItD : public ItBase {
    *
    * @return the constructed ItD object
    */
-  ItD(Runnable& parent, std::source_location location, Block block) : ItBase(parent, location), block(block) {}
+  ItD(std::source_location location, Block block) : ItBase(location), block(block) {}
 
   // implemented in description.hpp
   void run() override;
@@ -105,13 +105,14 @@ class ItCD : public ItBase {
   T& subject;
 
   // This is only ever instantiated by ClassDescription<T>
-  ItCD(Runnable& parent, std::source_location location, T& subject, const char* description, Block block)
-      : ItBase(parent, location, description), block(block), subject(subject) {}
+  ItCD(std::source_location location, T& subject, const char* description, Block block)
+      : ItBase(location, description), block(block), subject(subject) {}
 
-  ItCD(Runnable& parent, std::source_location location, T& subject, Block block)
-      : ItBase(parent, location), block(block), subject(subject) {}
+  ItCD(std::source_location location, T& subject, Block block) : ItBase(location), block(block), subject(subject) {}
 
-  ExpectationValue<T> is_expected();
+  ExpectationValue<T> is_expected(std::source_location location = std::source_location::current()) {
+    return ExpectationValue<T>(*this, subject, location);
+  }
   void run() override;
 };
 

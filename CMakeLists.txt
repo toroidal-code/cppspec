@@ -39,7 +39,10 @@ target_link_libraries(c++spec INTERFACE
   cxx-prettyprint
   argparse
 )
-target_compile_options(c++spec INTERFACE -Wno-missing-template-arg-list-after-template-kw -Wno-dollar-in-identifier-extension)
+
+if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  target_compile_options(c++spec INTERFACE -Wno-missing-template-arg-list-after-template-kw -Wno-dollar-in-identifier-extension)
+endif()
 
 FILE(GLOB_RECURSE c++spec_headers ${CMAKE_CURRENT_LIST_DIR}/include/*.hpp)
 
@@ -57,7 +60,7 @@ function(add_spec source_file)
   cmake_path(GET source_file STEM spec_name)
   add_executable(${spec_name} ${source_file})
   target_link_libraries(${spec_name} c++spec)
-
+  target_compile_features(${spec_name} PRIVATE cxx_std_23)
   set_target_properties(${spec_name} PROPERTIES
     CXX_STANDARD 23
     CXX_STANDARD_REQUIRED YES

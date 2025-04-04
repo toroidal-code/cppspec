@@ -102,6 +102,10 @@ concept is_functional =
 template <typename C>
 concept is_not_functional = !is_functional<C>;
 
+template <typename T>
+concept not_c_string = !std::is_same_v<T, const char*> && !std::is_same_v<T, char*> &&
+                       !std::is_convertible_v<T, const char*> && !std::is_convertible_v<T, char*>;
+
 /**
  * @brief Implode a string
  *
