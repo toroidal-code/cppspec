@@ -16,11 +16,11 @@ class Verbose : public BaseFormatter {
   Verbose(const BaseFormatter& base, std::ostream& out_stream) : BaseFormatter(base, out_stream) {}
   explicit Verbose(const BaseFormatter& base) : BaseFormatter(base) {}
 
-  void format(Description& description) override;
-  void format(ItBase& it) override;
+  void format(const Description& description) override;
+  void format(const ItBase& it) override;
 };
 
-inline void Verbose::format(Description& description) {
+inline void Verbose::format(const Description& description) {
   if (!first && !description.has_parent()) {
     out_stream << std::endl;
   }
@@ -30,7 +30,7 @@ inline void Verbose::format(Description& description) {
   }
 }
 
-inline void Verbose::format(ItBase& it) {
+inline void Verbose::format(const ItBase& it) {
   if (color_output) {
     out_stream << (it.get_result().status() ? GREEN : RED);
   }
@@ -42,7 +42,7 @@ inline void Verbose::format(ItBase& it) {
   // Print any failures if we've got them
   // 'it' having a bad status necessarily
   // implies that there are failure messages
-  for (const auto& result : it.get_results()) {
+  for (const Result& result : it.get_results()) {
     if (result.is_failure()) {
       if (color_output) {
         out_stream << RED;  // make them red

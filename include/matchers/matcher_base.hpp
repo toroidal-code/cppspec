@@ -73,9 +73,9 @@ class MatcherBase : public Pretty {
   Expectation<Actual>& expectation() { return expectation_; }
 
   // Set the message to give on match failure
-  virtual MatcherBase& set_message(const std::string& message);
+  virtual MatcherBase& set_message(std::string message);
 
-  std::source_location get_location() const { return expectation_.get_location(); }
+  [[nodiscard]] std::source_location get_location() const { return expectation_.get_location(); }
 
   /*--------- Primary functions -------------*/
 
@@ -97,8 +97,8 @@ class MatcherBase : public Pretty {
  * @return the modified Matcher
  */
 template <typename A, typename E>
-MatcherBase<A, E>& MatcherBase<A, E>::set_message(const std::string& message) {
-  this->custom_failure_message = message;
+MatcherBase<A, E>& MatcherBase<A, E>::set_message(std::string message) {
+  this->custom_failure_message = std::move(message);
   return *this;
 }
 
@@ -152,7 +152,7 @@ std::string MatcherBase<A, E>::description() {
 template <typename A, typename E>
 Result MatcherBase<A, E>::run() {
   ItBase* parent = expectation_.get_it();
-  if (parent) {
+  if (parent != nullptr) {
     // If we need a description for our test, generate it
     // unless we're ignoring the output.
     if (parent->needs_description() && !expectation_.ignore_failure()) {

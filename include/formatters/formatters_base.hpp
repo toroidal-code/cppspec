@@ -44,25 +44,25 @@ class BaseFormatter {
 
   virtual ~BaseFormatter() = default;
 
-  void format(Runnable& runnable) {
-    if (auto* description = dynamic_cast<Description*>(&runnable)) {
+  void format(const Runnable& runnable) {
+    if (const auto* description = dynamic_cast<const Description*>(&runnable)) {
       format(*description);
-    } else if (auto* it = dynamic_cast<ItBase*>(&runnable)) {
+    } else if (const auto* it = dynamic_cast<const ItBase*>(&runnable)) {
       format(*it);
     }
     format_children(runnable);
   }
 
-  void format_children(Runnable& runnable) {
-    for (auto& child : runnable.get_children()) {
-      if (auto* runnable = dynamic_cast<Runnable*>(child.get())) {
+  void format_children(const Runnable& runnable) {
+    for (const auto& child : runnable.get_children()) {
+      if (const auto* runnable = dynamic_cast<const Runnable*>(child.get())) {
         this->format(*runnable);
       }
     }
   }
 
-  virtual void format(Description& /* description */) {}
-  virtual void format(ItBase& /* it */) {}
+  virtual void format(const Description& /* description */) {}
+  virtual void format(const ItBase& /* it */) {}
   virtual void cleanup() {}
 
   BaseFormatter& set_color_output(bool value);

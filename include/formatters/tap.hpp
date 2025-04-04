@@ -15,14 +15,14 @@ struct TAP final : public BaseFormatter {
   ~TAP() { flush(); }
 
   std::string result_to_yaml(const Result& result);
-  void format(Description& description) override;
-  void format(ItBase& it) override;
+  void format(const Description& description) override;
+  void format(const ItBase& it) override;
   void flush();
 };
 
 inline std::string TAP::result_to_yaml(const Result& result) {
   if (result.is_success()) {
-    return std::string();
+    return {};
   }
 
   std::ostringstream oss;
@@ -65,7 +65,7 @@ inline void TAP::flush() {
   buffer = std::ostringstream();
 }
 
-inline void TAP::format(Description& description) {
+inline void TAP::format(const Description& description) {
   if (!first && !description.has_parent()) {
     flush();
   }
@@ -75,16 +75,18 @@ inline void TAP::format(Description& description) {
   }
 }
 
-inline void TAP::format(ItBase& it) {
-  std::string description{it.get_description()};
-
+inline void TAP::format(const ItBase& it) {
   // Build up the description for the test by ascending the
   // execution tree and chaining the individual descriptions together
+  std::forward_list<std::string> descriptions;
 
-  for (auto parent = it.get_parent_as<Description>(); parent != nullptr;
+  descriptions.push_front(it.get_description());
+  for (const auto* parent = it.get_parent_as<Description>(); parent->has_parent();
        parent = parent->get_parent_as<Description>()) {
-    description = std::string(parent->get_description()) + " " + description;
+    descriptions.push_front(parent->get_description());
   }
+
+  std::string description = Util::join(descriptions, " ");
 
   if (color_output) {
     buffer << (it.get_result().status() ? GREEN : RED);

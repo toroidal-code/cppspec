@@ -164,7 +164,7 @@ class JUnitXML : public BaseFormatter {
     out_stream.flush();
   }
 
-  void format(Description& description) override {
+  void format(const Description& description) override {
     if (test_suites.name.empty()) {
       std::filesystem::path file_path = description.get_location().file_name();
       test_suites.name = file_path.stem().string();
@@ -176,12 +176,12 @@ class JUnitXML : public BaseFormatter {
                                     description.num_failures(), description.get_start_time());
   }
 
-  void format(ItBase& it) override {
+  void format(const ItBase& it) override {
     using namespace std::chrono;
     std::forward_list<std::string> descriptions;
 
     descriptions.push_front(it.get_description());
-    for (auto* parent = it.get_parent_as<Description>(); parent->has_parent();
+    for (const auto* parent = it.get_parent_as<Description>(); parent->has_parent();
          parent = parent->get_parent_as<Description>()) {
       descriptions.push_front(parent->get_description());
     }
@@ -198,7 +198,7 @@ class JUnitXML : public BaseFormatter {
         .line = it.get_location().line(),
     };
 
-    for (auto& result : it.get_results()) {
+    for (const auto& result : it.get_results()) {
       if (result.is_success()) {
         continue;
       }

@@ -60,6 +60,11 @@ inline Runner parse(int argc, char** const argv) {
 
   auto junit_output_filepath = program.get<std::string>("--output-junit");
   if (!junit_output_filepath.empty()) {
+    // create directories recursively if they don't exist
+    std::filesystem::path junit_output_path = junit_output_filepath;
+    std::filesystem::create_directories(junit_output_path.parent_path());
+
+    // open file stream
     auto* file_stream = new std::ofstream(junit_output_filepath);
     auto junit_output = std::make_shared<Formatters::JUnitXML>(*file_stream, false);
     return Runner{formatter, junit_output};

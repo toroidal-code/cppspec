@@ -31,7 +31,7 @@ class ExpectationFunc;
 class ItBase : public Runnable {
   /** @brief The documentation string for this `it` */
   std::string description;
-  std::list<Result> results{};  // The results of the `it` statement
+  std::list<Result> results;  // The results of the `it` statement
 
  public:
   ItBase() = delete;  // Don't allow a default constructor
@@ -48,7 +48,7 @@ class ItBase : public Runnable {
    * @return the constructed BaseIt
    */
   explicit ItBase(std::source_location location, const char* description) noexcept
-      : Runnable(location), description(std::move(description)) {}
+      : Runnable(location), description(description) {}
 
   /**
    * @brief Get whether the object needs a description string

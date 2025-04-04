@@ -10,7 +10,7 @@
 namespace CppSpec {
 
 class Result {
-  bool value;
+  bool value = false;
   std::source_location location;
   std::string message;
   std::string type;
@@ -22,9 +22,8 @@ class Result {
 
   /*--------- Status helper functions --------------*/
   [[nodiscard]] bool status() const noexcept { return value; }
-  [[nodiscard]] bool status() noexcept { return value; }
   [[nodiscard]] bool is_success() const noexcept { return value; }
-  [[nodiscard]] bool is_failure() const noexcept { return value == false; }
+  [[nodiscard]] bool is_failure() const noexcept { return !value; }
 
   /*--------- Location helper functions ------------*/
   [[nodiscard]] std::source_location get_location() const noexcept { return location; }
