@@ -2,16 +2,16 @@
 #include <algorithm>
 #include <atomic>
 #include <chrono>
+#include <filesystem>
 #include <numeric>
 #include <string>
-#include <string_view>
 
 #include "formatters_base.hpp"
 #include "it_base.hpp"
 
 namespace CppSpec::Formatters {
 // JUnit XML header
-constexpr static std::string_view junit_xml_header = R"(<?xml version="1.0" encoding="UTF-8"?>)";
+constexpr static auto junit_xml_header = R"(<?xml version="1.0" encoding="UTF-8"?>)";
 
 struct XMLSerializable {
   virtual ~XMLSerializable() = default;
@@ -26,8 +26,8 @@ struct Result {
   std::string type;
   std::string text;
 
-  Result(const std::string& message, const std::string& type, const std::string& text, Status status = Status::Failure)
-      : status(status), message(message), type(type), text(text) {}
+  Result(std::string message, std::string type, std::string text, Status status = Status::Failure)
+      : status(status), message(std::move(message)), type(std::move(type)), text(std::move(text)) {}
 
   [[nodiscard]] std::string status_string() const {
     switch (status) {
@@ -91,7 +91,7 @@ struct TestSuite {
             size_t tests,
             size_t failures,
             std::chrono::time_point<std::chrono::system_clock> timestamp)
-      : id(get_next_id()), name(name), time(time), timestamp(timestamp), tests(tests), failures(failures) {}
+      : id(get_next_id()), name(std::move(name)), time(time), timestamp(timestamp), tests(tests), failures(failures) {}
 
   [[nodiscard]] std::string to_xml() const {
     auto timestamp_str =
@@ -119,7 +119,7 @@ struct TestSuites {
   std::string name;
   size_t tests = 0;
   size_t failures = 0;
-  std::chrono::duration<double> time;
+  std::chrono::duration<double> time{};
   std::chrono::time_point<std::chrono::system_clock> timestamp;
 
   std::list<TestSuite> suites;
@@ -165,6 +165,10 @@ class JUnitXML : public BaseFormatter {
   }
 
   void format(Description& description) override {
+    if (test_suites.name.empty()) {
+      std::filesystem::path file_path = description.get_location().file_name();
+      test_suites.name = file_path.stem().string();
+    }
     if (description.has_parent()) {
       return;
     }
@@ -177,7 +181,7 @@ class JUnitXML : public BaseFormatter {
     std::forward_list<std::string> descriptions;
 
     descriptions.push_front(it.get_description());
-    for (auto parent = it.get_parent_as<Description>(); parent->has_parent();
+    for (auto* parent = it.get_parent_as<Description>(); parent->has_parent();
          parent = parent->get_parent_as<Description>()) {
       descriptions.push_front(parent->get_description());
     }
@@ -198,8 +202,8 @@ class JUnitXML : public BaseFormatter {
       if (result.is_success()) {
         continue;
       }
-      std::string junit_message = result.get_location_string() + ": " + result.get_message();
-      test_case.results.emplace_back("Match failure.", result.get_type(), result.get_message());
+      test_case.results.emplace_back(result.get_location_string() + ": Match failure.", result.get_type(),
+                                     result.get_message());
     }
 
     test_suites.suites.back().cases.push_back(test_case);
