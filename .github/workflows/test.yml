@@ -38,8 +38,13 @@ jobs:
         echo "CXX=clang++" >> $GITHUB_ENV
       if: ${{ matrix.os == 'windows-latest' && matrix.compiler != 'native'}}
 
-    - name: Configure
+    - name: Configure with default compiler
       run: cmake -B build -DCPPSPEC_BUILD_TESTS=YES
+      if: ${{ matrix.compiler == 'native'}}
+
+    - name: Configure with specific compiler
+      run: cmake -B build -DCPPSPEC_BUILD_TESTS=YES -DCMAKE_C_COMPILER="$CC" -DCMAKE_CXX_COMPILER="$CXX"
+      if: ${{ matrix.compiler != 'native'}}
 
     - name: Build
       run: cmake --build build --config Release
