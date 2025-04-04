@@ -13,10 +13,31 @@ namespace CppSpec::Formatters {
 // JUnit XML header
 constexpr static auto junit_xml_header = R"(<?xml version="1.0" encoding="UTF-8"?>)";
 
-struct XMLSerializable {
-  virtual ~XMLSerializable() = default;
-  [[nodiscard]] virtual std::string to_xml() const = 0;
-};
+inline std::string encode_xml(const std::string& data) {
+  std::string buffer;
+  for (char c : data) {
+    switch (c) {
+      case '<':
+        buffer += "&lt;";
+        break;
+      case '>':
+        buffer += "&gt;";
+        break;
+      case '&':
+        buffer += "&amp;";
+        break;
+      case '"':
+        buffer += "&quot;";
+        break;
+      case '\'':
+        buffer += "&apos;";
+        break;
+      default:
+        buffer += c;
+    }
+  }
+  return buffer;
+}
 
 namespace JUnitNodes {
 struct Result {
@@ -42,8 +63,8 @@ struct Result {
   }
 
   [[nodiscard]] std::string to_xml() const {
-    return std::format(R"(      <{} message="{}" type="{}">{}</{}>)", status_string(), message, type, text,
-                       status_string());
+    return std::format(R"(      <{} message="{}" type="{}">{}</{}>)", status_string(), encode_xml(message),
+                       encode_xml(type), encode_xml(text), status_string());
   }
 };
 
@@ -58,8 +79,8 @@ struct TestCase {
 
   [[nodiscard]] std::string to_xml() const {
     auto start =
-        std::format(R"(    <testcase name="{}" classname="{}" assertions="{}" time="{:f}" file="{}" line="{}")", name,
-                    classname, assertions, time.count(), file, line);
+        std::format(R"(    <testcase name="{}" classname="{}" assertions="{}" time="{:f}" file="{}" line="{}")",
+                    encode_xml(name), encode_xml(classname), assertions, time.count(), file, line);
     if (results.empty()) {
       return start + "/>";
     }
@@ -99,10 +120,10 @@ struct TestSuite {
 
     std::stringstream ss;
     ss << "  "
-       << std::format(R"(<testsuite id="{}" name="{}" time="{:f}" timestamp="{}" tests="{}" failures="{}">)", id, name,
-                      time.count(), timestamp_str, tests, failures);
+       << std::format(R"(<testsuite id="{}" name="{}" time="{:f}" timestamp="{}" tests="{}" failures="{}">)", id,
+                      encode_xml(name), time.count(), timestamp_str, tests, failures);
     ss << std::endl;
-    for (const auto& test_case : cases) {
+    for (const TestCase& test_case : cases) {
       ss << test_case.to_xml() << std::endl;
     }
     ss << "  </testsuite>";
@@ -127,8 +148,8 @@ struct TestSuites {
   [[nodiscard]] std::string to_xml() const {
     std::stringstream ss;
     auto timestamp_str = std::format("{0:%F}T{0:%T}", timestamp);
-    ss << std::format(R"(<testsuites name="{}" tests="{}" failures="{}" time="{:f}" timestamp="{}">)", name, tests,
-                      failures, time.count(), timestamp_str);
+    ss << std::format(R"(<testsuites name="{}" tests="{}" failures="{}" time="{:f}" timestamp="{}">)", encode_xml(name),
+                      tests, failures, time.count(), timestamp_str);
     ss << std::endl;
     for (const TestSuite& suite : suites) {
       ss << suite.to_xml() << std::endl;
