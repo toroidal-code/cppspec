@@ -26,17 +26,16 @@ class ClassDescription : public Description {
   std::string type;
 
  public:
-  const bool has_subject = true;
   T subject;  // subject field public for usage in `expect([self.]subject)`
 
   // Constructor
   // if there's no explicit subject given, then use
   // the default constructor of the given type as the implicit subject.
   ClassDescription(Block block, std::source_location location = std::source_location::current())
-      : block(block), type(" : " + Util::demangle(typeid(T).name())), subject(T()) {
-    this->description = Pretty::to_word(subject);
-    this->set_location(location);
-  }
+      : Description(location, Pretty::to_word(subject)),
+        block(block),
+        type(" : " + Util::demangle(typeid(T).name())),
+        subject(T()) {}
 
   ClassDescription(const char* description,
                    Block block,
@@ -67,7 +66,7 @@ class ClassDescription : public Description {
       : Description(location, Pretty::to_word(subject)),
         block(block),
         type(" : " + Util::demangle(typeid(T).name())),
-        subject(std::move(subject)) {}
+        subject(std::forward<U>(subject)) {}
 
   template <typename U>
   ClassDescription(std::initializer_list<U> init_list,
@@ -85,7 +84,7 @@ class ClassDescription : public Description {
                    std::source_location location = std::source_location::current())
       : Description(location, description), block(block), subject(T(init_list)) {}
 
-  ItCD<T>& it(const char* description,
+  ItCD<T>& it(const char* name,
               std::function<void(ItCD<T>&)> block,
               std::source_location location = std::source_location::current());
   ItCD<T>& it(std::function<void(ItCD<T>&)> block, std::source_location location = std::source_location::current());
@@ -114,7 +113,7 @@ class ClassDescription : public Description {
 
   template <class U, class B>
   ClassDescription<U>& context(U&& subject, B block, std::source_location location = std::source_location::current()) {
-    return this->context("", subject, block, location);
+    return this->context("", std::forward<U>(subject), block, location);
   }
   void run() override;
 
@@ -149,7 +148,7 @@ ClassContext<U>& ClassDescription<T>::context(const char* description,
                                               U&& subject,
                                               B block,
                                               std::source_location location) {
-  auto* context = this->make_child<ClassContext<U>>(description, subject, block, location);
+  auto* context = this->make_child<ClassContext<U>>(description, std::forward<U>(subject), block, location);
   context->ClassContext<U>::before_eaches = this->before_eaches;
   context->ClassContext<U>::after_eaches = this->after_eaches;
   context->timed_run();
@@ -186,7 +185,7 @@ ClassContext<T>& Description::context(const char* description, T& subject, B blo
 
 template <Util::not_c_string T, class B>
 ClassContext<T>& Description::context(T&& subject, B block, std::source_location location) {
-  auto* context = this->make_child<ClassContext<T>>(subject, block, location);
+  auto* context = this->make_child<ClassContext<T>>(std::forward<T>(subject), block, location);
   context->before_eaches = this->before_eaches;
   context->after_eaches = this->after_eaches;
   context->timed_run();
@@ -195,7 +194,7 @@ ClassContext<T>& Description::context(T&& subject, B block, std::source_location
 
 template <class T, class B>
 ClassContext<T>& Description::context(const char* description, T&& subject, B block, std::source_location location) {
-  auto* context = this->make_child<ClassContext<T>>(description, subject, block, location);
+  auto* context = this->make_child<ClassContext<T>>(description, std::forward<T>(subject), block, location);
   context->before_eaches = this->before_eaches;
   context->after_eaches = this->after_eaches;
   context->timed_run();

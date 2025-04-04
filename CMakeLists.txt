@@ -56,7 +56,7 @@ endif()
 # HELPERS
 
 # Add spec
-function(add_spec source_file)
+function(add_spec source_file args)
   cmake_path(GET source_file STEM spec_name)
   add_executable(${spec_name} ${source_file})
   target_link_libraries(${spec_name} c++spec)
@@ -65,7 +65,7 @@ function(add_spec source_file)
     CXX_STANDARD 23
     CXX_STANDARD_REQUIRED YES
   )
-  add_test(NAME ${spec_name} COMMAND ${spec_name} --verbose)
+  add_test(NAME ${spec_name} COMMAND ${spec_name} --verbose ${args})
 endfunction(add_spec)
 
 # Discover Specs
@@ -73,9 +73,18 @@ function(discover_specs spec_folder)
   file(GLOB_RECURSE specs ${spec_folder}/*_spec.cpp)
 
   foreach(spec IN LISTS specs)
-    add_spec(${spec})
+    add_spec(${spec} "")
   endforeach()
 endfunction(discover_specs)
+
+function(discover_specs_output_junit spec_folder)
+  file(GLOB_RECURSE specs ${spec_folder}/*_spec.cpp)
+
+  foreach(spec IN LISTS specs)
+    cmake_path(GET spec STEM spec_name)
+    add_spec(${spec} "--output-junit;${CMAKE_CURRENT_BINARY_DIR}/results/${spec_name}.xml")
+  endforeach()
+endfunction(discover_specs_output_junit)
 
 # OPTIONS
 option(CPPSPEC_BUILD_TESTS "Build C++Spec tests")

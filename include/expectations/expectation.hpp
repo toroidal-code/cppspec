@@ -155,7 +155,7 @@ void Expectation<A>::to(M matcher, std::string msg) {
                 "Matcher is not a subclass of BaseMatcher.");
   // auto base_matcher = static_cast<Matchers::BaseMatcher<A,typename
   // M::expected_t>>(matcher);
-  matcher.set_message(msg).run();
+  matcher.set_message(std::move(msg)).run();
 }
 
 /**
@@ -194,7 +194,7 @@ void Expectation<A>::to_be_falsy(std::string msg) {
  */
 template <typename A>
 void Expectation<A>::to_be_null(std::string msg) {
-  Matchers::BeNullptr<A>(*this).set_message(msg).run();
+  Matchers::BeNullptr<A>(*this).set_message(std::move(msg)).run();
 }
 
 /**
@@ -238,19 +238,19 @@ void Expectation<A>::to_be_truthy(std::string msg) {
 template <typename A>
 template <typename E>
 void Expectation<A>::to_be_between(E min, E max, Matchers::RangeMode mode, std::string msg) {
-  Matchers::BeBetween<A, E>(*this, min, max, mode).set_message(msg).run();
+  Matchers::BeBetween<A, E>(*this, min, max, mode).set_message(std::move(msg)).run();
 }
 
 template <typename A>
 template <typename E>
 void Expectation<A>::to_be_less_than(E rhs, std::string msg) {
-  Matchers::BeLessThan<A, E>(*this, rhs).set_message(msg).run();
+  Matchers::BeLessThan<A, E>(*this, rhs).set_message(std::move(msg)).run();
 }
 
 template <typename A>
 template <typename E>
 void Expectation<A>::to_be_greater_than(E rhs, std::string msg) {
-  Matchers::BeGreaterThan<A, E>(*this, rhs).set_message(msg).run();
+  Matchers::BeGreaterThan<A, E>(*this, rhs).set_message(std::move(msg)).run();
 }
 
 /**
@@ -264,7 +264,7 @@ void Expectation<A>::to_be_greater_than(E rhs, std::string msg) {
 template <typename A>
 template <typename U>
 void Expectation<A>::to_contain(std::initializer_list<U> expected, std::string msg) {
-  Matchers::Contain<A, std::vector<U>, U>(*this, expected).set_message(msg).run();
+  Matchers::Contain<A, std::vector<U>, U>(*this, expected).set_message(std::move(msg)).run();
 }
 
 /**
@@ -278,7 +278,7 @@ void Expectation<A>::to_contain(std::initializer_list<U> expected, std::string m
 template <typename A>
 template <typename E>
 void Expectation<A>::to_contain(E expected, std::string msg) {
-  Matchers::Contain<A, E, E>(*this, expected).set_message(msg).run();
+  Matchers::Contain<A, E, E>(*this, expected).set_message(std::move(msg)).run();
 }
 
 /**
@@ -292,7 +292,7 @@ void Expectation<A>::to_contain(E expected, std::string msg) {
 template <typename A>
 template <typename E>
 void Expectation<A>::to_equal(E expected, std::string msg) {
-  Matchers::Equal<A, E>(*this, expected).set_message(msg).run();
+  Matchers::Equal<A, E>(*this, expected).set_message(std::move(msg)).run();
 }
 
 /**
@@ -307,40 +307,40 @@ template <typename A>
 template <typename E>
 Matchers::BeWithinHelper<A, E> Expectation<A>::to_be_within(E expected, std::string msg) {
   Matchers::BeWithinHelper<A, E> matcher(*this, expected);
-  matcher.set_message(msg);
+  matcher.set_message(std::move(msg));
   return matcher;
 }
 
 template <typename A>
 void Expectation<A>::to_fail(std::string msg) {
   static_assert(is_result_v<A>, ".to_fail() must be used on an expression that returns a Result.");
-  Matchers::Fail<Result>(*this).set_message(msg).run();
+  Matchers::Fail<Result>(*this).set_message(std::move(msg)).run();
 }
 
 template <typename A>
 void Expectation<A>::to_fail_with(std::string failure_message, std::string msg) {
   static_assert(is_result_v<A>, ".to_fail_with() must be used on an expression that returns a Result.");
-  Matchers::FailWith<A>(*this, failure_message).set_message(msg).run();
+  Matchers::FailWith<A>(*this, failure_message).set_message(std::move(msg)).run();
 }
 
 template <typename A>
 void Expectation<A>::to_match(std::string str, std::string msg) {
-  Matchers::Match<A>(*this, str).set_message(msg).run();
+  Matchers::Match<A>(*this, str).set_message(std::move(msg)).run();
 }
 
 template <typename A>
 void Expectation<A>::to_match(std::regex regex, std::string msg) {
-  Matchers::Match<A>(*this, regex).set_message(msg).run();
+  Matchers::Match<A>(*this, regex).set_message(std::move(msg)).run();
 }
 
 template <typename A>
 void Expectation<A>::to_partially_match(std::string str, std::string msg) {
-  Matchers::MatchPartial<A>(*this, str).set_message(msg).run();
+  Matchers::MatchPartial<A>(*this, str).set_message(std::move(msg)).run();
 }
 
 template <typename A>
 void Expectation<A>::to_partially_match(std::regex regex, std::string msg) {
-  Matchers::MatchPartial<A>(*this, regex).set_message(msg).run();
+  Matchers::MatchPartial<A>(*this, regex).set_message(std::move(msg)).run();
 }
 
 /**
@@ -354,40 +354,40 @@ void Expectation<A>::to_partially_match(std::regex regex, std::string msg) {
  */
 template <typename A>
 void Expectation<A>::to_satisfy(std::function<bool(A)> test, std::string msg) {
-  Matchers::Satisfy<A>(*this, test).set_message(msg).run();
+  Matchers::Satisfy<A>(*this, test).set_message(std::move(msg)).run();
 }
 
 template <typename A>
 void Expectation<A>::to_start_with(std::string start, std::string msg) {
-  Matchers::StartWith<std::string, std::string>(*this, start).set_message(msg).run();
+  Matchers::StartWith<std::string, std::string>(*this, start).set_message(std::move(msg)).run();
 }
 
 template <typename A>
 template <typename U>
 void Expectation<A>::to_start_with(std::initializer_list<U> start_sequence, std::string msg) {
-  Matchers::StartWith<A, std::initializer_list<U>>(*this, start_sequence).set_message(msg).run();
+  Matchers::StartWith<A, std::initializer_list<U>>(*this, start_sequence).set_message(std::move(msg)).run();
 }
 
 template <typename A>
 void Expectation<A>::to_end_with(std::string ending, std::string msg) {
-  Matchers::EndWith<std::string, std::string>(*this, ending).set_message(msg).run();
+  Matchers::EndWith<std::string, std::string>(*this, ending).set_message(std::move(msg)).run();
 }
 
 template <typename A>
 template <typename U>
 void Expectation<A>::to_end_with(std::initializer_list<U> start_sequence, std::string msg) {
-  Matchers::StartWith<A, std::initializer_list<U>>(*this, start_sequence).set_message(msg).run();
+  Matchers::StartWith<A, std::initializer_list<U>>(*this, start_sequence).set_message(std::move(msg)).run();
 }
 
 template <typename A>
 void Expectation<A>::to_have_value(std::string msg) {
-  Matchers::HaveValue<A>(*this).set_message(msg).run();
+  Matchers::HaveValue<A>(*this).set_message(std::move(msg)).run();
 }
 
 #if __cpp_lib_expected
 template <typename A>
 void Expectation<A>::to_have_error(std::string msg) {
-  Matchers::HaveError<A>(*this).set_message(msg).run();
+  Matchers::HaveError<A>(*this).set_message(std::move(msg)).run();
 }
 #endif
 
@@ -497,7 +497,7 @@ class ExpectationFunc : public Expectation<decltype(std::declval<F>()())> {
 template <Util::is_functional F>
 template <typename Ex>
 void ExpectationFunc<F>::to_throw(std::string msg) {
-  Matchers::Throw<decltype(this->block.operator()()), Ex>(*this).set_message(msg).run();
+  Matchers::Throw<decltype(this->block.operator()()), Ex>(*this).set_message(std::move(msg)).run();
 }
 
 }  // namespace CppSpec

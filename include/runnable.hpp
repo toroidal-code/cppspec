@@ -40,10 +40,10 @@ class Runnable {
   // The source file location of the Runnable object
   std::source_location location;
 
-  std::list<std::shared_ptr<Runnable>> children_{};  // List of children
+  std::list<std::shared_ptr<Runnable>> children_;  // List of children
 
   std::chrono::time_point<std::chrono::system_clock> start_time_;
-  std::chrono::duration<double> runtime_;
+  std::chrono::duration<double> runtime_{};
 
  public:
   Runnable(std::source_location location) : location(location) {}
@@ -62,11 +62,16 @@ class Runnable {
   [[nodiscard]] const Runnable* get_parent() const noexcept { return parent; }
 
   std::list<std::shared_ptr<Runnable>>& get_children() noexcept { return children_; }
-  const std::list<std::shared_ptr<Runnable>>& get_children() const noexcept { return children_; }
+  [[nodiscard]] const std::list<std::shared_ptr<Runnable>>& get_children() const noexcept { return children_; }
 
   template <class C>
   C* get_parent_as() noexcept {
     return static_cast<C*>(parent);
+  }
+
+  template <class C>
+  [[nodiscard]] const C* get_parent_as() const noexcept {
+    return static_cast<const C*>(parent);
   }
 
   template <typename T, typename... Args>
@@ -106,33 +111,33 @@ class Runnable {
 
   [[nodiscard]] virtual Result get_result() const {
     Result result = Result::success(location);
-    for (auto& child : get_children()) {
+    for (const auto& child : get_children()) {
       result &= child->get_result();
     }
     return result;
   }
 
-  size_t num_tests() const noexcept {
+  [[nodiscard]] size_t num_tests() const noexcept {
     if (get_children().empty()) {
       return 1;  // This is a leaf node
     }
 
     // This is not a leaf node, so we need to count the children
     size_t count = 0;
-    for (auto& child : get_children()) {
+    for (const auto& child : get_children()) {
       count += child->num_tests();  // +1 for the child itself
     }
     return count;
   }
 
-  size_t num_failures() const noexcept {
+  [[nodiscard]] size_t num_failures() const noexcept {
     if (get_children().empty()) {
-      return this->get_result().is_failure();  // This is a leaf node
+      return this->get_result().is_failure() ? 1 : 0;  // This is a leaf node
     }
 
     // This is not a leaf node, so we need to count the children
     size_t count = 0;
-    for (auto& child : get_children()) {
+    for (const auto& child : get_children()) {
       count += child->num_failures();  // +1 for the child itself
     }
     return count;
