@@ -12,9 +12,12 @@ struct TAP final : public BaseFormatter {
   bool first = true;
   std::ostringstream buffer;
 
+  ~TAP() { flush(); }
+
   std::string result_to_yaml(const Result& result);
   void format(Description& description) override;
   void format(ItBase& it) override;
+  void flush();
 };
 
 inline std::string TAP::result_to_yaml(const Result& result) {
@@ -36,14 +39,14 @@ inline std::string TAP::result_to_yaml(const Result& result) {
   return oss.str();
 }
 
-inline void TAP::format(Description& description) {
-  if (!first && !description.has_parent()) {
-    std::string str = buffer.str();
-    std::ostringstream oss;
-    if (str[0] == '\n') {
-      oss << str[0];
-    }
+inline void TAP::flush() {
+  std::string str = buffer.str();
+  std::ostringstream oss;
+  if (str[0] == '\n') {
+    oss << str[0];
+  }
 
+  if (test_counter != 1) {
     if (color_output) {
       oss << GREEN;
     }
@@ -52,13 +55,19 @@ inline void TAP::format(Description& description) {
       oss << RESET;
     }
     oss << std::endl;
+  }
 
-    oss << ((str[0] == '\n') ? str.substr(1) : str);
+  oss << ((str[0] == '\n') ? str.substr(1) : str);
 
-    std::cout << oss.str() << std::flush;
-    first = false;
-    test_counter = 1;
-    buffer = std::ostringstream();
+  std::cout << oss.str() << std::flush;
+  first = false;
+  reset_test_counter();
+  buffer = std::ostringstream();
+}
+
+inline void TAP::format(Description& description) {
+  if (!first && !description.has_parent()) {
+    flush();
   }
 
   if (first) {

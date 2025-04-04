@@ -169,18 +169,14 @@ Result MatcherBase<A, E>::run() {
 
   // If our items didn't match, we obviously failed.
   // Only report the failure if we aren't actively ignoring it.
-  if (result.is_failure()) {
-    if (expectation_.ignore_failure()) {
-      result = Result::success(result.get_location());
-    } else if (result.get_message().empty()) {
-      result.set_message(
-          "Failure message is empty. Does your matcher define the "
-          "appropriate failure_message[_when_negated] method to "
-          "return a string?");
-    }
+  if (result.is_failure() && result.get_message().empty()) {
+    result.set_message(
+        "Failure message is empty. Does your matcher define the "
+        "appropriate failure_message[_when_negated] method to "
+        "return a string?");
   }
 
-  if (parent) {
+  if (parent && !expectation_.ignore_failure()) {
     parent->add_result(result);
   }
   return result;

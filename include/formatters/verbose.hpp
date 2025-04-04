@@ -12,7 +12,6 @@ namespace CppSpec::Formatters {
 
 class Verbose : public BaseFormatter {
   bool first = true;
-  std::list<std::string> failure_messages{};
 
  public:
   Verbose() = default;
@@ -51,8 +50,7 @@ inline void Verbose::format(ItBase& it) {
       if (color_output) {
         out_stream << RED;  // make them red
       }
-      out_stream << Util::join(failure_messages,
-                               "\n");  // separated by a blank line
+      out_stream << result.get_message() << std::endl;
       if (color_output) {
         out_stream << RESET;
       }
