@@ -145,6 +145,7 @@ class Runnable {
  * @brief Generate padding (indentation) fore the current object.
  * @return A string of spaces for use in pretty-printing.
  */
+// TODO: Refactor this into Runnable::depth
 inline std::string Runnable::padding() const noexcept {
   return this->has_parent() ? this->get_parent()->padding() + "  " : "";
 }
