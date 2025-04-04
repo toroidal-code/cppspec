@@ -1,7 +1,5 @@
 /** @file */
 #pragma once
-#include <initializer_list>
-#pragma once
 
 #include <list>
 #include <utility>
@@ -16,13 +14,15 @@ namespace CppSpec {
  * @brief A collection of Descriptions that are run in sequence
  */
 class Runner {
-  std::list<Description*> specs{};
-  std::shared_ptr<Formatters::BaseFormatter> formatter;
+  std::list<Description*> specs;
+  std::list<std::shared_ptr<Formatters::BaseFormatter>> formatters;
 
  public:
-  explicit Runner(std::shared_ptr<Formatters::BaseFormatter> formatter) : formatter{std::move(formatter)} {};
+  template <typename... Formatters>
+  explicit Runner(Formatters&&... formatters) : formatters{std::forward<Formatters>(formatters)...} {}
 
-  ~Runner() = default;
+  explicit Runner(std::list<std::shared_ptr<Formatters::BaseFormatter>>&& formatters)
+      : formatters{std::move(formatters)} {}
 
   /**
    * @brief Add a Description object
@@ -45,19 +45,17 @@ class Runner {
     bool success = true;
     for (Description* spec : specs) {
       spec->timed_run();
-      formatter->format(static_cast<Runnable&>(*spec));
       success &= spec->get_result().status();
+    }
+    for (auto& formatter : formatters) {
+      for (Description* spec : specs) {
+        formatter->format(static_cast<Runnable&>(*spec));
+      }
     }
     return success ? Result::success(location) : Result::failure(location);
   }
 
-  Result exec() {
-    if (specs.size() > 1) {
-      formatter->set_multiple(true);
-    }
-    Result result = run();
-    return result;
-  }
+  Result exec() { return run(); }
 };
 
 }  // namespace CppSpec

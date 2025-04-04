@@ -1,9 +1,6 @@
 /** @file */
 #pragma once
 
-#include <list>
-#include <string>
-
 #include "formatters_base.hpp"
 #include "it_base.hpp"
 #include "term_colors.hpp"
@@ -20,7 +17,7 @@ class Verbose : public BaseFormatter {
   explicit Verbose(const BaseFormatter& base) : BaseFormatter(base) {}
 
   void format(Description& description) override;
-  void format(ItBase& description) override;
+  void format(ItBase& it) override;
 };
 
 inline void Verbose::format(Description& description) {
