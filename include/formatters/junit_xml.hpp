@@ -130,7 +130,7 @@ struct TestSuites {
     ss << std::format(R"(<testsuites name="{}" tests="{}" failures="{}" time="{:f}" timestamp="{}">)", name, tests,
                       failures, time.count(), timestamp_str);
     ss << std::endl;
-    for (const auto& suite : suites) {
+    for (const TestSuite& suite : suites) {
       ss << suite.to_xml() << std::endl;
     }
     ss << "</testsuites>" << std::endl;
@@ -148,10 +148,10 @@ class JUnitXML : public BaseFormatter {
 
   ~JUnitXML() {
     test_suites.tests =
-        std::accumulate(test_suites.suites.begin(), test_suites.suites.end(), 0,
+        std::accumulate(test_suites.suites.begin(), test_suites.suites.end(), size_t{0},
                         [](size_t sum, const JUnitNodes::TestSuite& suite) { return sum + suite.tests; });
     test_suites.failures =
-        std::accumulate(test_suites.suites.begin(), test_suites.suites.end(), 0,
+        std::accumulate(test_suites.suites.begin(), test_suites.suites.end(), size_t{0},
                         [](size_t sum, const JUnitNodes::TestSuite& suite) { return sum + suite.failures; });
     test_suites.time = std::ranges::fold_left(test_suites.suites, std::chrono::duration<double>(0),
                                               [](const auto& acc, const auto& suite) { return acc + suite.time; });
@@ -181,7 +181,7 @@ class JUnitXML : public BaseFormatter {
     std::forward_list<std::string> descriptions;
 
     descriptions.push_front(it.get_description());
-    for (const auto* parent = it.get_parent_as<Description>(); parent->has_parent();
+    for (const Description* parent = it.get_parent_as<Description>(); parent->has_parent();
          parent = parent->get_parent_as<Description>()) {
       descriptions.push_front(parent->get_description());
     }
@@ -198,7 +198,7 @@ class JUnitXML : public BaseFormatter {
         .line = it.get_location().line(),
     };
 
-    for (const auto& result : it.get_results()) {
+    for (const Result& result : it.get_results()) {
       if (result.is_success()) {
         continue;
       }
