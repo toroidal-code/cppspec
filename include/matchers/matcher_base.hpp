@@ -151,7 +151,7 @@ std::string MatcherBase<A, E>::description() {
  */
 template <typename A, typename E>
 Result MatcherBase<A, E>::run() {
-  ItBase* parent = static_cast<ItBase*>(expectation_.get_it());
+  ItBase* parent = expectation_.get_it();
   if (parent) {
     // If we need a description for our test, generate it
     // unless we're ignoring the output.

@@ -36,7 +36,7 @@ class Runner {
   }
 
   template <typename... Specs>
-  Runner& add_specs(Specs... specs) {
+  Runner& add_specs(Specs&... specs) {
     (add_spec(specs), ...);  // Fold expression to add all specs
     return *this;
   }

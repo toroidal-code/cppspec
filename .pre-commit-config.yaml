@@ -8,4 +8,3 @@ repos:
     hooks:
       - id: clang-format
         types_or: [c, c++]
-        files: 'include/.*(?<!\.hpp)$'

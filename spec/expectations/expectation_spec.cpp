@@ -4,8 +4,8 @@ using namespace CppSpec;
 
 // Very simple int<=>int custom matcher
 struct CustomMatcher : public Matchers::MatcherBase<int, int> {
-  CustomMatcher(Expectation<int> &expectation, int expected)
-      : Matchers::MatcherBase<int,int>(expectation, expected){};
+  CustomMatcher(Expectation<int>& expectation, int expected)
+      : Matchers::MatcherBase<int, int>(expectation, expected) {};
   bool match() { return expected() == actual(); }
 };
 
@@ -76,7 +76,7 @@ describe expectation_spec("Expectation", $ {
   });
 
   context(".ignore()", _ {
-    ItD i(self, std::source_location::current(), _ {});
+    ItD i(std::source_location::current(), _ {});
 #undef expect
     // TODO: Allow lets take a &self that refers to calling it?
     let(e, [&] { return i.expect(5); });

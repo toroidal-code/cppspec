@@ -40,7 +40,7 @@ class Runnable {
   // The source file location of the Runnable object
   std::source_location location;
 
-  std::list<Runnable*> children_{};  // List of children
+  std::list<std::shared_ptr<Runnable>> children_{};  // List of children
 
   std::chrono::time_point<std::chrono::system_clock> start_time_;
   std::chrono::duration<double> runtime_;
@@ -48,9 +48,6 @@ class Runnable {
  public:
   Runnable(std::source_location location) : location(location) {}
 
-  Runnable(Runnable& parent, std::source_location location) : parent(&parent), location(location) {
-    parent.children_.push_back(this);
-  }
   virtual ~Runnable() = default;
 
   /*--------- Parent helper functions -------------*/
@@ -64,24 +61,21 @@ class Runnable {
   [[nodiscard]] Runnable* get_parent() noexcept { return parent; }
   [[nodiscard]] const Runnable* get_parent() const noexcept { return parent; }
 
-  std::list<Runnable*>& get_children() noexcept { return children_; }
-  const std::list<Runnable*>& get_children() const noexcept { return children_; }
+  std::list<std::shared_ptr<Runnable>>& get_children() noexcept { return children_; }
+  const std::list<std::shared_ptr<Runnable>>& get_children() const noexcept { return children_; }
 
   template <class C>
   C* get_parent_as() noexcept {
     return static_cast<C*>(parent);
   }
 
-  /** @brief Set the Runnable's parent */
-  Runnable& set_parent(Runnable* parent) noexcept {
-    if (this->parent != nullptr) {
-      this->parent->children_.remove(this);
-    }
-    if (parent != nullptr) {
-      parent->children_.push_back(this);
-    }
-    this->parent = parent;
-    return *this;
+  template <typename T, typename... Args>
+  T* make_child(Args&&... args) {
+    auto child = std::make_shared<T>(std::forward<Args>(args)...);
+    auto* child_ptr = child.get();
+    child->parent = this;
+    children_.push_back(std::move(child));
+    return child_ptr;
   }
 
   /*--------- Primary member functions -------------*/
@@ -112,7 +106,7 @@ class Runnable {
 
   [[nodiscard]] virtual Result get_result() const {
     Result result = Result::success(location);
-    for (auto* child : get_children()) {
+    for (auto& child : get_children()) {
       result &= child->get_result();
     }
     return result;
@@ -125,7 +119,7 @@ class Runnable {
 
     // This is not a leaf node, so we need to count the children
     size_t count = 0;
-    for (Runnable* child : get_children()) {
+    for (auto& child : get_children()) {
       count += child->num_tests();  // +1 for the child itself
     }
     return count;
@@ -138,7 +132,7 @@ class Runnable {
 
     // This is not a leaf node, so we need to count the children
     size_t count = 0;
-    for (Runnable* child : get_children()) {
+    for (auto& child : get_children()) {
       count += child->num_failures();  // +1 for the child itself
     }
     return count;

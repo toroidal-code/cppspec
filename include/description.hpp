@@ -14,7 +14,7 @@
 
 namespace CppSpec {
 
-template <typename T>
+template <class T>
 class ClassDescription;  // forward-declaration for ClassDescription
 
 class Description : public Runnable {
@@ -35,12 +35,6 @@ class Description : public Runnable {
  protected:
   std::string description;
 
-  Description(std::source_location location, std::string&& description) noexcept
-      : Runnable(location), description(std::move(description)) {}
-
-  Description(Runnable& parent, std::source_location location, const char* description, Block block) noexcept
-      : Runnable(parent, location), block(block), description(description) {}
-
   void exec_before_eaches();
   void exec_after_eaches();
 
@@ -53,6 +47,12 @@ class Description : public Runnable {
     this->set_location(location);
   }
 
+  Description(std::source_location location, std::string&& description) noexcept
+      : Runnable(location), description(std::move(description)) {}
+
+  Description(std::source_location location, const char* description, Block block) noexcept
+      : Runnable(location), block(block), description(description) {}
+
   /********* Specify/It *********/
 
   ItD& it(const char* description, ItD::Block body, std::source_location location = std::source_location::current());
@@ -63,13 +63,21 @@ class Description : public Runnable {
   template <class T = std::nullptr_t>
   Description& context(const char* name, Block body, std::source_location location = std::source_location::current());
 
-  template <class T, class B>
-    requires(!std::is_same_v<T, const char*>)
-  ClassDescription<T>& context(T subject, B block, std::source_location location = std::source_location::current());
+  template <Util::not_c_string T, class B>
+  ClassDescription<T>& context(T& subject, B block, std::source_location location = std::source_location::current());
 
   template <class T, class B>
   ClassDescription<T>& context(const char* description,
-                               T subject,
+                               T& subject,
+                               B block,
+                               std::source_location location = std::source_location::current());
+
+  template <Util::not_c_string T, class B>
+  ClassDescription<T>& context(T&& subject, B block, std::source_location location = std::source_location::current());
+
+  template <class T, class B>
+  ClassDescription<T>& context(const char* description,
+                               T&& subject,
                                B block,
                                std::source_location location = std::source_location::current());
 
@@ -111,7 +119,7 @@ using Context = Description;
 /*========= Description::it =========*/
 
 inline ItD& Description::it(const char* description, ItD::Block block, std::source_location location) {
-  auto* it = new ItD(*this, location, description, block);
+  auto it = this->make_child<ItD>(location, description, block);
   it->timed_run();
   exec_after_eaches();
   exec_before_eaches();
@@ -119,7 +127,7 @@ inline ItD& Description::it(const char* description, ItD::Block block, std::sour
 }
 
 inline ItD& Description::it(ItD::Block block, std::source_location location) {
-  auto* it = new ItD(*this, location, block);
+  auto* it = this->make_child<ItD>(location, block);
   it->timed_run();
   exec_after_eaches();
   exec_before_eaches();
@@ -130,7 +138,7 @@ inline ItD& Description::it(ItD::Block block, std::source_location location) {
 
 template <class T>
 inline Context& Description::context(const char* description, Block body, std::source_location location) {
-  auto* context = new Context(*this, location, description, body);
+  auto* context = this->make_child<Context>(location, description, body);
   context->before_eaches = this->before_eaches;
   context->after_eaches = this->after_eaches;
   context->timed_run();

@@ -15,8 +15,8 @@ class BeWithinHelper {
  public:
   BeWithinHelper(Expectation<A>& expectation, E tolerance) : expectation(expectation), tolerance(tolerance) {}
 
-  BeWithin<A, E>& of(E expected);
-  BeWithin<A, E>& percent_of(E expected);
+  BeWithin<A, E> of(E expected);
+  BeWithin<A, E> percent_of(E expected);
   void set_message(const std::string& msg) { this->msg = msg; }
   std::string get_message() { return this->msg; }
 };
@@ -39,17 +39,17 @@ class BeWithin : public MatcherBase<A, E> {
 };
 
 template <typename A, typename E>
-BeWithin<A, E>& BeWithinHelper<A, E>::of(E expected) {
-  auto* matcher = new BeWithin<A, E>(expectation, tolerance, expected, "");  // No unit specified
-  matcher->set_message(msg);
-  return *matcher;
+BeWithin<A, E> BeWithinHelper<A, E>::of(E expected) {
+  auto matcher = BeWithin<A, E>(expectation, tolerance, expected, "");  // No unit specified
+  matcher.set_message(msg);
+  return matcher;
 }
 
 template <typename A, typename E>
-BeWithin<A, E>& BeWithinHelper<A, E>::percent_of(E expected) {
-  auto* matcher = new BeWithin<A, E>(expectation, tolerance, expected, "%");  // Percent unit specified
-  matcher->set_message(msg);
-  return *matcher;
+BeWithin<A, E> BeWithinHelper<A, E>::percent_of(E expected) {
+  auto matcher = BeWithin<A, E>(expectation, tolerance, expected, "%");  // Percent unit specified
+  matcher.set_message(msg);
+  return matcher;
 }
 
 template <typename A, typename E>

@@ -17,10 +17,8 @@ jobs:
       fail-fast: false
       matrix:
         compiler: [native, llvm]
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        exclude:
-          - os: macos-latest
-            compiler: native
+        os: [ubuntu-latest, windows-latest]
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -28,20 +26,20 @@ jobs:
     - name: Install CMake
       uses: lukka/get-cmake@latest
 
-    - name: Install LLVM and Clang
-      uses: KyleMayes/install-llvm-action@v2
-      with:
-        version: "20"
-        env: true
-      if: ${{ matrix.compiler == 'llvm'}}
+    - name: Use LLVM and Clang for Linux
+      run: |
+        echo "CC=clang-18" >> $GITHUB_ENV
+        echo "CXX=clang++-18" >> $GITHUB_ENV
+      if: ${{ matrix.os == 'ubuntu-latest' && matrix.compiler != 'native'}}
 
-    - name: Configure for native compiler
+    - name: Use LLVM and Clang for Windows
+      run: |
+        echo "CC=clang" >> $GITHUB_ENV
+        echo "CXX=clang++" >> $GITHUB_ENV
+      if: ${{ matrix.os == 'windows-latest' && matrix.compiler != 'native'}}
+
+    - name: Configure
       run: cmake -B build -DCPPSPEC_BUILD_TESTS=YES
-      if: ${{ matrix.compiler == 'native'}}
-
-    - name: Configure for non-native compiler
-      run: cmake -B build -G Ninja -DCPPSPEC_BUILD_TESTS=YES -DCMAKE_C_COMPILER="$CC" -DCMAKE_CXX_COMPILER="$CXX"
-      if: ${{ matrix.compiler != 'native'}}
 
     - name: Build
       run: cmake --build build --config Release

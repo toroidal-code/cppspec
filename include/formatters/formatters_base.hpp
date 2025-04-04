@@ -58,8 +58,8 @@ class BaseFormatter {
   }
 
   void format_children(Runnable& runnable) {
-    for (auto child : runnable.get_children()) {
-      if (Runnable* runnable = dynamic_cast<Runnable*>(child)) {
+    for (auto& child : runnable.get_children()) {
+      if (Runnable* runnable = dynamic_cast<Runnable*>(child.get())) {
         this->format(*runnable);
       }
     }

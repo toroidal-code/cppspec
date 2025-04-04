@@ -40,15 +40,15 @@ class ItBase : public Runnable {
    * @brief Create an BaseIt without an explicit description
    * @return the constructed BaseIt
    */
-  explicit ItBase(Runnable& parent, std::source_location location) noexcept : Runnable(parent, location) {}
+  explicit ItBase(std::source_location location) noexcept : Runnable(location) {}
 
   /**
    * @brief Create an BaseIt with an explicit description.
    * @param description the documentation string of the `it` statement
    * @return the constructed BaseIt
    */
-  explicit ItBase(Runnable& parent, std::source_location location, const char* description) noexcept
-      : Runnable(parent, location), description(std::move(description)) {}
+  explicit ItBase(std::source_location location, const char* description) noexcept
+      : Runnable(location), description(std::move(description)) {}
 
   /**
    * @brief Get whether the object needs a description string
