@@ -58,7 +58,7 @@ struct TestCase {
 
   [[nodiscard]] std::string to_xml() const {
     auto start =
-        std::format(R"(    <testcase name="{}" classname="{}" assertions="{}" time="{:f}", file="{}" line="{}")", name,
+        std::format(R"(    <testcase name="{}" classname="{}" assertions="{}" time="{:f}" file="{}" line="{}")", name,
                     classname, assertions, time.count(), file, line);
     if (results.empty()) {
       return start + "/>";
