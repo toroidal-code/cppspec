@@ -129,4 +129,17 @@ concept not_c_string = !std::is_same_v<T, const char*> && !std::is_same_v<T, cha
   return oss.str();
 }
 
+[[nodiscard]] inline std::string join_endl(std::ranges::range auto&& iterable) {
+  std::ostringstream oss;
+  bool first = true;
+  for (auto& thing : iterable) {
+    if (!first) {
+      oss << std::endl;
+    }
+    oss << thing;  // use operator<< to convert and append
+    first = false;
+  }
+  return oss.str();
+}
+
 }  // namespace CppSpec::Util

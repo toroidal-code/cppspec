@@ -111,7 +111,7 @@ class ItCD : public ItBase {
   ItCD(std::source_location location, T& subject, Block block) : ItBase(location), block(block), subject(subject) {}
 
   ExpectationValue<T> is_expected(std::source_location location = std::source_location::current()) {
-    return ExpectationValue<T>(*this, subject, location);
+    return {*this, subject, location};
   }
   void run() override;
 };
@@ -127,17 +127,17 @@ class ItCD : public ItBase {
  */
 template <Util::is_not_functional T>
 ExpectationValue<T> ItBase::expect(T value, std::source_location location) {
-  return ExpectationValue<T>(*this, value, location);
+  return {*this, value, location};
 }
 
 template <Util::is_functional T>
 ExpectationFunc<T> ItBase::expect(T block, std::source_location location) {
-  return ExpectationFunc<T>(*this, block, location);
+  return {*this, block, location};
 }
 
 template <typename T>
 ExpectationValue<T> ItBase::expect(Let<T>& let, std::source_location location) {
-  return ExpectationValue<T>(*this, let.value(), location);
+  return {*this, let.value(), location};
 }
 
 /**
@@ -150,11 +150,11 @@ ExpectationValue<T> ItBase::expect(Let<T>& let, std::source_location location) {
 template <typename T>
 ExpectationValue<std::initializer_list<T>> ItBase::expect(std::initializer_list<T> init_list,
                                                           std::source_location location) {
-  return ExpectationValue<std::initializer_list<T>>(*this, init_list, location);
+  return {*this, init_list, location};
 }
 
 inline ExpectationValue<std::string> ItBase::expect(const char* str, std::source_location location) {
-  return ExpectationValue<std::string>(*this, std::string(str), location);
+  return {*this, std::string(str), location};
 }
 
 }  // namespace CppSpec

@@ -6,7 +6,7 @@ using namespace CppSpec;
 struct CustomMatcher : public Matchers::MatcherBase<int, int> {
   CustomMatcher(Expectation<int>& expectation, int expected)
       : Matchers::MatcherBase<int, int>(expectation, expected) {};
-  bool match() { return expected() == actual(); }
+  bool match() override { return expected() == actual(); }
 };
 
 // clang-format off
@@ -82,15 +82,15 @@ describe expectation_spec("Expectation", $ {
     let(e, [&] { return i.expect(5); });
 #define expect self.expect
 
-    it("flips the ignore_failure flag", _ {
-      expect(e->ignore_failure()).to_be_false();
-      expect(e->ignore().ignore_failure()).to_be_true();
+    it("flips the ignored flag", _ {
+      expect(e->ignored()).to_be_false();
+      expect(e->ignore().ignored()).to_be_true();
     });
 
     it("makes it so that matches do not alter the status of the parent", _ {
       expect([=]() mutable {
         e->ignore().to_equal(4);
-        return i.get_result().status();
+        return i.get_result().is_success();
       }).to_be_true();
     });
 

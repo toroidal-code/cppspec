@@ -25,9 +25,23 @@ inline std::string TAP::result_to_yaml(const Result& result) {
     return {};
   }
 
+  auto message = result.get_message();
+
   std::ostringstream oss;
   oss << "  " << "---" << std::endl;
-  oss << "  " << "message: " << "'" << result.get_message() << "'" << std::endl;
+  if (message.contains("\n")) {
+    oss << "  " << "message: |" << std::endl;
+    std::string indented_message = message;  // split on newlines and indent
+    std::string::size_type pos = 0;
+    while ((pos = indented_message.find('\n', pos)) != std::string::npos) {
+      indented_message.replace(pos, 1, "\n    ");
+      pos += 2;  // Skip over the newline and the space we just added
+    }
+    oss << "  " << "  " << indented_message << std::endl;
+  } else {
+    oss << "  " << "message: " << '"' << result.get_message() << '"' << std::endl;
+  }
+
   oss << "  " << "severity: failure" << std::endl;
   oss << "  " << "at:" << std::endl;
   oss << "  " << "  " << "file: " << result.get_location().file_name() << std::endl;
@@ -88,13 +102,9 @@ inline void TAP::format(const ItBase& it) {
 
   std::string description = Util::join(descriptions, " ");
 
-  if (color_output) {
-    buffer << (it.get_result().status() ? GREEN : RED);
-  }
-  buffer << (it.get_result().status() ? "ok" : "not ok");
-  if (color_output) {
-    buffer << RESET;
-  }
+  buffer << status_color(it.get_result().status());
+  buffer << (it.get_result().is_success() ? "ok" : "not ok");
+  buffer << reset_color();
   buffer << " " << get_and_increment_test_counter() << " - " << description << std::endl;
   buffer << result_to_yaml(it.get_result());
 }

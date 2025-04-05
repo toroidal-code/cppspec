@@ -2,6 +2,7 @@
 
 #include <exception>
 #include <regex>
+#include <source_location>
 #include <string>
 #include <vector>
 
@@ -50,10 +51,11 @@ class Expectation {
  protected:
   bool is_positive_ = true;
   // Have we been negated?
-  bool ignore_failure_ = false;
+  bool ignore_ = false;
 
  public:
   Expectation() = default;
+  explicit Expectation(std::source_location location) : location(location) {}
 
   /**
    * @brief Create an Expectation using a value.
@@ -68,12 +70,12 @@ class Expectation {
   // virtual const A &get_target() const & { return target; }
   virtual A& get_target() & = 0;
 
-  ItBase* get_it() const { return it; }
-  std::source_location get_location() const { return location; }
+  [[nodiscard]] ItBase* get_it() const { return it; }
+  [[nodiscard]] std::source_location get_location() const { return location; }
 
   /** @brief Get whether the expectation is normal or negated. */
-  [[nodiscard]] constexpr bool sign() const { return is_positive_; }
-  [[nodiscard]] constexpr bool ignore_failure() const { return ignore_failure_; }
+  [[nodiscard]] constexpr bool positive() const { return is_positive_; }
+  [[nodiscard]] constexpr bool ignored() const { return ignore_; }
 
   /********* Modifiers *********/
 
@@ -404,6 +406,8 @@ class ExpectationValue : public Expectation<A> {
    * @return The constructed ExpectationValue.
    */
   ExpectationValue(ItBase& it, A value, std::source_location location) : Expectation<A>(it, location), value(value) {}
+  explicit ExpectationValue(A value, std::source_location location = std::source_location::current())
+      : Expectation<A>(location), value(value) {}
 
   /**
    * @brief Create an Expectation using an initializer list.
@@ -425,7 +429,7 @@ class ExpectationValue : public Expectation<A> {
   }
 
   ExpectationValue& ignore() override {
-    this->ignore_failure_ = true;
+    this->ignore_ = true;
     return *this;
   }
 };
@@ -484,7 +488,7 @@ class ExpectationFunc : public Expectation<decltype(std::declval<F>()())> {
   }
 
   ExpectationFunc& ignore() override {
-    this->ignore_failure_ = true;
+    this->ignore_ = true;
     return *this;
   }
 

@@ -7,6 +7,7 @@
 #include "description.hpp"
 #include "it_base.hpp"
 #include "runnable.hpp"
+#include "term_colors.hpp"
 
 extern "C" {
 #ifdef _WIN32
@@ -69,6 +70,31 @@ class BaseFormatter {
 
   int get_and_increment_test_counter() { return test_counter++; }
   void reset_test_counter() { test_counter = 1; }
+
+  const char* set_color(const char* color) {
+    if (!color_output) {
+      return "";  // No color output
+    }
+    return color;
+  }
+
+  const char* status_color(Result::Status status) {
+    if (!color_output) {
+      return "";  // No color output
+    }
+    switch (status) {
+      case Result::Status::Success:
+        return GREEN;
+      case Result::Status::Failure:
+        return RED;
+      case Result::Status::Error:
+        return MAGENTA;
+      case Result::Status::Skipped:
+        return YELLOW;
+    }
+  }
+
+  const char* reset_color() { return color_output ? RESET : ""; }
 };
 
 inline BaseFormatter& BaseFormatter::set_color_output(bool value) {

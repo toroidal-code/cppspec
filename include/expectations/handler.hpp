@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <exception>
 #include <string>
 
 #include "result.hpp"
@@ -39,9 +40,17 @@ struct NegativeExpectationHandler {
  */
 template <class Matcher>
 Result PositiveExpectationHandler::handle_matcher(Matcher& matcher) {
-  // TODO: handle expectation failure here
-  return !matcher.match() ? Result::failure_with(matcher.get_location(), matcher.failure_message())
-                          : Result::success(matcher.get_location());
+  bool matched = false;
+  try {
+    matched = matcher.match();
+  } catch (std::exception& e) {
+    return Result::error_with(matcher.get_location(), e.what());
+  } catch (...) {
+    return Result::error_with(matcher.get_location(), "Unknown exception thrown during matcher execution.");
+  }
+
+  return !matched ? Result::failure_with(matcher.get_location(), matcher.failure_message())
+                  : Result::success(matcher.get_location());
 }
 
 /**
@@ -54,9 +63,16 @@ Result PositiveExpectationHandler::handle_matcher(Matcher& matcher) {
  */
 template <class Matcher>
 Result NegativeExpectationHandler::handle_matcher(Matcher& matcher) {
-  // TODO: handle expectation failure here
-  return !matcher.negated_match() ? Result::failure_with(matcher.get_location(), matcher.failure_message_when_negated())
-                                  : Result::success(matcher.get_location());
+  bool matched = false;
+  try {
+    matched = matcher.negated_match();
+  } catch (std::exception& e) {
+    return Result::error_with(matcher.get_location(), e.what());
+  } catch (...) {
+    return Result::error_with(matcher.get_location(), "Unhandled exception thrown during matcher execution.");
+  }
+  return !matched ? Result::failure_with(matcher.get_location(), matcher.failure_message_when_negated())
+                  : Result::success(matcher.get_location());
 }
 
 }  // namespace CppSpec

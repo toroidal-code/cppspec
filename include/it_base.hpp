@@ -133,7 +133,7 @@ class ItBase : public Runnable {
 
   void add_result(const Result& result) { results.push_back(result); }
   std::list<Result>& get_results() noexcept { return results; }
-  const std::list<Result>& get_results() const noexcept { return results; }
+  [[nodiscard]] const std::list<Result>& get_results() const noexcept { return results; }
   void clear_results() noexcept { results.clear(); }
 
   [[nodiscard]] Result get_result() const override {
@@ -141,7 +141,7 @@ class ItBase : public Runnable {
       return Result::success(this->get_location());
     }
 
-    return *std::ranges::fold_left_first(results, std::logical_and<>{});
+    return *std::ranges::fold_left_first(results, &Result::reduce);
   }
 };
 
