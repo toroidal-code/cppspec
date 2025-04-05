@@ -70,7 +70,7 @@ endfunction(add_spec)
 
 # Discover Specs
 function(discover_specs spec_folder)
-  file(GLOB_RECURSE specs ${spec_folder}/*_spec.cpp)
+  file(GLOB_RECURSE specs RELATIVE ${spec_folder} ${spec_folder}/*_spec.cpp)
 
   if (${ARGC} GREATER 1)
     set(output_junit ${ARGV1})
@@ -79,8 +79,11 @@ function(discover_specs spec_folder)
   endif()
 
   foreach(spec IN LISTS specs)
+    cmake_path(GET spec STEM spec_name)
+    cmake_path(GET spec PARENT_PATH spec_folder)
+
     if (${output_junit})
-      add_spec(${spec} "--output-junit;${CMAKE_CURRENT_BINARY_DIR}/results/${spec_name}.xml")
+      add_spec(${spec} "--output-junit;${CMAKE_CURRENT_BINARY_DIR}/results/${spec_folder}/${spec_name}.xml")
     else()
       add_spec(${spec} "")
     endif()
