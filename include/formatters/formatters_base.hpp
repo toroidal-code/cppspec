@@ -92,6 +92,7 @@ class BaseFormatter {
       case Result::Status::Skipped:
         return YELLOW;
     }
+    return "";  // Default to no color
   }
 
   const char* reset_color() { return color_output ? RESET : ""; }
