@@ -10,17 +10,18 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
         compiler: [native, llvm]
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest]
         exclude:
-          - os: macos-latest
-            compiler: native
+          - os: windows-latest
+            compiler: llvm
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -28,30 +29,47 @@ jobs:
     - name: Install CMake
       uses: lukka/get-cmake@latest
 
-    - name: Install LLVM and Clang 17
-      uses: KyleMayes/install-llvm-action@v1
-      with:
-        version: "17"
-        env: true
-      if: ${{ matrix.compiler == 'llvm' && matrix.os != 'macos-latest' }}
+    - name: Use LLVM and Clang
+      run: |
+        echo "CC=clang-18" >> $GITHUB_ENV
+        echo "CXX=clang++-18" >> $GITHUB_ENV
+      if: ${{ matrix.compiler != 'native' }}
 
-    - name: Install LLVM and Clang 15
-      uses: KyleMayes/install-llvm-action@v1
-      with:
-        version: "15.0.7"
-        env: true
-      if: ${{ matrix.compiler == 'llvm' && matrix.os == 'macos-latest' }}
-
-    - name: Configure for native compiler
+    - name: Configure
       run: cmake -B build -DCPPSPEC_BUILD_TESTS=YES
-      if: ${{ matrix.compiler == 'native'}}
-
-    - name: Configure for non-native compiler
-      run: cmake -B build -G Ninja -DCPPSPEC_BUILD_TESTS=YES -DCMAKE_C_COMPILER="$CC" -DCMAKE_CXX_COMPILER="$CXX"
-      if: ${{ matrix.compiler != 'native'}}
 
     - name: Build
       run: cmake --build build --config Release
 
     - name: Test
-      run: ctest --test-dir build --build-config Release
+      run: ctest --test-dir build --build-config Release --output-on-failure
+
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: Test Results (${{ matrix.os }} - ${{ matrix.compiler }})
+        path: build/spec/results/*.xml
+
+  publish-test-results:
+    name: "Publish Tests Results"
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+
+      # only needed unless run with comment_mode: off
+      pull-requests: write
+
+    if: always()
+
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: "artifacts/**/*.xml"

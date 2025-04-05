@@ -1,8 +1,11 @@
 #pragma once
 
 #include <argparse/argparse.hpp>
+#include <fstream>
+#include <string>
 #include <string_view>
 
+#include "formatters/junit_xml.hpp"
 #include "formatters/progress.hpp"
 #include "formatters/tap.hpp"
 #include "formatters/verbose.hpp"
@@ -20,21 +23,19 @@ inline std::string file_name(std::string_view path) {
   return std::string{file};
 }
 
-struct RuntimeOpts {
-  bool verbose = false;
-  std::shared_ptr<Formatters::BaseFormatter> formatter = nullptr;
-};
-
 inline Runner parse(int argc, char** const argv) {
-  argparse::ArgumentParser program{file_name(argv[0])};
+  std::filesystem::path executable_path = argv[0];
+  std::string executable_name = executable_path.filename().string();
+  argparse::ArgumentParser program{executable_name};
 
   program.add_argument("-f", "--format")
       .default_value(std::string{"p"})
-      .choices("progress", "p", "tap", "t", "detail", "d")
+      .choices("progress", "p", "tap", "t", "detail", "d", "junit", "j")
       .required()
       .help("set the output format");
 
-  program.add_argument("--verbose").help("increase output verbosity").default_value(false).implicit_value(true);
+  program.add_argument("--output-junit").help("output JUnit XML to the specified file").default_value(std::string{});
+  program.add_argument("--verbose").help("increase output verbosity").flag();
 
   try {
     program.parse_args(argc, argv);
@@ -44,20 +45,33 @@ inline Runner parse(int argc, char** const argv) {
     std::exit(1);
   }
 
-  RuntimeOpts opts;
-
   auto format_string = program.get<std::string>("--format");
+  std::shared_ptr<Formatters::BaseFormatter> formatter;
   if (format_string == "d" || format_string == "detail" || program["--verbose"] == true) {
-    opts.formatter = std::make_unique<Formatters::Verbose>();
+    formatter = std::make_shared<Formatters::Verbose>();
   } else if (format_string == "p" || format_string == "progress") {
-    opts.formatter = std::make_unique<Formatters::Progress>();
+    formatter = std::make_shared<Formatters::Progress>();
   } else if (format_string == "t" || format_string == "tap") {
-    opts.formatter = std::make_unique<Formatters::TAP>();
+    formatter = std::make_shared<Formatters::TAP>();
+  } else if (format_string == "j" || format_string == "junit") {
+    formatter = std::make_shared<Formatters::JUnitXML>();
   } else {
     std::cerr << "Unrecognized format type" << std::endl;
     std::exit(-1);
   }
 
-  return Runner{opts.formatter};
+  auto junit_output_filepath = program.get<std::string>("--output-junit");
+  if (!junit_output_filepath.empty()) {
+    // create directories recursively if they don't exist
+    std::filesystem::path junit_output_path = junit_output_filepath;
+    std::filesystem::create_directories(junit_output_path.parent_path());
+
+    // open file stream
+    auto* file_stream = new std::ofstream(junit_output_filepath);
+    auto junit_output = std::make_shared<Formatters::JUnitXML>(*file_stream, false);
+    return Runner{formatter, junit_output};
+  }
+
+  return Runner{formatter};
 }
 }  // namespace CppSpec

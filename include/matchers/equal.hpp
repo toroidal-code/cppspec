@@ -16,9 +16,9 @@ namespace CppSpec::Matchers {
 template <typename A, typename E>
 class Equal : public MatcherBase<A, E> {
  public:
-  Equal(Expectation<A> &expectation, E expected) : MatcherBase<A, E>(expectation, expected) {}
+  Equal(Expectation<A>& expectation, E expected) : MatcherBase<A, E>(expectation, expected) {}
 
-  std::string description() override;
+  std::string verb() override { return "equal"; }
   std::string failure_message() override;
   std::string failure_message_when_negated() override;
   bool diffable();
@@ -30,13 +30,6 @@ class Equal : public MatcherBase<A, E> {
   std::string simple_failure_message();
   // std::string detailed_failure_message();
 };
-
-template <typename A, typename E>
-std::string Equal<A, E>::description() {
-  std::stringstream ss;
-  ss << "equal" << Pretty::to_sentence<E>(this->expected());
-  return ss.str();
-}
 
 template <typename A, typename E>
 std::string Equal<A, E>::failure_message() {
@@ -51,18 +44,18 @@ std::string Equal<A, E>::failure_message() {
 template <typename A, typename E>
 std::string Equal<A, E>::failure_message_when_negated() {
   std::stringstream ss;
-  ss << "expected not " << Pretty::inspect_object(MatcherBase<A, E>::expected()) << "\n"
-     << "         got " << actual_inspected() << "\n"
-     << "Compared using `==`" << std::endl;
+  ss << "expected not " << Pretty::inspect_object(MatcherBase<A, E>::expected()) << std::endl;
+  ss << "         got " << actual_inspected() << std::endl;
+  ss << "Compared using `==`";
   return ss.str();
 }
 
 template <typename A, typename E>
 std::string Equal<A, E>::simple_failure_message() {
   std::stringstream ss;
-  ss << "expected " << Pretty::inspect_object(MatcherBase<A, E>::expected()) << "\n"
-     << "     got " << actual_inspected() << "\n"
-     << "Compared using `==`" << std::endl;
+  ss << "expected " << Pretty::inspect_object(MatcherBase<A, E>::expected()) << std::endl;
+  ss << "     got " << actual_inspected() << std::endl;
+  ss << "Compared using `==`";
   return ss.str();
 }
 
@@ -111,4 +104,3 @@ std::string Equal<A, E>::actual_inspected() {
 // }
 
 }  // namespace CppSpec::Matchers
-

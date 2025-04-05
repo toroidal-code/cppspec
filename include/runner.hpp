@@ -1,7 +1,5 @@
 /** @file */
 #pragma once
-#include <initializer_list>
-#pragma once
 
 #include <list>
 #include <utility>
@@ -16,13 +14,15 @@ namespace CppSpec {
  * @brief A collection of Descriptions that are run in sequence
  */
 class Runner {
-  std::list<Description *> specs{};
-  std::shared_ptr<Formatters::BaseFormatter> formatter;
+  std::list<Description*> specs;
+  std::list<std::shared_ptr<Formatters::BaseFormatter>> formatters;
 
  public:
-  explicit Runner(std::shared_ptr<Formatters::BaseFormatter> formatter) : formatter{std::move(formatter)} {};
+  template <typename... Formatters>
+  explicit Runner(Formatters&&... formatters) : formatters{std::forward<Formatters>(formatters)...} {}
 
-  ~Runner() = default;
+  explicit Runner(std::list<std::shared_ptr<Formatters::BaseFormatter>>&& formatters)
+      : formatters{std::move(formatters)} {}
 
   /**
    * @brief Add a Description object
@@ -30,26 +30,32 @@ class Runner {
    * @param spec the spec to be added
    * @return a reference to the modified Runner
    */
-  Runner &add_spec(Description &spec) {
+  Runner& add_spec(Description& spec) {
     specs.push_back(&spec);
     return *this;
   }
 
-  Result run() {
-    bool success = true;
-    for (auto *spec : specs) {
-      success &= static_cast<bool>(spec->run(*formatter));
-    }
-    return success ? Result::success() : Result::failure();
+  template <typename... Specs>
+  Runner& add_specs(Specs&... specs) {
+    (add_spec(specs), ...);  // Fold expression to add all specs
+    return *this;
   }
 
-  Result exec() {
-    if (specs.size() > 1) {
-      formatter->set_multiple(true);
+  Result run(std::source_location location = std::source_location::current()) {
+    bool success = true;
+    for (Description* spec : specs) {
+      spec->timed_run();
+      success &= !spec->get_result().is_failure();
     }
-    Result result = run();
-    return result;
+    for (auto& formatter : formatters) {
+      for (Description* spec : specs) {
+        formatter->format(static_cast<Runnable&>(*spec));
+      }
+    }
+    return success ? Result::success(location) : Result::failure(location);
   }
+
+  Result exec() { return run(); }
 };
 
 }  // namespace CppSpec

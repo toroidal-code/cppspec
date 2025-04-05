@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.27 FATAL_ERROR)
 
-project(c++spec)
+project(c++spec
+  VERSION 1.0.0
+  DESCRIPTION "BDD testing for C++"
+  LANGUAGES CXX
+)
 
 set(CMAKE_COLOR_DIAGNOSTICS ON)
 
@@ -10,7 +14,7 @@ include(FetchContent)
 
 FetchContent_Declare(argparse
   GIT_REPOSITORY https://github.com/p-ranav/argparse/
-  GIT_TAG v3.1
+  GIT_TAG v3.2
   GIT_SHALLOW 1
 )
 FetchContent_MakeAvailable(argparse)
@@ -35,7 +39,10 @@ target_link_libraries(c++spec INTERFACE
   cxx-prettyprint
   argparse
 )
-target_compile_options(c++spec INTERFACE -Wno-missing-template-arg-list-after-template-kw -Wno-dollar-in-identifier-extension)
+
+if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  target_compile_options(c++spec INTERFACE -Wno-missing-template-arg-list-after-template-kw -Wno-dollar-in-identifier-extension)
+endif()
 
 FILE(GLOB_RECURSE c++spec_headers ${CMAKE_CURRENT_LIST_DIR}/include/*.hpp)
 
@@ -49,26 +56,39 @@ endif()
 # HELPERS
 
 # Add spec
-function(add_spec source_file)
+function(add_spec source_file args)
   cmake_path(GET source_file STEM spec_name)
   add_executable(${spec_name} ${source_file})
   target_link_libraries(${spec_name} c++spec)
-
+  target_compile_features(${spec_name} PRIVATE cxx_std_23)
   set_target_properties(${spec_name} PROPERTIES
     CXX_STANDARD 23
     CXX_STANDARD_REQUIRED YES
   )
-  add_test(NAME ${spec_name} COMMAND ${spec_name} --verbose)
+  add_test(NAME ${spec_name} COMMAND ${spec_name} --verbose ${args})
 endfunction(add_spec)
 
 # Discover Specs
 function(discover_specs spec_folder)
-  file(GLOB_RECURSE specs ${spec_folder}/*_spec.cpp)
+  file(GLOB_RECURSE specs RELATIVE ${spec_folder} ${spec_folder}/*_spec.cpp)
+
+  if (${ARGC} GREATER 1)
+    set(output_junit ${ARGV1})
+  else()
+    set(output_junit FALSE)
+  endif()
 
   foreach(spec IN LISTS specs)
-    add_spec(${spec})
+    cmake_path(GET spec STEM spec_name)
+    cmake_path(GET spec PARENT_PATH spec_folder)
+
+    if (${output_junit})
+      add_spec(${spec} "--output-junit;${CMAKE_CURRENT_BINARY_DIR}/results/${spec_folder}/${spec_name}.xml")
+    else()
+      add_spec(${spec} "")
+    endif()
   endforeach()
-endfunction(discover_specs)
+endfunction()
 
 # OPTIONS
 option(CPPSPEC_BUILD_TESTS "Build C++Spec tests")
@@ -77,6 +97,7 @@ option(CPPSPEC_BUILD_DOCS "Build C++Spec documentation")
 
 if(CPPSPEC_BUILD_TESTS)
   enable_testing()
+  include(CTest)
 
   # Tests
   add_subdirectory(spec)

@@ -13,15 +13,16 @@ class ContainBase : public MatcherBase<A, E> {
   A actual_;
 
  public:
+  std::string verb() override { return "contain"; }
   std::string description() override;
   std::string failure_message() override;
   std::string failure_message_when_negated() override;
   virtual bool diffable() { return true; }
 
-  ContainBase(Expectation<A> &expectation, std::initializer_list<U> expected)
-      : MatcherBase<A, std::vector<U>>(expectation, std::vector<U>(expected)), actual_(this->actual()){};
-  ContainBase(Expectation<A> &expectation, U expected)
-      : MatcherBase<A, U>(expectation, expected), actual_(this->actual()){};
+  ContainBase(Expectation<A>& expectation, std::initializer_list<U> expected)
+      : MatcherBase<A, std::vector<U>>(expectation, std::vector<U>(expected)), actual_(this->actual()) {};
+  ContainBase(Expectation<A>& expectation, U expected)
+      : MatcherBase<A, U>(expectation, expected), actual_(this->actual()) {};
 
  protected:
   bool actual_collection_includes(U expected_item);
@@ -30,7 +31,7 @@ class ContainBase : public MatcherBase<A, E> {
 template <typename A, typename E, typename U>
 std::string ContainBase<A, E, U>::description() {
   // std::vector<E> described_items;
-  return Pretty::improve_hash_formatting("contain" + Pretty::to_sentence(this->expected()));
+  return Pretty::improve_hash_formatting(verb() + Pretty::to_sentence(this->expected()));
 }
 
 template <typename A, typename E, typename U>
@@ -49,7 +50,7 @@ bool ContainBase<A, E, U>::actual_collection_includes(U expected_item) {
   auto last = *(actual.begin());
   static_assert(Util::verbose_assert<std::is_same_v<decltype(last), U>>::value,
                 "Expected item is not the same type as what is inside container.");
-  return std::find(actual.begin(), actual.end(), expected_item) != actual.end();
+  return std::ranges::find(actual, expected_item) != actual.end();
 }
 
 /**
@@ -118,7 +119,7 @@ bool Contain<A, E, U>::perform_match(Predicate predicate, Predicate /*hash_subse
 template <typename A, typename U>
 class Contain<A, U, U> : public ContainBase<A, U, U> {
  public:
-  Contain(Expectation<A> &expectation, U expected) : ContainBase<A, U, U>(expectation, expected){};
+  Contain(Expectation<A>& expectation, U expected) : ContainBase<A, U, U>(expectation, expected) {};
 
   bool match() override;
 };
@@ -129,4 +130,3 @@ bool Contain<A, U, U>::match() {
 }
 
 }  // namespace CppSpec::Matchers
-

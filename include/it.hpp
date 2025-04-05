@@ -1,6 +1,7 @@
 /** @file */
 #pragma once
 
+#include <source_location>
 #include <string>
 #include <utility>
 #include <vector>
@@ -25,7 +26,7 @@ namespace CppSpec {
  */
 class ItD : public ItBase {
  public:
-  using Block = std::function<void(ItD &)>;
+  using Block = std::function<void(ItD&)>;
 
  private:
   /** @brief The block contained in the ItD */
@@ -48,8 +49,8 @@ class ItD : public ItBase {
    *
    * @return the constructed ItD object
    */
-  ItD(const Child &parent, std::string description, Block block)
-      : ItBase(parent, std::move(description)), block(std::move(block)) {}
+  ItD(std::source_location location, const char* description, Block block)
+      : ItBase(location, description), block(std::move(block)) {}
 
   /**
    * @brief The anonymous ItD constructor
@@ -68,10 +69,10 @@ class ItD : public ItBase {
    *
    * @return the constructed ItD object
    */
-  ItD(const Child &parent, Block block) : ItBase(parent), block(block) {}
+  ItD(std::source_location location, Block block) : ItBase(location), block(block) {}
 
   // implemented in description.hpp
-  Result run(Formatters::BaseFormatter &printer) override;
+  void run() override;
 };
 
 /**
@@ -87,7 +88,7 @@ class ItD : public ItBase {
 template <typename T>
 class ItCD : public ItBase {
  public:
-  using Block = std::function<void(ItCD<T> &)>;
+  using Block = std::function<void(ItCD<T>&)>;
 
  private:
   /** @brief The block contained in the ItCD */
@@ -101,16 +102,18 @@ class ItCD : public ItBase {
    * needing to have a dedicated macro for accessing the subject via getter, or
    * needing to introduce parenthesis for call syntax (like `subject()`)
    */
-  T &subject;
+  T& subject;
 
   // This is only ever instantiated by ClassDescription<T>
-  ItCD(const Child &parent, T &subject, std::string description, Block block)
-      : ItBase(parent, description), block(block), subject(subject) {}
+  ItCD(std::source_location location, T& subject, const char* description, Block block)
+      : ItBase(location, description), block(block), subject(subject) {}
 
-  ItCD(const Child &parent, T &subject, Block block) : ItBase(parent), block(block), subject(subject) {}
+  ItCD(std::source_location location, T& subject, Block block) : ItBase(location), block(block), subject(subject) {}
 
-  ExpectationValue<T> is_expected();
-  Result run(Formatters::BaseFormatter &printer) override;
+  ExpectationValue<T> is_expected(std::source_location location = std::source_location::current()) {
+    return {*this, subject, location};
+  }
+  void run() override;
 };
 
 /**
@@ -123,18 +126,18 @@ class ItCD : public ItBase {
  * @endcode
  */
 template <Util::is_not_functional T>
-ExpectationValue<T> ItBase::expect(T value) {
-  return ExpectationValue<T>(*this, value);
+ExpectationValue<T> ItBase::expect(T value, std::source_location location) {
+  return {*this, value, location};
 }
 
 template <Util::is_functional T>
-ExpectationFunc<T> ItBase::expect(T block) {
-  return ExpectationFunc<T>(*this, block);
+ExpectationFunc<T> ItBase::expect(T block, std::source_location location) {
+  return {*this, block, location};
 }
 
 template <typename T>
-ExpectationValue<T> ItBase::expect(Let<T> &let) {
-  return ExpectationValue<T>(*this, let.value());
+ExpectationValue<T> ItBase::expect(Let<T>& let, std::source_location location) {
+  return {*this, let.value(), location};
 }
 
 /**
@@ -145,12 +148,13 @@ ExpectationValue<T> ItBase::expect(Let<T> &let) {
  * @endcode
  */
 template <typename T>
-ExpectationValue<std::initializer_list<T>> ItBase::expect(std::initializer_list<T> init_list) {
-  return ExpectationValue<std::initializer_list<T>>(*this, init_list);
+ExpectationValue<std::initializer_list<T>> ItBase::expect(std::initializer_list<T> init_list,
+                                                          std::source_location location) {
+  return {*this, init_list, location};
 }
 
-inline ExpectationValue<std::string> ItBase::expect(const char *str) {
-  return ExpectationValue<std::string>(*this, std::string(str));
+inline ExpectationValue<std::string> ItBase::expect(const char* str, std::source_location location) {
+  return {*this, std::string(str), location};
 }
 
 }  // namespace CppSpec
