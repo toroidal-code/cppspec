@@ -41,11 +41,11 @@ describe_a<std::true_type> describe_a_syntax_spec("describe_a syntax", $ {
 });
 
 // clang-format on
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   return CppSpec::parse(argc, argv)
                  .add_specs(describe_a_implicit_spec, describe_a_explicit_spec, describe_a_syntax_spec)
                  .exec()
-                 .status()
+                 .is_success()
              ? EXIT_SUCCESS
              : EXIT_FAILURE;
 }

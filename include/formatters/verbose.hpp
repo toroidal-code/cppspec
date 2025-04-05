@@ -31,26 +31,18 @@ inline void Verbose::format(const Description& description) {
 }
 
 inline void Verbose::format(const ItBase& it) {
-  if (color_output) {
-    out_stream << (it.get_result().status() ? GREEN : RED);
-  }
+  out_stream << status_color(it.get_result().status());
   out_stream << it.padding() << it.get_description() << std::endl;
-  if (color_output) {
-    out_stream << RESET;
-  }
+  out_stream << reset_color();
 
   // Print any failures if we've got them
   // 'it' having a bad status necessarily
   // implies that there are failure messages
   for (const Result& result : it.get_results()) {
     if (result.is_failure()) {
-      if (color_output) {
-        out_stream << RED;  // make them red
-      }
+      out_stream << set_color(RED);
       out_stream << result.get_message() << std::endl;
-      if (color_output) {
-        out_stream << RESET;
-      }
+      out_stream << reset_color();
     }
   }
 

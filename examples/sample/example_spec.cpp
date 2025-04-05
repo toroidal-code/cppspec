@@ -4,10 +4,11 @@
 #include <list>
 #include "cppspec.hpp"
 
+// clang-format off
 describe bool_spec("Some Tests", $ {
   context("true is", _ {
     it("true", _ {
-      expect(static_cast<bool>(1)).to_equal(true);
+      expect(1).to_equal(true);
     });
 
     it("true", _ {
@@ -26,6 +27,10 @@ describe bool_spec("Some Tests", $ {
 
     it("plus 1 equals 5", _ {
       expect(i+1).to_equal(5);
+    });
+
+    it("equals 6", _ {
+      expect(i).to_equal(6);
     });
   });
 

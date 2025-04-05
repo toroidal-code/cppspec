@@ -24,7 +24,9 @@ inline std::string file_name(std::string_view path) {
 }
 
 inline Runner parse(int argc, char** const argv) {
-  argparse::ArgumentParser program{file_name(argv[0])};
+  std::filesystem::path executable_path = argv[0];
+  std::string executable_name = executable_path.filename().string();
+  argparse::ArgumentParser program{executable_name};
 
   program.add_argument("-f", "--format")
       .default_value(std::string{"p"})

@@ -2,6 +2,7 @@
 
 using namespace CppSpec;
 
+// clang-format off
 describe equal_spec("Equal", $ {
   it("matches when actual == expected", _ {
     expect(1).to_equal(1);

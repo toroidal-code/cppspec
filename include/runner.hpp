@@ -45,7 +45,7 @@ class Runner {
     bool success = true;
     for (Description* spec : specs) {
       spec->timed_run();
-      success &= spec->get_result().status();
+      success &= !spec->get_result().is_failure();
     }
     for (auto& formatter : formatters) {
       for (Description* spec : specs) {

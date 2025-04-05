@@ -112,7 +112,7 @@ class Runnable {
   [[nodiscard]] virtual Result get_result() const {
     Result result = Result::success(location);
     for (const auto& child : get_children()) {
-      result &= child->get_result();
+      result = Result::reduce(result, child->get_result());
     }
     return result;
   }

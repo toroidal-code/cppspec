@@ -56,6 +56,8 @@ class MatcherBase : public Pretty {
   // commonly used constructor
   MatcherBase(Expectation<Actual>& expectation, Expected expected) : expected_(expected), expectation_(expectation) {}
 
+  virtual ~MatcherBase() = default;
+
   /*--------- Helper functions -------------*/
 
   virtual std::string failure_message();
@@ -82,7 +84,6 @@ class MatcherBase : public Pretty {
   // Run the matcher
   Result run();
 
-  // TODO: match and negated match should return Result
   virtual bool match() = 0;
   virtual bool negated_match() { return !match(); }
 
@@ -151,19 +152,8 @@ std::string MatcherBase<A, E>::description() {
  */
 template <typename A, typename E>
 Result MatcherBase<A, E>::run() {
-  ItBase* parent = expectation_.get_it();
-  if (parent != nullptr) {
-    // If we need a description for our test, generate it
-    // unless we're ignoring the output.
-    if (parent->needs_description() && !expectation_.ignore_failure()) {
-      parent->set_description(
-          (expectation_.sign() ? PositiveExpectationHandler::verb() : NegativeExpectationHandler::verb()) + " " +
-          this->description());
-    }
-  }
-
-  Result result = expectation_.sign() ? PositiveExpectationHandler::handle_matcher(*this)
-                                      : NegativeExpectationHandler::handle_matcher(*this);
+  Result result = expectation_.positive() ? PositiveExpectationHandler::handle_matcher(*this)
+                                          : NegativeExpectationHandler::handle_matcher(*this);
 
   result.set_type(Util::demangle(typeid(*this).name()));
 
@@ -176,7 +166,19 @@ Result MatcherBase<A, E>::run() {
         "return a string?");
   }
 
-  if (parent && !expectation_.ignore_failure()) {
+  if (expectation_.ignored()) {
+    result.set_status(Result::Status::Skipped);
+  }
+
+  ItBase* parent = expectation_.get_it();
+  if (parent != nullptr) {
+    // If we need a description for our test, generate it
+    // unless we're ignoring the output.
+    if (parent->needs_description() && !expectation_.ignored()) {
+      parent->set_description(
+          (expectation_.positive() ? PositiveExpectationHandler::verb() : NegativeExpectationHandler::verb()) + " " +
+          this->description());
+    }
     parent->add_result(result);
   }
   return result;

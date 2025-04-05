@@ -13,7 +13,6 @@ namespace CppSpec::Formatters {
 // The TAP format makes things a little tricky
 class Progress : public BaseFormatter {
   std::list<std::string> baked_failure_messages;
-  std::list<std::string> raw_failure_messages;
 
   std::string prep_failure_helper(const ItBase& it);
 
@@ -25,6 +24,20 @@ class Progress : public BaseFormatter {
 
   void format_failure_messages();
   void prep_failure(const ItBase& it);
+
+  static char status_char(Result::Status status) {
+    switch (status) {
+      case Result::Status::Success:
+        return '.';
+      case Result::Status::Failure:
+        return 'F';
+      case Result::Status::Error:
+        return 'E';
+      case Result::Status::Skipped:
+        return 'S';
+    }
+    return '.';  // Default to success if status is unknown
+  }
 };
 
 /** @brief An assistant function for prep_failure to reduce complexity */
@@ -63,43 +76,33 @@ inline std::string Progress::prep_failure_helper(const ItBase& it) {
 }
 
 inline void Progress::prep_failure(const ItBase& it) {
-  std::ostringstream string_builder;  // oss is used as the local string builder
-  if (color_output) {
-    string_builder << RED;  // if we're doing color, make it red
-  }
+  std::list<std::string> raw_failure_messages;  // raw failure messages
+  std::ranges::transform(it.get_results(), std::back_inserter(raw_failure_messages),
+                         [](const Result& result) { return result.get_message(); });
+
+  std::ostringstream string_builder;                               // oss is used as the local string builder
+  string_builder << set_color(RED);                                // if we're doing color, make it red
   string_builder << "Test number " << test_counter << " failed:";  // Tell us what test # failed
-  if (color_output) {
-    string_builder << RESET;  // if we're doing color, reset the terminal
-  }
+  string_builder << reset_color();                                 // reset the color
   string_builder << prep_failure_helper(it);
-  if (color_output) {
-    string_builder << RED;
-  }
-  string_builder << Util::join(raw_failure_messages, "\n");
-  if (color_output) {
-    string_builder << RESET;
-  }
+  string_builder << set_color(RED);
+  string_builder << Util::join_endl(raw_failure_messages);
+  string_builder << reset_color();  // reset the color
+  string_builder << std::endl;
+
   raw_failure_messages.clear();
   baked_failure_messages.push_back(string_builder.str());
 }
 
 inline void Progress::format(const ItBase& it) {
-  if (it.get_result().status()) {
-    if (color_output) {
-      out_stream << GREEN;
-    }
-    out_stream << ".";
-  } else {
-    if (color_output) {
-      out_stream << RED;
-    }
-    out_stream << "F";
+  out_stream << status_color(it.get_result().status());
+  out_stream << status_char(it.get_result().status());
+  out_stream << reset_color();
+  out_stream << std::flush;
+
+  if (it.get_result().status() == Result::Status::Failure) {
     prep_failure(it);
   }
-  if (color_output) {
-    out_stream << RESET;
-  }
-  out_stream << std::flush;
   get_and_increment_test_counter();
 }
 
