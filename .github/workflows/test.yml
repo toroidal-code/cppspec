@@ -43,7 +43,7 @@ jobs:
         run: |
           echo "CC=clang-18" >> $GITHUB_ENV
           echo "CXX=clang++-18" >> $GITHUB_ENV
-        if: ${{ matrix.compiler == 'llvm' && (matrix.os != 'macos-13' || matrix.os != 'macos-15') }}
+        if: ${{ matrix.compiler == 'llvm' && (matrix.os != 'macos-13' && matrix.os != 'macos-15') }}
 
       - name: Use GCC
         run: |
