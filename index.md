@@ -14,7 +14,6 @@ C++Spec is a behavior-driven development library for C++ with an RSpec-inspired 
 - Cross-platform with no need to change complex build settings.
 
 
-
 ## An example:
 
 ```c++
