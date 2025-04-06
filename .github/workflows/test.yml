@@ -20,7 +20,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-13, macos-15]
         exclude:
           - os: windows-latest
-            compiler: llvm-18
+            compiler: gcc-14
           - os: macos-13
             compiler: native # AppleClang is too old
 
@@ -32,12 +32,12 @@ jobs:
         uses: lukka/get-cmake@latest
 
       - name: Install Clang
-        if: ${{ matrix.compiler == 'llvm-18' && (matrix.os == 'macos-13' || matrix.os == 'macos-15') }}
         run: |
           brew install llvm@18
           brew link --force --overwrite llvm@18
           echo "CC=$(brew --prefix llvm@18)/bin/clang" >> $GITHUB_ENV
           echo "CXX=$(brew --prefix llvm@18)/bin/clang++" >> $GITHUB_ENV
+        if: ${{ matrix.compiler == 'llvm-18' && (matrix.os == 'macos-13' || matrix.os == 'macos-15') }}
 
       - name: Use LLVM and Clang
         run: |
@@ -53,6 +53,11 @@ jobs:
 
       - name: Configure
         run: cmake -B build -DCPPSPEC_BUILD_TESTS=YES
+        if: ${{ matrix.compiler != 'llvm-18' || matrix.os != 'windows-latest' }}
+
+      - name: Configure ClangCL
+        run: cmake -B build -DCPPSPEC_BUILD_TESTS=YES -G "Visual Studio 17 2022" -T ClangCL
+        if: ${{ matrix.compiler == 'llvm-18' && matrix.os == 'windows-latest' }}
 
       - name: Build
         run: cmake --build build --config Release
