@@ -90,8 +90,8 @@ struct TestCase {
     std::stringstream ss;
     ss << start << ">" << std::endl;
 
-    ss << *std::ranges::fold_left_first(xml_results,
-                                        [](const std::string& acc, const std::string& r) { return acc + "\n" + r; });
+    ss << std::accumulate(xml_results.begin(), xml_results.end(), std::string{},
+                          [](const std::string& acc, const std::string& r) { return acc + "\n" + r; });
     ss << std::endl;
     ss << "    </testcase>";
     return ss.str();
@@ -115,8 +115,18 @@ struct TestSuite {
       : id(get_next_id()), name(std::move(name)), time(time), timestamp(timestamp), tests(tests), failures(failures) {}
 
   [[nodiscard]] std::string to_xml() const {
-    auto timestamp_str =
-        std::format("{0:%F}T{0:%T}", std::chrono::zoned_time(std::chrono::current_zone(), timestamp).get_local_time());
+    std::string timestamp_str;
+    if constexpr (requires { std::chrono::current_zone(); }) {
+      auto localtime = std::chrono::zoned_time(std::chrono::current_zone(), timestamp).get_local_time();
+      timestamp_str = std::format("{0:%F}T{0:%T}", localtime);
+    } else {
+      // Cludge because macOS doesn't have std::chrono::current_zone() or std::chrono::zoned_time()
+      std::time_t time_t_timestamp = std::chrono::system_clock::to_time_t(timestamp);
+      std::tm localtime = *std::localtime(&time_t_timestamp);
+      std::ostringstream oss;
+      oss << std::put_time(&localtime, "%Y-%m-%dT%H:%M:%S");
+      timestamp_str = oss.str();
+    }
 
     std::stringstream ss;
     ss << "  "

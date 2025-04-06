@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <numeric>
 #include <source_location>
 #include <string>
 #include <utility>
@@ -137,11 +138,12 @@ class ItBase : public Runnable {
   void clear_results() noexcept { results.clear(); }
 
   [[nodiscard]] Result get_result() const override {
+    auto default_result = Result::success(this->get_location());
     if (results.empty()) {
-      return Result::success(this->get_location());
+      return default_result;
     }
 
-    return *std::ranges::fold_left_first(results, &Result::reduce);
+    return std::accumulate(results.begin(), results.end(), default_result, &Result::reduce);
   }
 };
 
