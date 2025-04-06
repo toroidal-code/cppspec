@@ -16,40 +16,56 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: [native, llvm]
-        os: [ubuntu-latest, windows-latest]
+        compiler: [native, llvm, gcc]
+        os: [ubuntu-latest, windows-latest, macos-13, macos-15]
         exclude:
           - os: windows-latest
             compiler: llvm
+          - os: ubuntu-latest
+            compiler: gcc # gcc is already the default
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Install CMake
-      uses: lukka/get-cmake@latest
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
 
-    - name: Use LLVM and Clang
-      run: |
-        echo "CC=clang-18" >> $GITHUB_ENV
-        echo "CXX=clang++-18" >> $GITHUB_ENV
-      if: ${{ matrix.compiler != 'native' }}
+      - name: Install Clang
+        if: ${{ matrix.compiler == 'llvm' && (matrix.os == 'macos-13' || matrix.os == 'macos-15') }}
+        run: |
+          brew install llvm@18
+          brew link --force --overwrite llvm@18
+          echo "CC=$(brew --prefix llvm@18)/bin/clang" >> $GITHUB_ENV
+          echo "CXX=$(brew --prefix llvm@18)/bin/clang++" >> $GITHUB_ENV
 
-    - name: Configure
-      run: cmake -B build -DCPPSPEC_BUILD_TESTS=YES
+      - name: Use LLVM and Clang
+        run: |
+          echo "CC=clang-18" >> $GITHUB_ENV
+          echo "CXX=clang++-18" >> $GITHUB_ENV
+        if: ${{ matrix.compiler == 'llvm' && (matrix.os != 'macos-13' || matrix.os != 'macos-15') }}
 
-    - name: Build
-      run: cmake --build build --config Release
+      - name: Use GCC
+        run: |
+          echo "CC=gcc-14" >> $GITHUB_ENV
+          echo "CXX=g++-14" >> $GITHUB_ENV
+        if: ${{ matrix.compiler == 'gcc' && (matrix.os != 'ubuntu-latest') }}
 
-    - name: Test
-      run: ctest --test-dir build --build-config Release --output-on-failure
+      - name: Configure
+        run: cmake -B build -DCPPSPEC_BUILD_TESTS=YES
 
-    - name: Upload Test Results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: Test Results (${{ matrix.os }} - ${{ matrix.compiler }})
-        path: build/spec/results/*.xml
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Test
+        run: ctest --test-dir build --build-config Release --output-on-failure
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Test Results (${{ matrix.os }} - ${{ matrix.compiler }})
+          path: build/spec/results/*.xml
 
   publish-test-results:
     name: "Publish Tests Results"
