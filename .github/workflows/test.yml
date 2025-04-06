@@ -16,13 +16,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: [native, llvm, gcc]
+        compiler: [native, llvm-18, gcc-14]
         os: [ubuntu-latest, windows-latest, macos-13, macos-15]
         exclude:
           - os: windows-latest
-            compiler: llvm
-          - os: ubuntu-latest
-            compiler: gcc # gcc is already the default
+            compiler: llvm-18
+          - os: macos-13
+            compiler: native # AppleClang is too old
 
     steps:
       - name: Checkout code
@@ -32,7 +32,7 @@ jobs:
         uses: lukka/get-cmake@latest
 
       - name: Install Clang
-        if: ${{ matrix.compiler == 'llvm' && (matrix.os == 'macos-13' || matrix.os == 'macos-15') }}
+        if: ${{ matrix.compiler == 'llvm-18' && (matrix.os == 'macos-13' || matrix.os == 'macos-15') }}
         run: |
           brew install llvm@18
           brew link --force --overwrite llvm@18
@@ -43,13 +43,13 @@ jobs:
         run: |
           echo "CC=clang-18" >> $GITHUB_ENV
           echo "CXX=clang++-18" >> $GITHUB_ENV
-        if: ${{ matrix.compiler == 'llvm' && (matrix.os != 'macos-13' && matrix.os != 'macos-15') }}
+        if: ${{ matrix.compiler == 'llvm-18' && (matrix.os != 'macos-13' && matrix.os != 'macos-15') }}
 
       - name: Use GCC
         run: |
           echo "CC=gcc-14" >> $GITHUB_ENV
           echo "CXX=g++-14" >> $GITHUB_ENV
-        if: ${{ matrix.compiler == 'gcc' && (matrix.os != 'ubuntu-latest') }}
+        if: ${{ matrix.compiler == 'gcc-14' }}
 
       - name: Configure
         run: cmake -B build -DCPPSPEC_BUILD_TESTS=YES
