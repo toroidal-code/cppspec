@@ -41,14 +41,14 @@ jobs:
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
         # Create or switch to gh-pages branch
-        git fetch origin gh-pages || true
-        git checkout gh-pages || git checkout --orphan gh-pages
+        git fetch origin gh-pages
+        git checkout --track origin/gh-pages || git checkout -b gh-pages
 
         # Remove old files and copy new documentation
         git rm -rf doxygen || true
         mv build/html doxygen
 
         # Commit and push changes
-        git add .
+        git add doxygen
         git commit -m "Update Doxygen documentation"
         git push origin gh-pages --force
