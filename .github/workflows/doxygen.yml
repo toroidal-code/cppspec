@@ -46,7 +46,8 @@ jobs:
 
         # Remove old files and copy new documentation
         git rm -rf doxygen || true
-        mv build/html doxygen
+        mv build/html/ doxygen
+        touch doxygen/.nojekyll
 
         # Commit and push changes
         git add doxygen
