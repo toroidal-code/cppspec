@@ -25,7 +25,7 @@ links:
     external:     true
 
   - name:         API Docs
-    url:          /dox/html/index.html
+    url:          /doxygen/index.html
 
   - name:         Download
     url:          https://github.com/toroidal-code/cppspec/releases/latest
