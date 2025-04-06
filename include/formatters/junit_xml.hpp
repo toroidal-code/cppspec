@@ -116,17 +116,18 @@ struct TestSuite {
 
   [[nodiscard]] std::string to_xml() const {
     std::string timestamp_str;
-    if constexpr (requires { std::chrono::current_zone(); }) {
-      auto localtime = std::chrono::zoned_time(std::chrono::current_zone(), timestamp).get_local_time();
-      timestamp_str = std::format("{0:%F}T{0:%T}", localtime);
-    } else {
-      // Cludge because macOS doesn't have std::chrono::current_zone() or std::chrono::zoned_time()
-      std::time_t time_t_timestamp = std::chrono::system_clock::to_time_t(timestamp);
-      std::tm localtime = *std::localtime(&time_t_timestamp);
-      std::ostringstream oss;
-      oss << std::put_time(&localtime, "%Y-%m-%dT%H:%M:%S");
-      timestamp_str = oss.str();
-    }
+#ifdef __APPLE__
+    // Cludge because macOS doesn't have std::chrono::current_zone() or std::chrono::zoned_time()
+    std::time_t time_t_timestamp = std::chrono::system_clock::to_time_t(timestamp);
+    std::tm localtime = *std::localtime(&time_t_timestamp);
+    std::ostringstream oss;
+    oss << std::put_time(&localtime, "%Y-%m-%dT%H:%M:%S");
+    timestamp_str = oss.str();
+#else
+    // Use std::chrono::current_zone() and std::chrono::zoned_time() if available (C++20)
+    auto localtime = std::chrono::zoned_time(std::chrono::current_zone(), timestamp).get_local_time();
+    timestamp_str = std::format("{0:%F}T{0:%T}", localtime);
+#endif
 
     std::stringstream ss;
     ss << "  "
