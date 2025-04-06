@@ -1,0 +1,54 @@
+name: Generate Doxygen Documentation
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the repository
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install CMake
+      uses: lukka/get-cmake@latest
+
+    - name: Install doxygen
+      uses: ssciwr/doxygen-install@v1
+
+    - name: Install graphviz
+      run: |
+        sudo apt-get update
+        sudo apt-get install --no-install-recommends -y graphviz
+
+    - name: Run configure
+      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCPPSPEC_BUILD_DOCS=ON
+
+    # Generate Doxygen documentation
+    - name: Generate Doxygen documentation
+      run: cmake --build build --target doxygen
+
+    # Deploy to gh-pages branch
+    - name: Deploy to gh-pages branch
+      run: |
+        # Configure Git
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+        # Create or switch to gh-pages branch
+        git fetch origin gh-pages || true
+        git checkout gh-pages || git checkout --orphan gh-pages
+
+        # Remove old files and copy new documentation
+        git rm -rf doxygen || true
+        mv build/html doxygen
+
+        # Commit and push changes
+        git add .
+        git commit -m "Update Doxygen documentation"
+        git push origin gh-pages --force
