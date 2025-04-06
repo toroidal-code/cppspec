@@ -1,0 +1,27 @@
+<map id="include/description.hpp" name="include/description.hpp">
+<area shape="rect" id="Node000001" title="Defines the Description class and associated functions." alt="" coords="369,5,543,31"/>
+<area shape="rect" id="Node000002" href="$class__description_8hpp.html" title=" " alt="" coords="5,262,219,287"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="426,40,364,81,225,185,127,264,124,260,222,181,361,76,423,36"/>
+<area shape="rect" id="Node000004" href="$formatters__base_8hpp.html" title=" " alt="" coords="375,79,537,119"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="459,44,459,79,453,79,453,44"/>
+<area shape="rect" id="Node000010" href="$runner_8hpp.html" title=" " alt="" coords="665,174,807,199"/>
+<area shape="poly" id="edge15_Node000001_Node000010" title=" " alt="" coords="488,35,718,172,715,176,486,40"/>
+<area shape="rect" id="Node000003" href="$cppspec_8hpp.html" title="The core header file for Cppspec." alt="" coords="216,416,371,441"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="138,294,281,414,278,418,134,298"/>
+<area shape="rect" id="Node000005" href="$junit__xml_8hpp_source.html" title=" " alt="" coords="243,255,386,295"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="372,127,343,144,321,168,312,189,309,212,313,254,307,255,303,212,307,188,316,165,340,140,369,122"/>
+<area shape="rect" id="Node000007" href="$tap_8hpp.html" title=" " alt="" coords="331,167,474,207"/>
+<area shape="poly" id="edge7_Node000004_Node000007" title=" " alt="" coords="439,132,417,168,412,165,435,129"/>
+<area shape="rect" id="Node000008" href="$verbose_8hpp.html" title=" " alt="" coords="498,167,641,207"/>
+<area shape="poly" id="edge9_Node000004_Node000008" title=" " alt="" coords="493,125,546,164,543,169,490,129"/>
+<area shape="poly" id="edge13_Node000004_Node000010" title=" " alt="" coords="531,120,700,171,698,177,530,125"/>
+<area shape="rect" id="Node000006" href="$argparse_8hpp_source.html" title=" " alt="" coords="370,343,529,368"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="360,299,431,340,428,345,358,304"/>
+<area shape="poly" id="edge6_Node000006_Node000003" title=" " alt="" coords="413,376,320,418,318,413,411,371"/>
+<area shape="poly" id="edge8_Node000007_Node000006" title=" " alt="" coords="414,219,449,342,444,343,409,221"/>
+<area shape="poly" id="edge10_Node000008_Node000006" title=" " alt="" coords="539,218,503,256,475,303,456,343,452,341,470,301,499,253,535,214"/>
+<area shape="rect" id="Node000009" href="$progress_8hpp.html" title=" " alt="" coords="513,255,655,295"/>
+<area shape="poly" id="edge11_Node000008_Node000009" title=" " alt="" coords="578,220,583,254,578,255,572,221"/>
+<area shape="poly" id="edge12_Node000009_Node000006" title=" " alt="" coords="541,304,471,345,468,340,538,299"/>
+<area shape="poly" id="edge14_Node000010_Node000006" title=" " alt="" coords="729,213,706,256,690,278,670,297,637,317,601,332,529,349,528,344,599,326,634,312,666,293,686,274,702,253,724,211"/>
+</map>

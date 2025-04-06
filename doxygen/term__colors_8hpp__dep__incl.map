@@ -1,0 +1,26 @@
+<map id="include/formatters/term_colors.hpp" name="include/formatters/term_colors.hpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="241,5,384,45"/>
+<area shape="rect" id="Node000002" href="$formatters__base_8hpp.html" title=" " alt="" coords="173,93,335,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="294,58,269,95,265,92,290,55"/>
+<area shape="rect" id="Node000006" href="$tap_8hpp.html" title=" " alt="" coords="32,181,175,221"/>
+<area shape="poly" id="edge14_Node000001_Node000006" title=" " alt="" coords="235,53,198,71,164,95,146,116,131,139,112,182,107,180,127,136,142,113,160,91,195,66,233,48"/>
+<area shape="rect" id="Node000007" href="$verbose_8hpp.html" title=" " alt="" coords="301,181,444,221"/>
+<area shape="poly" id="edge15_Node000001_Node000007" title=" " alt="" coords="333,56,350,92,364,140,372,181,367,182,359,141,345,94,328,58"/>
+<area shape="rect" id="Node000008" href="$progress_8hpp.html" title=" " alt="" coords="411,269,553,309"/>
+<area shape="poly" id="edge13_Node000001_Node000008" title=" " alt="" coords="349,52,406,107,435,142,459,180,476,227,483,269,478,270,471,228,454,183,430,145,402,111,345,56"/>
+<area shape="rect" id="Node000003" href="$junit__xml_8hpp_source.html" title=" " alt="" coords="25,269,168,309"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="241,147,218,185,188,223,159,250,129,271,126,267,155,246,184,220,213,182,236,144"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="211,142,138,184,135,179,208,138"/>
+<area shape="poly" id="edge7_Node000002_Node000007" title=" " alt="" coords="293,139,348,179,345,183,290,144"/>
+<area shape="rect" id="Node000009" href="$runner_8hpp.html" title=" " alt="" coords="192,277,335,302"/>
+<area shape="poly" id="edge11_Node000002_Node000009" title=" " alt="" coords="258,147,265,276,260,276,253,147"/>
+<area shape="rect" id="Node000004" href="$argparse_8hpp_source.html" title=" " alt="" coords="184,357,343,383"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="150,313,240,355,238,360,148,318"/>
+<area shape="rect" id="Node000005" href="$cppspec_8hpp.html" title="The core header file for Cppspec." alt="" coords="186,431,341,456"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="266,396,266,431,261,431,261,396"/>
+<area shape="poly" id="edge6_Node000006_Node000004" title=" " alt="" coords="58,231,35,248,16,268,8,288,9,298,15,308,40,325,82,339,184,358,183,363,81,344,38,330,11,311,4,299,3,288,12,265,31,244,55,227"/>
+<area shape="poly" id="edge8_Node000007_Node000004" title=" " alt="" coords="374,236,366,273,350,311,321,340,290,359,287,355,318,336,345,308,361,272,368,235"/>
+<area shape="poly" id="edge9_Node000007_Node000008" title=" " alt="" coords="409,228,459,267,456,271,406,232"/>
+<area shape="poly" id="edge10_Node000008_Node000004" title=" " alt="" coords="418,316,297,360,295,355,416,311"/>
+<area shape="poly" id="edge12_Node000009_Node000004" title=" " alt="" coords="266,316,266,357,261,357,261,316"/>
+</map>

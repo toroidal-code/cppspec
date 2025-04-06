@@ -1,0 +1,10 @@
+<map id="include/formatters/verbose.hpp" name="include/formatters/verbose.hpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="13,5,156,45"/>
+<area shape="rect" id="Node000002" href="$argparse_8hpp_source.html" title=" " alt="" coords="5,181,164,207"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="71,59,59,94,57,113,59,133,68,158,80,180,75,182,63,160,54,134,51,113,54,93,66,57"/>
+<area shape="rect" id="Node000004" href="$progress_8hpp.html" title=" " alt="" coords="68,93,211,133"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="106,56,129,92,125,95,102,58"/>
+<area shape="rect" id="Node000003" href="$cppspec_8hpp.html" title="The core header file for Cppspec." alt="" coords="7,255,162,280"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="87,220,87,255,82,255,82,220"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="120,146,95,183,91,179,116,143"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" href="$classCppSpec_1_1Formatters_1_1BaseFormatter.html" title=" " alt="" coords="5,99,163,139"/>
+<area shape="rect" id="Node000001" href="$classCppSpec_1_1Formatters_1_1JUnitXML.html" title=" " alt="" coords="227,5,384,45"/>
+<area shape="poly" id="edge3_Node000000_Node000001" title=" " alt="" coords="134,90,210,55,241,43,243,48,212,60,136,95"/>
+<area shape="rect" id="Node000002" href="$classCppSpec_1_1Formatters_1_1Progress.html" title=" " alt="" coords="227,69,384,109"/>
+<area shape="poly" id="edge4_Node000000_Node000002" title=" " alt="" coords="176,104,226,97,227,102,177,109"/>
+<area shape="rect" id="Node000003" href="$structCppSpec_1_1Formatters_1_1TAP.html" title=" " alt="" coords="211,134,400,159"/>
+<area shape="poly" id="edge5_Node000000_Node000003" title=" " alt="" coords="177,128,211,132,210,137,176,133"/>
+<area shape="rect" id="Node000004" href="$classCppSpec_1_1Formatters_1_1Verbose.html" title=" " alt="" coords="227,184,384,224"/>
+<area shape="poly" id="edge6_Node000000_Node000004" title=" " alt="" coords="146,142,212,168,247,181,245,186,210,173,144,146"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="CppSpec::LetBase" name="CppSpec::LetBase">
+<area shape="rect" id="Node000001" title="Base class for lets to abstract away the template arguments." alt="" coords="8,5,147,31"/>
+<area shape="rect" id="Node000002" href="$classCppSpec_1_1Let.html" title="A container that memoizes the result of a block in `it&#39;s." alt="" coords="5,79,149,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="80,44,80,79,75,79,75,44"/>
+</map>

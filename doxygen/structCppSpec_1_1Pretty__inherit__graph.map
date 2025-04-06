@@ -1,0 +1,70 @@
+<map id="CppSpec::Pretty" name="CppSpec::Pretty">
+<area shape="rect" id="Node000001" title="A helper base class that assists in pretty&#45;printing various objects." alt="" coords="5,821,131,846"/>
+<area shape="rect" id="Node000002" href="$classCppSpec_1_1Matchers_1_1MatcherBase.html" title=" " alt="" coords="194,261,357,301"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="75,807,117,679,176,510,263,300,268,302,181,512,122,680,80,808"/>
+<area shape="rect" id="Node000012" href="$classCppSpec_1_1Matchers_1_1MatcherBase.html" title=" " alt="" coords="196,523,355,578"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="75,807,112,718,141,666,177,617,200,595,225,576,228,580,203,599,181,620,146,669,117,721,80,809"/>
+<area shape="rect" id="Node000014" href="$classCppSpec_1_1Matchers_1_1MatcherBase.html" title=" " alt="" coords="193,631,357,671"/>
+<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="81,807,120,750,147,719,177,691,216,668,218,673,180,695,151,723,124,754,86,810"/>
+<area shape="rect" id="Node000017" href="$classCppSpec_1_1Matchers_1_1MatcherBase.html" title=" " alt="" coords="179,705,372,745"/>
+<area shape="poly" id="edge17_Node000001_Node000017" title=" " alt="" coords="94,810,132,782,177,755,205,743,207,748,180,760,135,786,97,814"/>
+<area shape="rect" id="Node000020" href="$classCppSpec_1_1Matchers_1_1MatcherBase.html" title=" " alt="" coords="196,770,355,825"/>
+<area shape="poly" id="edge20_Node000001_Node000020" title=" " alt="" coords="144,818,195,808,196,814,144,823"/>
+<area shape="rect" id="Node000022" href="$classCppSpec_1_1Matchers_1_1MatcherBase.html" title=" " alt="" coords="179,849,371,889"/>
+<area shape="poly" id="edge22_Node000001_Node000022" title=" " alt="" coords="144,844,180,850,179,855,144,849"/>
+<area shape="rect" id="Node000025" href="$classCppSpec_1_1Matchers_1_1MatcherBase.html" title=" " alt="" coords="195,965,356,1005"/>
+<area shape="poly" id="edge25_Node000001_Node000025" title=" " alt="" coords="99,852,249,963,245,967,96,856"/>
+<area shape="rect" id="Node000029" href="$classCppSpec_1_1Matchers_1_1MatcherBase.html" title=" " alt="" coords="196,1058,355,1113"/>
+<area shape="poly" id="edge29_Node000001_Node000029" title=" " alt="" coords="83,858,121,932,149,975,181,1016,204,1037,229,1056,226,1060,200,1041,177,1019,144,979,117,935,78,860"/>
+<area shape="rect" id="Node000032" href="$classCppSpec_1_1Matchers_1_1MatcherBase.html" title=" " alt="" coords="184,1137,367,1177"/>
+<area shape="poly" id="edge32_Node000001_Node000032" title=" " alt="" coords="74,860,83,915,101,985,115,1023,133,1059,154,1093,180,1123,196,1135,193,1139,177,1127,150,1097,128,1062,110,1025,96,987,78,916,69,861"/>
+<area shape="rect" id="Node000034" href="$classCppSpec_1_1Matchers_1_1MatcherBase.html" title="the base class for all Matcher classes and objects" alt="" coords="192,1202,359,1257"/>
+<area shape="poly" id="edge34_Node000001_Node000034" title=" " alt="" coords="73,859,79,924,95,1011,109,1058,127,1105,151,1148,181,1188,195,1200,191,1204,177,1191,147,1151,122,1107,104,1060,90,1013,73,925,67,860"/>
+<area shape="rect" id="Node000003" href="$classCppSpec_1_1Matchers_1_1BeBetween.html" title=" " alt="" coords="438,5,593,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="287,247,307,204,335,152,373,100,418,55,438,43,441,48,422,59,377,104,340,155,312,206,292,249"/>
+<area shape="rect" id="Node000004" href="$classCppSpec_1_1Matchers_1_1BeGreaterThan.html" title=" " alt="" coords="428,69,603,109"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="295,248,346,183,381,149,419,119,441,107,444,112,421,124,384,153,350,187,299,252"/>
+<area shape="rect" id="Node000005" href="$classCppSpec_1_1Matchers_1_1BeLessThan.html" title=" " alt="" coords="438,133,593,173"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="312,251,361,216,419,183,447,171,449,176,421,188,364,221,315,255"/>
+<area shape="rect" id="Node000006" href="$classCppSpec_1_1Matchers_1_1BeWithin.html" title=" " alt="" coords="438,197,593,237"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="364,255,439,235,441,240,365,260"/>
+<area shape="rect" id="Node000007" href="$classCppSpec_1_1Matchers_1_1ContainBase.html" title=" " alt="" coords="427,261,604,301"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="371,279,426,279,426,284,371,284"/>
+<area shape="rect" id="Node000009" href="$classCppSpec_1_1Matchers_1_1EndWith.html" title=" " alt="" coords="438,325,593,365"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="365,302,441,323,439,328,364,308"/>
+<area shape="rect" id="Node000010" href="$classCppSpec_1_1Matchers_1_1Equal.html" title="The equal matcher." alt="" coords="438,389,593,429"/>
+<area shape="poly" id="edge9_Node000002_Node000010" title=" " alt="" coords="315,308,364,342,421,375,449,387,447,392,419,380,361,346,312,312"/>
+<area shape="rect" id="Node000011" href="$classCppSpec_1_1Matchers_1_1StartWith.html" title=" " alt="" coords="438,453,593,493"/>
+<area shape="poly" id="edge10_Node000002_Node000011" title=" " alt="" coords="299,311,350,376,384,410,421,439,444,451,441,456,419,444,381,414,346,379,295,314"/>
+<area shape="rect" id="Node000008" href="$classCppSpec_1_1Matchers_1_1Contain.html" title=" " alt="" coords="679,261,834,301"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="618,279,679,279,679,284,618,284"/>
+<area shape="rect" id="Node000013" href="$classCppSpec_1_1Matchers_1_1BeNullptr.html" title=" " alt="" coords="438,517,593,557"/>
+<area shape="poly" id="edge12_Node000012_Node000013" title=" " alt="" coords="369,543,438,539,438,544,369,548"/>
+<area shape="rect" id="Node000015" href="$classCppSpec_1_1Matchers_1_1ContainBase.html" title=" " alt="" coords="426,581,605,621"/>
+<area shape="poly" id="edge14_Node000014_Node000015" title=" " alt="" coords="371,628,425,617,426,622,372,634"/>
+<area shape="rect" id="Node000016" href="$classCppSpec_1_1Matchers_1_1Contain_3_01A_00_01U_00_01U_01_4.html" title=" " alt="" coords="679,581,834,621"/>
+<area shape="poly" id="edge15_Node000015_Node000016" title=" " alt="" coords="619,608,679,607,679,612,619,613"/>
+<area shape="poly" id="edge16_Node000015_Node000016" title=" " alt="" coords="619,590,679,590,679,596,619,595"/>
+<area shape="rect" id="Node000018" href="$classCppSpec_1_1Matchers_1_1Fail.html" title=" " alt="" coords="438,645,593,685"/>
+<area shape="poly" id="edge18_Node000017_Node000018" title=" " alt="" coords="369,699,437,682,438,687,370,704"/>
+<area shape="rect" id="Node000019" href="$classCppSpec_1_1Matchers_1_1Throw.html" title=" " alt="" coords="438,709,593,749"/>
+<area shape="poly" id="edge19_Node000017_Node000019" title=" " alt="" coords="386,725,438,725,438,731,386,730"/>
+<area shape="rect" id="Node000021" href="$classCppSpec_1_1Matchers_1_1FailWith.html" title=" " alt="" coords="438,773,593,813"/>
+<area shape="poly" id="edge21_Node000020_Node000021" title=" " alt="" coords="369,793,438,792,438,797,369,798"/>
+<area shape="rect" id="Node000023" href="$classCppSpec_1_1Matchers_1_1HaveError.html" title=" " alt="" coords="438,837,593,877"/>
+<area shape="poly" id="edge23_Node000022_Node000023" title=" " alt="" coords="385,861,438,859,438,864,385,867"/>
+<area shape="rect" id="Node000024" href="$classCppSpec_1_1Matchers_1_1HaveValue.html" title=" " alt="" coords="438,901,593,941"/>
+<area shape="poly" id="edge24_Node000022_Node000024" title=" " alt="" coords="382,890,438,902,437,907,381,895"/>
+<area shape="rect" id="Node000026" href="$classCppSpec_1_1Matchers_1_1Equal.html" title=" " alt="" coords="438,965,593,1005"/>
+<area shape="poly" id="edge26_Node000025_Node000026" title=" " alt="" coords="370,983,438,983,438,988,370,988"/>
+<area shape="rect" id="Node000028" href="$classCppSpec_1_1Matchers_1_1HaveErrorEqualTo.html" title=" " alt="" coords="420,1029,611,1069"/>
+<area shape="poly" id="edge28_Node000025_Node000028" title=" " alt="" coords="365,1006,441,1027,439,1032,364,1012"/>
+<area shape="rect" id="Node000027" href="$classCppSpec_1_1Matchers_1_1HaveValueEqualTo.html" title=" " alt="" coords="659,965,855,1005"/>
+<area shape="poly" id="edge27_Node000026_Node000027" title=" " alt="" coords="606,983,658,983,658,988,606,988"/>
+<area shape="rect" id="Node000030" href="$classCppSpec_1_1Matchers_1_1Match.html" title=" " alt="" coords="438,1093,593,1133"/>
+<area shape="poly" id="edge30_Node000029_Node000030" title=" " alt="" coords="369,1094,438,1102,437,1107,368,1099"/>
+<area shape="rect" id="Node000031" href="$classCppSpec_1_1Matchers_1_1MatchPartial.html" title=" " alt="" coords="438,1157,593,1197"/>
+<area shape="poly" id="edge31_Node000029_Node000031" title=" " alt="" coords="355,1115,421,1143,454,1155,452,1160,419,1148,353,1120"/>
+<area shape="rect" id="Node000033" href="$classCppSpec_1_1Matchers_1_1Satisfy.html" title=" " alt="" coords="438,1221,593,1261"/>
+<area shape="poly" id="edge33_Node000032_Node000033" title=" " alt="" coords="349,1179,373,1188,421,1207,455,1219,453,1224,419,1212,371,1193,347,1184"/>
+</map>

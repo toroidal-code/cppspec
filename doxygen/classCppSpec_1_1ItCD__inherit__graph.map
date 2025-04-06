@@ -1,0 +1,7 @@
+<map id="CppSpec::ItCD&lt; T &gt;" name="CppSpec::ItCD&lt; T &gt;">
+<area shape="rect" id="Node000001" title="An it embedded in a ClassDescription." alt="" coords="5,152,157,177"/>
+<area shape="rect" id="Node000002" href="$classCppSpec_1_1ItBase.html" title="Base class for it expressions." alt="" coords="18,79,145,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="84,118,84,152,79,152,79,118"/>
+<area shape="rect" id="Node000003" href="$classCppSpec_1_1Runnable.html" title="Base class for all objects in the execution tree." alt="" coords="8,5,155,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="84,44,84,79,79,79,79,44"/>
+</map>

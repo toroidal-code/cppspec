@@ -1,0 +1,10 @@
+<map id="CppSpec::Matchers::Contain&lt; A, U, U &gt;" name="CppSpec::Matchers::Contain&lt; A, U, U &gt;">
+<area shape="rect" id="Node000001" title=" " alt="" coords="17,255,172,295"/>
+<area shape="rect" id="Node000002" href="$classCppSpec_1_1Matchers_1_1ContainBase.html" title=" " alt="" coords="5,167,184,207"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="89,220,90,254,84,255,83,220"/>
+<area shape="poly" id="edge4_Node000001_Node000002" title=" " alt="" coords="106,220,105,255,100,254,101,220"/>
+<area shape="rect" id="Node000003" href="$classCppSpec_1_1Matchers_1_1MatcherBase.html" title=" " alt="" coords="13,79,177,119"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="97,133,97,166,92,166,92,133"/>
+<area shape="rect" id="Node000004" href="$structCppSpec_1_1Pretty.html" title="A helper base class that assists in pretty&#45;printing various objects." alt="" coords="32,5,157,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="97,44,97,79,92,79,92,44"/>
+</map>

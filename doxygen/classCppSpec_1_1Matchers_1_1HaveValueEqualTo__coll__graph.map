@@ -1,0 +1,11 @@
+<map id="CppSpec::Matchers::HaveValueEqualTo&lt; T, E &gt;" name="CppSpec::Matchers::HaveValueEqualTo&lt; T, E &gt;">
+<area shape="rect" id="Node000001" title=" " alt="" coords="63,272,259,312"/>
+<area shape="rect" id="Node000002" href="$classCppSpec_1_1Matchers_1_1Equal.html" title=" " alt="" coords="84,183,239,223"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="164,237,164,272,159,272,159,237"/>
+<area shape="rect" id="Node000003" href="$classCppSpec_1_1Matchers_1_1MatcherBase.html" title=" " alt="" coords="81,93,242,133"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="164,147,164,183,159,183,159,147"/>
+<area shape="rect" id="Node000004" href="$structCppSpec_1_1Pretty.html" title="A helper base class that assists in pretty&#45;printing various objects." alt="" coords="5,5,131,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="91,38,144,91,140,95,87,42"/>
+<area shape="rect" id="Node000005" href="$classCppSpec_1_1Expectation.html" title=" " alt="" coords="155,5,357,31"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="237,42,182,95,179,91,233,38"/>
+</map>

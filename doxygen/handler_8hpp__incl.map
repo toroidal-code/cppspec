@@ -1,0 +1,20 @@
+<map id="include/expectations/handler.hpp" name="include/expectations/handler.hpp">
+<area shape="rect" id="Node000001" title="Contains the primary handlers for running Matchers." alt="" coords="51,5,209,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,93,92,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="112,47,73,85,69,82,108,44"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="50,167,109,192"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="128,46,106,120,92,155,87,153,101,118,123,45"/>
+<area shape="rect" id="Node000004" href="$result_8hpp.html" title=" " alt="" coords="219,93,305,119"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="163,43,232,84,229,88,160,48"/>
+<area shape="poly" id="edge8_Node000004_Node000003" title=" " alt="" coords="234,121,123,164,121,159,232,116"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="133,167,205,192"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="249,121,196,160,193,156,245,117"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="229,167,295,192"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="265,119,265,153,259,153,259,119"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="320,167,444,192"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="283,116,352,157,349,162,280,121"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="469,167,543,192"/>
+<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="302,116,456,161,455,166,300,121"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="568,167,628,192"/>
+<area shape="poly" id="edge9_Node000004_Node000009" title=" " alt="" coords="306,113,555,164,554,169,305,118"/>
+</map>
