@@ -121,8 +121,9 @@ if(CPPSPEC_BUILD_DOCS)
     endif()
 
     FetchContent_Declare(doxygen-awesome-css
-      URL https://github.com/jothepro/doxygen-awesome-css/archive/refs/tags/v2.2.1.tar.gz
-      URL_HASH MD5=340d3a206794ac01a91791c2a513991f
+      GIT_REPOSITORY https://github.com/jothepro/doxygen-awesome-css/
+      GIT_TAG v2.3.4
+      GIT_SHALLOW 1
     )
     FetchContent_MakeAvailable(doxygen-awesome-css)
 
