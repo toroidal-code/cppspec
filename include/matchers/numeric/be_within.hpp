@@ -8,8 +8,8 @@ class BeWithin;
 
 template <typename A, typename E>
 class BeWithinHelper {
-  E tolerance;
   Expectation<A>& expectation;
+  E tolerance;
   std::string msg;
 
  public:
@@ -23,8 +23,8 @@ class BeWithinHelper {
 
 template <typename A, typename E>
 class BeWithin : public MatcherBase<A, E> {
-  std::string unit;
   E tolerance;
+  std::string unit;
 
  public:
   BeWithin(Expectation<A>& expectation, E tolerance, E value, std::string_view unit)
