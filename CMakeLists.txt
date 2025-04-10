@@ -65,7 +65,7 @@ function(add_spec source_file args)
     CXX_STANDARD 23
     CXX_STANDARD_REQUIRED YES
   )
-  add_test(NAME ${spec_name} COMMAND ${spec_name} --verbose ${args})
+  add_test(NAME ${spec_name} COMMAND ${CPPSPEC_SPEC_RUNNER} ${spec_name} --verbose ${args})
 endfunction(add_spec)
 
 # Discover Specs
