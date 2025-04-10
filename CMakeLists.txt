@@ -83,6 +83,7 @@ function(discover_specs spec_folder)
     cmake_path(GET spec PARENT_PATH spec_folder)
 
     if (${output_junit})
+      file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/results/${spec_folder})
       add_spec(${spec} "--output-junit;${CMAKE_CURRENT_BINARY_DIR}/results/${spec_folder}/${spec_name}.xml")
     else()
       add_spec(${spec} "")
