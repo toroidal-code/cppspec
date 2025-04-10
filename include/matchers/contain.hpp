@@ -48,8 +48,8 @@ template <typename A, typename E, typename U>
 bool ContainBase<A, E, U>::actual_collection_includes(U expected_item) {
   auto actual = this->actual();
   auto last = *(actual.begin());
-  static_assert(Util::verbose_assert<std::is_same_v<decltype(last), U>>::value,
-                "Expected item is not the same type as what is inside container.");
+  static_assert(Util::verbose_assert<std::is_convertible_v<U, decltype(last)>>::value,
+                "Expected item is not comparable against what is inside container.");
   return std::ranges::find(actual, expected_item) != actual.end();
 }
 
