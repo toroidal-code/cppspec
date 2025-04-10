@@ -107,13 +107,17 @@ inline void Progress::format(const ItBase& it) {
 }
 
 inline void Progress::format_failure_messages() {
-  if (!baked_failure_messages.empty()) {  // If we have any failures to format
-    for (const std::string& message : baked_failure_messages) {
-      out_stream << std::endl;
-      out_stream << message;  // separated by a blank line
-    }
-    baked_failure_messages.clear();  // Finally, clear the failures list.
+  if (baked_failure_messages.empty()) {
+    out_stream << std::endl;  // If we don't have any failures, just print a blank line.
+    return;
   }
+
+  // If we have any failures to format
+  for (const std::string& message : baked_failure_messages) {
+    out_stream << std::endl;
+    out_stream << message;  // separated by a blank line
+  }
+  baked_failure_messages.clear();  // Finally, clear the failures list.
 }
 
 static Progress progress;

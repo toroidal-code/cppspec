@@ -33,10 +33,21 @@
 #define after_each self.after_each
 #define let(name, body) auto(name) = self.let(body);
 
+#ifdef CPPSPEC_SEMIHOSTED
+#define CPPSPEC_MAIN(spec)                                                                              \
+  int main(int argc, char** const argv) {                                                               \
+    return CppSpec::parse(argc, argv).add_spec(spec).exec().is_success() ? EXIT_SUCCESS : EXIT_FAILURE; \
+  }                                                                                                     \
+  extern "C" int _getentropy(void* buf, size_t buflen) {                                                \
+    return -1;                                                                                          \
+  }
+
+#else
 #define CPPSPEC_MAIN(spec)                                                                              \
   int main(int argc, char** const argv) {                                                               \
     return CppSpec::parse(argc, argv).add_spec(spec).exec().is_success() ? EXIT_SUCCESS : EXIT_FAILURE; \
   }
+#endif
 
 #define CPPSPEC_SPEC(spec_name)                                                                              \
   int spec_name##_spec(int argc, char** const argv) {                                                        \

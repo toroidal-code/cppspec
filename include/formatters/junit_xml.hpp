@@ -1,10 +1,12 @@
 #pragma once
 #include <algorithm>
-#include <atomic>
 #include <chrono>
-#include <filesystem>
 #include <numeric>
 #include <string>
+
+#ifndef CPPSPEC_SEMIHOSTED
+#include <filesystem>
+#endif
 
 #include "formatters_base.hpp"
 #include "it_base.hpp"
@@ -116,7 +118,7 @@ struct TestSuite {
 
   [[nodiscard]] std::string to_xml() const {
     std::string timestamp_str;
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(CPPSPEC_SEMIHOSTED)
     // Cludge because macOS doesn't have std::chrono::current_zone() or std::chrono::zoned_time()
     std::time_t time_t_timestamp = std::chrono::system_clock::to_time_t(timestamp);
     std::tm localtime = *std::localtime(&time_t_timestamp);
@@ -142,7 +144,7 @@ struct TestSuite {
   }
 
   static size_t get_next_id() {
-    static std::atomic_size_t id_counter = 0;
+    static std::size_t id_counter = 0;
     return id_counter++;
   }
 };
@@ -198,8 +200,25 @@ class JUnitXML : public BaseFormatter {
 
   void format(const Description& description) override {
     if (test_suites.name.empty()) {
+#ifdef CPPSPEC_SEMIHOSTED
+      std::string file_path = description.get_location().file_name();
+      // remove leading folders
+      auto pos = file_path.find_last_of("/");
+      if (pos != std::string::npos) {
+        file_path = file_path.substr(pos + 1);
+      }
+
+      // remove extension
+      pos = file_path.find_last_of('.');
+      if (pos != std::string::npos) {
+        file_path = file_path.substr(0, pos);
+      }
+
+      test_suites.name = file_path;
+#else
       std::filesystem::path file_path = description.get_location().file_name();
       test_suites.name = file_path.stem().string();
+#endif
     }
     if (description.has_parent()) {
       return;
@@ -213,7 +232,7 @@ class JUnitXML : public BaseFormatter {
     std::forward_list<std::string> descriptions;
 
     descriptions.push_front(it.get_description());
-    for (const Description* parent = it.get_parent_as<Description>(); parent->has_parent();
+    for (const auto* parent = it.get_parent_as<Description>(); parent->has_parent();
          parent = parent->get_parent_as<Description>()) {
       descriptions.push_front(parent->get_description());
     }
