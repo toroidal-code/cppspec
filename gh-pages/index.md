@@ -5,29 +5,27 @@ profile: true
 
 C++Spec is a behavior-driven development library for C++ with an RSpec-inspired DSL. Designed with ease of use and rapid prototyping in mind, C++Spec offers an alternative to traditional testing libraries and frameworks. Some things that make C++Spec different than other testing libraries:
 
-- A clean, readable syntax
-- As few macros as possibles
+- A clean, readable syntax inspired by RSpec and Jasmine
 - Use as a library, not a framework
-- Easily extensible with custom matchers.
-- Support for the RSpec and Jasmine constructs you'd expect, such as describe, context, it, expect, and let.
-- Can automatically generate documentation strings based on your tests
-- Cross-platform with no need to change complex build settings.
+- Easily extensible with custom matchers
+- Support for the constructs you'd expect: `describe`, `context`, `it`, `expect`, and `let`
+- Can automatically generate description strings based on your tests
+- Cross-platform with no need to change complex build settings
 
 
 
 ## An example:
 
 ```cpp
-describe_a <std::list<int>>
-int_list_spec("A list of ints", {1,2,3}, $ {
+describe_a<std::list<int>> int_list_spec("A list of ints", {1, 2, 3}, $ {
   it("is doubly-linked", _ {
     expect(subject.front()).to_equal(1);
     expect(subject.back()).to_equal(3);
   });
 
-  it(_{ is_expected().to_include(6); });
-  it(_{ is_expected().to_include({1,2,3}); });
-  it(_{ is_expected().not_().to_include(4); });
+  it(_ { is_expected().to_contain(6); });
+  it(_ { is_expected().to_contain({1, 2, 3}); });
+  it(_ { is_expected().not_().to_contain(4); });
 });
 ```
 
@@ -36,28 +34,51 @@ int_list_spec("A list of ints", {1,2,3}, $ {
 <code>
 <span>A list of ints</span>
 <span class="sr">  is doubly-linked</span>
-<span class="s1">  should include 6</span>
-<span class="s1">expected [1,2,3] to include 6</span>
-<span class="sr">  should include 1, 2, and 3</span>
-<span class="sr">  should not include 4</span>
+<span class="s1">  is expected to contain 6</span>
+<span class="s1">expected [1,2,3] to contain 6</span>
+<span class="sr">  is expected to contain 1, 2, and 3</span>
+<span class="sr">  is expected not to contain 4</span>
 </code>
 </pre>
 
 ## Usage:
 
-Download the [header file]() and put it in your project either alongside your tests or in a folder that is in your `INCLUDE` path. Then, simply `#include "cppspec.hpp"` and you're ready to go. Both user and API documentation is available at the top of this page, and a tutorial will soon be available.
+The recommended approach is to integrate C++Spec as a subproject via CMake's `FetchContent`:
+
+```cmake
+FetchContent_Declare(
+  cppspec
+  GIT_REPOSITORY https://github.com/toroidal-code/cppspec
+  GIT_TAG        VERSION
+)
+FetchContent_MakeAvailable(cppspec)
+```
+
+Spec files are picked up automatically with:
+
+```cmake
+discover_specs(specs_folder)
+```
+
+This creates a separate CTest executable for every file ending in `_spec.cpp` in the given
+directory (recursive). Full documentation is available via the links at the top of this page.
 
 ## How does it work?
 
-C++Spec utilizes templated classes and functions as well as C++14 features in order to automatically deduce the types of your objects and construct your tests.
-
-Lambdas are passed to functions (such as `context` and `it`) in order to build an execution tree at runtime. A formatter object visits each node when the tests are run and prints the status of the tests and any errors.
+C++Spec uses templated classes and lambdas to build an execution tree at runtime. The `$`
+and `_` macros expand to lambda literals that receive a typed `self` reference, giving `it`,
+`expect`, `let`, and other DSL calls access to the enclosing description context. A formatter
+visits each node when the tests run and prints the status and any failures.
 
 ## I'm getting really long compiler errors. What's going on?
 
-Due to how the library is constructed with both templates and type-deduced (auto) lambdas, error messages from the compiler can be difficult to understand. Errors also tend to cascade and make the structures above the problem code also fail to compile, further obfuscating what's actually going wrong.
+Due to the library's use of templates and type-deduced lambdas, error messages from the
+compiler can be difficult to understand. Errors also tend to cascade, making structures above
+the problem code fail to compile and further obscuring what is actually wrong.
 
-Usually, the only information you want is the actual error, not all of the template substitution notes. You can reduce the template backtrace by using the flag `-ftemplate-backtrace-limit=1` when compiling with GCC and Clang.
+Usually the only information you need is the actual error itself, not the template
+substitution notes. You can reduce the template backtrace with the flag
+`-ftemplate-backtrace-limit=1` when compiling with GCC or Clang.
 
 
 

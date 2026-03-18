@@ -43,8 +43,7 @@ class Let : public LetBase {
   explicit Let(block_t body) noexcept : LetBase(), body(body) {}
 
   T* operator->() {
-    value();
-    return result.operator->();
+    return std::addressof(value());
   }
 
   T& operator*() & { return value(); }

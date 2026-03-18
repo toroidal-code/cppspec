@@ -31,21 +31,21 @@
 #define before_each self.before_each
 #define after_all self.after_all
 #define after_each self.after_each
-#define let(name, body) auto(name) = self.let(body); self.register_let(&(name));
+#define let(name, body) auto& name = self.let(body);
 
 #ifdef CPPSPEC_SEMIHOSTED
-#define CPPSPEC_MAIN(spec)                                                                              \
-  int main(int argc, char** const argv) {                                                               \
-    return CppSpec::parse(argc, argv).add_spec(spec).exec().is_success() ? EXIT_SUCCESS : EXIT_FAILURE; \
-  }                                                                                                     \
-  extern "C" int _getentropy(void* buf, size_t buflen) {                                                \
-    return -1;                                                                                          \
+#define CPPSPEC_MAIN(...)                                                                                    \
+  int main(int argc, char** const argv) {                                                                    \
+    return CppSpec::parse(argc, argv).add_specs(__VA_ARGS__).exec().is_success() ? EXIT_SUCCESS : EXIT_FAILURE; \
+  }                                                                                                          \
+  extern "C" int _getentropy(void* buf, size_t buflen) {                                                     \
+    return -1;                                                                                               \
   }
 
 #else
-#define CPPSPEC_MAIN(spec)                                                                              \
-  int main(int argc, char** const argv) {                                                               \
-    return CppSpec::parse(argc, argv).add_spec(spec).exec().is_success() ? EXIT_SUCCESS : EXIT_FAILURE; \
+#define CPPSPEC_MAIN(...)                                                                                    \
+  int main(int argc, char** const argv) {                                                                    \
+    return CppSpec::parse(argc, argv).add_specs(__VA_ARGS__).exec().is_success() ? EXIT_SUCCESS : EXIT_FAILURE; \
   }
 #endif
 

@@ -7,7 +7,7 @@
 namespace CppSpec::Matchers {
 
 template <class A>
-class BeNullptr : MatcherBase<A, std::nullptr_t> {
+class BeNullptr : public MatcherBase<A, std::nullptr_t> {
  public:
   explicit BeNullptr(Expectation<A>& expectation) : MatcherBase<A, std::nullptr_t>(expectation) {}
 

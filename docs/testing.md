@@ -1,31 +1,32 @@
 # Testing
 
-Running tests requires a `Description` object to provide the spec. Each spec is independent.
+Running tests requires one or more spec objects. Each spec is independent and self-contained.
 
-Tests are added to a `Runner` manually, which is passed a `Formatter` object on instantiation.
-
-Once a spec has been added to a `Runner`, the runner is then executed, returning a `Result` object.
-
-`Result` objects are able to be implicitly casted to `bool`, and can thus be used for returning
-directly from the `main` function.
-
+Specs are handed to `CppSpec::parse` which returns a runner. The runner executes all specs and
+returns a `Result`. Use `CPPSPEC_MAIN` for the common single-file case.
 
 ## Formatters
 
-There are a number of `Formatter` subclasses for printing to a terminal, including `Verbose`, `Progress`, and `TAP`. `Progress` prints out as a serious of periods, while `Verbose` prints a 
-fully RSpec-like list of tests, coloring them to show their status and result.
+There are a number of formatter options for printing to a terminal: `verbose`, `progress`, and
+`tap`. `progress` prints a series of dots while `verbose` prints a fully RSpec-like list of
+tests, colouring them to show their status and result.
+
+Pass a formatter to `CppSpec::parse`:
+
+```cpp
+CppSpec::parse(argc, argv, CppSpec::Formatters::verbose)
+```
 
 ## Example
 
-Here's an example spec and the associated runner:
-
 ```cpp
 #include <cstdlib>
+#include <cstring>
 #include "cppspec.hpp"
 
 describe strcmp_spec("int strcmp ( const char * str1, const char * str2 )", $ {
-  auto greater_than_zero = [](int i){return i>=0;};
-  auto less_than_zero = [](int i){return i<0;};
+  auto greater_than_zero = [](int i){ return i >= 0; };
+  auto less_than_zero    = [](int i){ return i < 0; };
 
   it("returns 0 only when strings are equal", _ {
     expect(strcmp("hello", "hello")).to_equal(0);
@@ -42,11 +43,5 @@ describe strcmp_spec("int strcmp ( const char * str1, const char * str2 )", $ {
   });
 });
 
-
-int main(){
-  return CppSpec::Runner(CppSpec::Formatters::verbose)
-             .add_spec(strcmp_spec)
-             .exec() ? EXIT_SUCCESS : EXIT_FAILURE;
-}
-
+CPPSPEC_MAIN(strcmp_spec);
 ```

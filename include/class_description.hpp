@@ -235,10 +235,10 @@ ClassContext<T>& Description::context(std::initializer_list<U> init_list,
  */
 template <class T>
 ItCD<T>& ClassDescription<T>::it(const char* name, std::function<void(ItCD<T>&)> block, std::source_location location) {
+  exec_before_eaches();
   auto* it = this->make_child<ItCD<T>>(location, this->subject, name, block);
   it->timed_run();
   exec_after_eaches();
-  exec_before_eaches();
   return *it;
 }
 
@@ -265,10 +265,10 @@ ItCD<T>& ClassDescription<T>::it(const char* name, std::function<void(ItCD<T>&)>
  */
 template <class T>
 ItCD<T>& ClassDescription<T>::it(std::function<void(ItCD<T>&)> block, std::source_location location) {
+  exec_before_eaches();
   auto* it = this->make_child<ItCD<T>>(location, this->subject, block);
   it->timed_run();
   exec_after_eaches();
-  exec_before_eaches();
   return *it;
 }
 

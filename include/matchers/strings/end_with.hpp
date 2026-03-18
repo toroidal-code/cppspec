@@ -18,7 +18,7 @@ class EndWith : public MatcherBase<A, E> {
   bool match() override {
     A& actual = this->actual();
     E& expected = this->expected();
-    return std::equal(expected.rbegin(), expected.rend(), actual.rbegin());
+    return std::equal(std::ranges::rbegin(expected), std::ranges::rend(expected), std::ranges::rbegin(actual));
   }
 };
 

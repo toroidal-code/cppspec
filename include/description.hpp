@@ -6,6 +6,8 @@
 
 #include <deque>
 #include <forward_list>
+#include <list>
+#include <memory>
 #include <source_location>
 #include <string>
 #include <utility>
@@ -30,6 +32,7 @@ class Description : public Runnable {
 
  private:
   Block block;
+  std::list<std::unique_ptr<LetBase>> owned_lets_;
 
  protected:
   std::string description;
@@ -96,9 +99,8 @@ class Description : public Runnable {
 
   /********* Let *********/
 
-  template <typename T>
-  auto let(T body) -> Let<decltype(body())>;
-  void register_let(LetBase* let) noexcept;
+  template <typename F>
+  auto& let(F factory);
   void reset_lets() noexcept;
 
   /********* Standard getters *********/
@@ -121,18 +123,18 @@ using Context = Description;
 /*========= Description::it =========*/
 
 inline ItD& Description::it(const char* description, ItD::Block block, std::source_location location) {
+  exec_before_eaches();
   auto* it = this->make_child<ItD>(location, description, block);
   it->timed_run();
   exec_after_eaches();
-  exec_before_eaches();
   return *it;
 }
 
 inline ItD& Description::it(ItD::Block block, std::source_location location) {
+  exec_before_eaches();
   auto* it = this->make_child<ItD>(location, block);
   it->timed_run();
   exec_after_eaches();
-  exec_before_eaches();
   return *it;
 }
 
@@ -150,15 +152,7 @@ inline Context& Description::context(const char* description, Block body, std::s
 /*========= Description:: each/alls =========*/
 
 inline void Description::before_each(VoidBlock b) {
-  before_eaches.push_back(b);
-
-  // Due to how lambdas and their contexts are passed around, we need to prime
-  // the environment by executing the before_each, so that when an 'it'
-  // declaration's lambda captures that env, it has the correct values for the
-  // variables. Truthfully, 'before_each' is a misnomer, as they are not
-  // getting executed directly before the lambda's execution as one might
-  // expect, but instead before the *next* lambda is declared.
-  b();
+  before_eaches.push_back(std::move(b));
 }
 
 inline void Description::before_all(VoidBlock b) {
@@ -189,25 +183,16 @@ inline void Description::exec_after_eaches() {
 
 /*========= Description::let =========*/
 
-/**
- * @brief Object generator for Let.
- *
- * @param body the body of the let statement
- *
- * @return a new Let object
- */
-template <typename T>
-auto Description::let(T block) -> Let<decltype(block())> {
-  return Let<decltype(block())>(block);
+template <typename F>
+auto& Description::let(F factory) {
+  using T = decltype(std::declval<F>()());
+  auto ptr = std::make_unique<Let<T>>(std::move(factory));
+  auto* raw = ptr.get();
+  owned_lets_.push_back(std::move(ptr));
+  lets.push_front(raw);
+  return *raw;
 }
 
-// Register a let variable for reset between examples.
-// Must be called with the address of the variable that holds the returned Let.
-inline void Description::register_let(LetBase* let) noexcept {
-  lets.push_front(let);
-}
-
-// TODO: Should this be protected?
 inline void Description::reset_lets() noexcept {
   // For every let in our list, reset it.
   for (auto& let : lets) {

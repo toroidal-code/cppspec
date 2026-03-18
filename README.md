@@ -12,32 +12,38 @@ See [http://cppspec.readthedocs.org/](http://cppspec.readthedocs.org/) for full 
 
 ## Requirements
 
-C++Spec requires a compiler and standard library with support for C++23: Currently tested and confirmed working are:
+C++Spec requires a compiler and standard library with C++23 support. Currently tested:
+
 - LLVM/Clang 18 (on Linux, macOS, and Windows)
 - GCC 14.2 (on Linux and macOS)
 - MSVC 19.43 (on Windows)
 - AppleClang 16 (on macOS)
 
-__Note:__ Only the tests require being compiled with C++23 support (`-std=c++23`). No other part of an existing project's build must be modified.
+__Note:__ Only spec files require C++23 (`-std=c++23`). No other part of an existing project's build needs modification.
 
 ## Usage
-The recommended usage is as a subproject integrated into your build system. For CMake this would look something like below:
+
+The recommended approach is to integrate C++Spec as a CMake subproject:
+
 ```cmake
 FetchContent_Declare(
-  c++spec
+  cppspec
   GIT_REPOSITORY https://github.com/toroidal-code/cppspec
   GIT_TAG        VERSION
 )
+FetchContent_MakeAvailable(cppspec)
 
 # Or using CPM
 CPMAddPackage("gh:toroidal-code/cppspec@VERSION")
 ```
 
-Specs can then be automatically added as targets with
+Spec files are picked up automatically with:
+
 ```cmake
 discover_specs(specs_folder)
 ```
-This will create a separate executable for every file ending in `_spec.cpp` in the given directory (recursive) and add them to CTest.
+
+This creates a separate CTest executable for every file ending in `_spec.cpp` in the given directory (recursive).
 
 ## Introduction
 
@@ -49,18 +55,18 @@ If you've ever used RSpec or Jasmine, chances are you'll be familiar with C++Spe
 
 describe order_spec("Order", $ {
   it("sums the prices of its line items", _ {
-    Order order();
+    Order order;
 
-	order.add_entry(LineItem().set_item(Item()
-	  .set_price(Money(1.11, Money::USD))
-	));
+    order.add_entry(LineItem().set_item(Item()
+      .set_price(Money(1.11, Money::USD))
+    ));
 
-	order.add_entry(LineItem().set_item(Item()
-	  .set_price(Money(1.11, Money::USD))
-	  .set_quantity(2)
-	));
+    order.add_entry(LineItem().set_item(Item()
+      .set_price(Money(1.11, Money::USD))
+      .set_quantity(2)
+    ));
 
-	expect(order.total()).to_equal(Money(5.55, Money::USD));
+    expect(order.total()).to_equal(Money(5.55, Money::USD));
   });
 });
 

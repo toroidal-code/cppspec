@@ -8,7 +8,7 @@
 namespace CppSpec::Matchers {
 
 template <typename A>
-class Match : MatcherBase<A, std::regex> {
+class Match : public MatcherBase<A, std::regex> {
  public:
   explicit Match(Expectation<A>& expectation, std::string expected)
       : MatcherBase<A, std::regex>(expectation, std::regex(expected)) {}

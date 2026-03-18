@@ -2,61 +2,121 @@ Every test suite begins with either `describe` or `describe_a`.
 
 # describe
 
-Describes have the form of:
+`describe` creates a named test suite:
 
 ```cpp
-describe example_spec("An example", $ { });
+describe example_spec("An example", $ {
+  // it blocks and hooks go here
+});
 ```
 
-Each `describe` is a global instance of the `Description` class, the name of the spec being the name of the global variable that the test is contained in.
+Each `describe` is a global instance of `Description`. The `$` macro expands to
+`[](auto& self) -> void`. Everything inside the block (`it`, `context`, `before_each`, etc.)
+resolves through `self` automatically via macros, so you write them unqualified.
 
 !!! important
 
-    Take note of the `$`. This is used whenever you write a `describe` or a `describe_a`.
+    Use `$` for `describe` and `context` bodies. Use `_` for `it` bodies.
 
-
-In conventional C++14, after macro-expansion the above snippet would be written as:
+In expanded form, the above is equivalent to:
 
 ```cpp
-Description example_spec("An example", [](&self auto) { });
+Description example_spec("An example", [](auto& self) -> void { });
 ```
 
-The `Description` constructor takes two arguments: a string, and a lambda. For simplicity's sake, any lambdas passed to any C++Spec functions are referred to as "blocks", as the capture-list and arguments of the lambda are effectively never seen.
+State shared between hooks and examples can live as a local variable inside the `$` block or
+as a file-scope variable in an anonymous namespace:
+
+```cpp
+namespace { int n = 0; }
+
+describe counter_spec("Counter", $ {
+  before_each([] { n = 0; });
+
+  it("starts at zero", _ {
+    expect(n).to_equal(0);
+  });
+});
+```
 
 # describe_a
 
-A `describe_a` is more complex than `describe`.
-
-Unlike `describe` which creates instances of `Description`, `describe_a` creates instances of `ClassDescription`. `ClassDescription` is a template class, where the template's type variable is used to specialize the description and create a subject available to all statements in the description. The subject is available via the `subject` keyword.
+`describe_a<T>` creates a typed test suite with a *subject* — an instance of `T` available
+to all examples. The template parameter determines the subject type.
 
 ```cpp
 template <typename T>
 class ClassDescription : public Description { ... };
 ```
 
-Also unlike `describe`, there are two forms of `describe_a`: one where the subject is explicit, and another where it is implied.
+## Implicit subject
 
-## Explicit subject describe_a
-
-An explicit describe_a has the subject passed into it as the first argument if there is no provided description, or after the description if there is one.
-
-For example:
+When no value is provided, `T` is default-constructed:
 
 ```cpp
-describe_a <TestClass> tc_spec(TestClass(arg1, arg2), $ { ... });
+describe_a<MyClass> my_spec("MyClass", $ {
+  it("starts in a valid state", _ {
+    expect(subject.is_valid()).to_be_true();
+  });
+});
 ```
 
-and
+## Explicit subject
+
+Pass a value after the description string:
 
 ```cpp
-describe_an <AnotherTestClass> atc_spec
-    ("The class AnotherTest class", AnotherTestClass(args...), $ { ... });
+describe_a<Point> point_spec("Point{3,4}", Point{3.0, 4.0}, $ {
+  it("has length 5", _ {
+    expect(subject.length()).to_be_within(1e-9).of(5.0);
+  });
+});
 ```
 
-## Implied subject describe_a
+For containers, an initializer list is also accepted:
 
 ```cpp
-describe_a <YetAnotherTestClass> yatc_spec( $ { ... });
+describe_a<std::vector<int>> vec_spec({1, 2, 3}, $ {
+  it("contains 2", _ {
+    expect(subject).to_contain(2);
+  });
+});
 ```
 
-With an implied subject, the default constructor of the templated class is called to create the subject.
+## Accessing the subject
+
+Inside a `describe_a<T>` block there are two ways to access the subject:
+
+**`subject` keyword** — available inside any `it` body at any nesting depth:
+
+```cpp
+it("accesses the subject", _ {
+  expect(subject.value()).to_equal(42);
+});
+```
+
+**`is_expected()`** — shorthand for `expect(subject)`, reads naturally when asserting on
+the subject itself:
+
+```cpp
+it("has the right value", _ {
+  is_expected().to_equal(MyClass{42});
+});
+```
+
+## describe_an
+
+`describe_an` is an alias for `describe_a` for grammatical convenience:
+
+```cpp
+describe_an<Animal> animal_spec("Animal", $ { ... });
+```
+
+# Entry point
+
+Each spec file needs an entry point:
+
+```cpp
+CPPSPEC_MAIN(my_spec);                       // single suite
+CPPSPEC_MAIN(spec_a, spec_b, spec_c);        // multiple suites
+```
