@@ -31,7 +31,7 @@
 #define before_each self.before_each
 #define after_all self.after_all
 #define after_each self.after_each
-#define let(name, body) auto(name) = self.let(body);
+#define let(name, body) auto(name) = self.let(body); self.register_let(&(name));
 
 #ifdef CPPSPEC_SEMIHOSTED
 #define CPPSPEC_MAIN(spec)                                                                              \

@@ -98,6 +98,7 @@ class Description : public Runnable {
 
   template <typename T>
   auto let(T body) -> Let<decltype(body())>;
+  void register_let(LetBase* let) noexcept;
   void reset_lets() noexcept;
 
   /********* Standard getters *********/
@@ -197,15 +198,13 @@ inline void Description::exec_after_eaches() {
  */
 template <typename T>
 auto Description::let(T block) -> Let<decltype(block())> {
-  // In reality, this gets inlined due to the fact that it's
-  // a templated function. Otherwise we wouldn't be able to
-  // add the address of the Let, return the Let by value,
-  // and still be able to do a valid deference of the Let
-  // pointer later on when we needed to reset the Let.
+  return Let<decltype(block())>(block);
+}
 
-  Let<decltype(block())> let(block);  // Create a Let
-  lets.push_front(&let);              // Add it to our list
-  return let;                         // Hand it object off
+// Register a let variable for reset between examples.
+// Must be called with the address of the variable that holds the returned Let.
+inline void Description::register_let(LetBase* let) noexcept {
+  lets.push_front(let);
 }
 
 // TODO: Should this be protected?

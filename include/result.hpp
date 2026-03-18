@@ -1,7 +1,7 @@
 /** @file */
 #pragma once
 
-#include <ciso646>
+#include <version>
 #include <format>
 #include <source_location>
 #include <sstream>
@@ -25,17 +25,13 @@ class Result {
   [[nodiscard]] bool is_error() const noexcept { return status_ == Status::Error; }
 
   static Result reduce(const Result& lhs, const Result& rhs) noexcept {
-    if (lhs.is_failure()) {
-      return lhs;
-    } else if (rhs.is_failure()) {
-      return rhs;
-    } else if (lhs.is_success()) {
-      return lhs;
-    } else if (rhs.is_success()) {
-      return rhs;
-    } else {
-      return lhs;
-    }
+    if (lhs.is_failure()) return lhs;
+    if (rhs.is_failure()) return rhs;
+    if (lhs.is_error()) return lhs;
+    if (rhs.is_error()) return rhs;
+    if (lhs.is_success()) return lhs;
+    if (rhs.is_success()) return rhs;
+    return lhs;
   }
 
   /*--------- Location helper functions ------------*/
@@ -45,11 +41,9 @@ class Result {
   }
 
   [[nodiscard]] std::string get_type() const noexcept { return type; }
-  [[nodiscard]] std::string get_type() noexcept { return type; }
   void set_type(std::string type) noexcept { this->type = std::move(type); }
 
   /*--------- Message helper functions -------------*/
-  std::string get_message() noexcept { return message; }
   [[nodiscard]] std::string get_message() const noexcept { return message; }
   Result& set_message(std::string message) noexcept {
     this->message = std::move(message);

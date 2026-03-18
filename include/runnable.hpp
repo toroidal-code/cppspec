@@ -99,10 +99,9 @@ class Runnable {
   virtual void timed_run() {
     using namespace std::chrono;
     start_time_ = system_clock::now();
-    time_point start_time = high_resolution_clock::now();
+    auto start = steady_clock::now();
     run();
-    time_point end = high_resolution_clock::now();
-    runtime_ = end - start_time;
+    runtime_ = steady_clock::now() - start;
   }
 
   [[nodiscard]] std::chrono::duration<double> get_runtime() const { return runtime_; }

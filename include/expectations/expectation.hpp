@@ -1,6 +1,7 @@
 #pragma once
 
 #include <exception>
+#include <optional>
 #include <regex>
 #include <source_location>
 #include <string>
@@ -116,7 +117,9 @@ class Expectation {
   void to_match(std::string str, std::string msg = "");
   void to_partially_match(std::regex regex, std::string msg = "");
   void to_partially_match(std::string str, std::string msg = "");
-  void to_satisfy(std::function<bool(A)> /*test*/, std::string msg = "");
+  template <typename F>
+    requires std::invocable<F, A> && std::convertible_to<std::invoke_result_t<F, A>, bool>
+  void to_satisfy(F test, std::string msg = "");
   void to_start_with(std::string start, std::string msg = "");
 
   template <typename U>
@@ -355,8 +358,10 @@ void Expectation<A>::to_partially_match(std::regex regex, std::string msg) {
  * @return Whether the expectation succeeds or fails.
  */
 template <typename A>
-void Expectation<A>::to_satisfy(std::function<bool(A)> test, std::string msg) {
-  Matchers::Satisfy<A>(*this, test).set_message(std::move(msg)).run();
+template <typename F>
+  requires std::invocable<F, A> && std::convertible_to<std::invoke_result_t<F, A>, bool>
+void Expectation<A>::to_satisfy(F test, std::string msg) {
+  Matchers::Satisfy<A>(*this, std::function<bool(A)>(std::move(test))).set_message(std::move(msg)).run();
 }
 
 template <typename A>
@@ -377,8 +382,8 @@ void Expectation<A>::to_end_with(std::string ending, std::string msg) {
 
 template <typename A>
 template <typename U>
-void Expectation<A>::to_end_with(std::initializer_list<U> start_sequence, std::string msg) {
-  Matchers::StartWith<A, std::initializer_list<U>>(*this, start_sequence).set_message(std::move(msg)).run();
+void Expectation<A>::to_end_with(std::initializer_list<U> end_sequence, std::string msg) {
+  Matchers::EndWith<A, std::initializer_list<U>>(*this, end_sequence).set_message(std::move(msg)).run();
 }
 
 template <typename A>
@@ -438,7 +443,7 @@ template <Util::is_functional F>
 class ExpectationFunc : public Expectation<decltype(std::declval<F>()())> {
   using block_ret_t = decltype(std::declval<F>()());
   F block;
-  std::shared_ptr<block_ret_t> computed = nullptr;
+  std::optional<block_ret_t> computed = std::nullopt;
 
  public:
   ExpectationFunc(ExpectationFunc<F> const& copy, std::source_location location)
@@ -473,8 +478,8 @@ class ExpectationFunc : public Expectation<decltype(std::declval<F>()())> {
 
   /** @brief Get the target of the expectation. */
   block_ret_t& get_target() & override {
-    if (computed == nullptr) {
-      computed = std::make_shared<block_ret_t>(block());
+    if (!computed.has_value()) {
+      computed.emplace(block());
     }
     return *computed;
   }
