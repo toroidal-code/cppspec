@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['let_0',['let',['../classCppSpec_1_1Description.html#a71d47115b881f1728ab44cff3da5b5f4',1,'CppSpec::Description']]]
+  ['needs_5fdescription_0',['needs_description',['../classCppSpec_1_1ItBase.html#a2f0782966fa91682e6c2e4ce607ba792',1,'CppSpec::ItBase']]]
 ];

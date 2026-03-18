@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['license_0',['LICENSE',['../md_LICENSE.html',1,'']]]
+  ['c_20spec_0',['C++Spec',['../index.html',1,'']]]
 ];

@@ -6,16 +6,14 @@ var hierarchy =
       [ "CppSpec::Formatters::TAP", "structCppSpec_1_1Formatters_1_1TAP.html", null ],
       [ "CppSpec::Formatters::Verbose", "classCppSpec_1_1Formatters_1_1Verbose.html", null ]
     ] ],
-    [ "CppSpec::Matchers::BeWithinHelper< A, E >", "classCppSpec_1_1Matchers_1_1BeWithinHelper.html", null ],
-    [ "CppSpec::Expectation< A >", "classCppSpec_1_1Expectation.html", [
+    [ "CppSpec::Matchers::BeWithinHelper&lt; A, E &gt;", "classCppSpec_1_1Matchers_1_1BeWithinHelper.html", null ],
+    [ "CppSpec::Expectation&lt; A &gt;", "classCppSpec_1_1Expectation.html", [
       [ "CppSpec::ExpectationValue< A >", "classCppSpec_1_1ExpectationValue.html", null ]
     ] ],
-    [ "CppSpec::Expectation< decltype(std::declval< F >()())>", "classCppSpec_1_1Expectation.html", [
+    [ "CppSpec::Expectation&lt; decltype(std::declval&lt; F &gt;()())&gt;", "classCppSpec_1_1Expectation.html", [
       [ "CppSpec::ExpectationFunc< F >", "classCppSpec_1_1ExpectationFunc.html", null ]
     ] ],
-    [ "CppSpec::LetBase", "classCppSpec_1_1LetBase.html", [
-      [ "CppSpec::Let< T >", "classCppSpec_1_1Let.html", null ]
-    ] ],
+    [ "CppSpec::LetBase", "classCppSpec_1_1LetBase.html", null ],
     [ "CppSpec::NegativeExpectationHandler", "structCppSpec_1_1NegativeExpectationHandler.html", null ],
     [ "CppSpec::PositiveExpectationHandler", "structCppSpec_1_1PositiveExpectationHandler.html", null ],
     [ "CppSpec::Pretty", "structCppSpec_1_1Pretty.html", [
@@ -81,5 +79,5 @@ var hierarchy =
     [ "CppSpec::Formatters::JUnitNodes::TestCase", "structCppSpec_1_1Formatters_1_1JUnitNodes_1_1TestCase.html", null ],
     [ "CppSpec::Formatters::JUnitNodes::TestSuite", "structCppSpec_1_1Formatters_1_1JUnitNodes_1_1TestSuite.html", null ],
     [ "CppSpec::Formatters::JUnitNodes::TestSuites", "structCppSpec_1_1Formatters_1_1JUnitNodes_1_1TestSuites.html", null ],
-    [ "CppSpec::Util::verbose_assert< result >", "structCppSpec_1_1Util_1_1verbose__assert.html", null ]
+    [ "CppSpec::Util::verbose_assert&lt; result &gt;", "structCppSpec_1_1Util_1_1verbose__assert.html", null ]
 ];

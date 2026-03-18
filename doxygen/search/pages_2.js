@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['spec_0',['C++Spec',['../index.html',1,'']]]
+  ['documentation_0',['Documentation',['../index.html#autotoc_md1',1,'']]]
 ];

@@ -14,5 +14,5 @@ var classCppSpec_1_1Expectation =
     [ "to_contain", "classCppSpec_1_1Expectation.html#ae42603bfb6283f73a7bd4b4f40f66992", null ],
     [ "to_contain", "classCppSpec_1_1Expectation.html#a1edc3c2ec03516d7359b0ae5acd7299a", null ],
     [ "to_equal", "classCppSpec_1_1Expectation.html#ac6b898a5711a410b3733da24eb4e8cf1", null ],
-    [ "to_satisfy", "classCppSpec_1_1Expectation.html#a73e25e3202f281456cc3b3884122d472", null ]
+    [ "to_satisfy", "classCppSpec_1_1Expectation.html#a2eaf3647d0427652e0b77e881b7cf036", null ]
 ];

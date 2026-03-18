@@ -1,6 +1,6 @@
 var util_8hpp =
 [
-    [ "CppSpec::Util::verbose_assert< result >", "structCppSpec_1_1Util_1_1verbose__assert.html", null ],
+    [ "CppSpec::Util::verbose_assert&lt; result &gt;", "structCppSpec_1_1Util_1_1verbose__assert.html", null ],
     [ "CppSpec::Util::is_container", "conceptCppSpec_1_1Util_1_1is__container.html", null ],
     [ "CppSpec::Util::is_streamable", "conceptCppSpec_1_1Util_1_1is__streamable.html", null ],
     [ "CppSpec::Util::is_functional", "conceptCppSpec_1_1Util_1_1is__functional.html", null ],
