@@ -33,12 +33,12 @@ class Satisfy : public MatcherBase<A, bool>  //, BeHelpers<Satisfy<A>>
 
 template <typename A>
 std::string Satisfy<A>::failure_message() {
-  return std::format("expected {} to evaluate to true", MatcherBase<A, bool>::actual());
+  return std::format("expected {} to evaluate to true", Pretty::to_word(MatcherBase<A, bool>::actual()));
 }
 
 template <typename A>
 std::string Satisfy<A>::failure_message_when_negated() {
-  return std::format("expected {} to evaluate to false", MatcherBase<A, bool>::actual());
+  return std::format("expected {} to evaluate to false", Pretty::to_word(MatcherBase<A, bool>::actual()));
 }
 
 template <typename A>
