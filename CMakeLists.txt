@@ -44,6 +44,10 @@ if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   target_compile_options(c++spec INTERFACE -Wno-missing-template-arg-list-after-template-kw -Wno-dollar-in-identifier-extension)
 endif()
 
+if(APPLE)
+  target_compile_definitions(c++spec INTERFACE _LIBCPP_DISABLE_AVAILABILITY_ANNOTATIONS=1)
+endif()
+
 FILE(GLOB_RECURSE c++spec_headers ${CMAKE_CURRENT_LIST_DIR}/include/*.hpp)
 
 option(CPPSPEC_PRECOMPILE_HEADERS "Precompile the C++Spec headers")

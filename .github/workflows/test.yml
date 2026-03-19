@@ -39,11 +39,14 @@ jobs:
           echo "CXX=$(brew --prefix llvm@20)/bin/clang++" >> $GITHUB_ENV
         if: ${{ matrix.compiler == 'llvm-20' && (matrix.os == 'macos-14' || matrix.os == 'macos-15') }}
 
-      - name: Use LLVM and Clang
+      - name: Install LLVM and Clang (Ubuntu)
         run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 20
           echo "CC=clang-20" >> $GITHUB_ENV
           echo "CXX=clang++-20" >> $GITHUB_ENV
-        if: ${{ matrix.compiler == 'llvm-20' && (matrix.os != 'macos-14' && matrix.os != 'macos-15') }}
+        if: ${{ matrix.compiler == 'llvm-20' && matrix.os == 'ubuntu-latest' }}
 
       - name: Use GCC
         run: |
