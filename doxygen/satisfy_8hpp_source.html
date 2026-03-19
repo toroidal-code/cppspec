@@ -131,14 +131,14 @@ $(function(){initNavTree('satisfy_8hpp_source.html','',''); });
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> A&gt;</div>
 <div class="foldopen" id="foldopen00035" data-start="{" data-end="}">
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="classCppSpec_1_1Matchers_1_1Satisfy.html#a0d78cd0b417db6d8ceb5434e3f29b299">   35</a></span>std::string <a class="code hl_function" href="classCppSpec_1_1Matchers_1_1Satisfy.html#a0d78cd0b417db6d8ceb5434e3f29b299">Satisfy&lt;A&gt;::failure_message</a>() {</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  <span class="keywordflow">return</span> std::format(<span class="stringliteral">&quot;expected {} to evaluate to true&quot;</span>, MatcherBase&lt;A, bool&gt;::actual());</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  <span class="keywordflow">return</span> std::format(<span class="stringliteral">&quot;expected {} to evaluate to true&quot;</span>, <a class="code hl_function" href="structCppSpec_1_1Pretty.html#a33579b889af5937608f3b21c15f8d8a6">Pretty::to_word</a>(MatcherBase&lt;A, bool&gt;::actual()));</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>}</div>
 </div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> A&gt;</div>
 <div class="foldopen" id="foldopen00040" data-start="{" data-end="}">
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="classCppSpec_1_1Matchers_1_1Satisfy.html#a808c1e1b9c38b21935650ba5ad0b1a65">   40</a></span>std::string <a class="code hl_function" href="classCppSpec_1_1Matchers_1_1Satisfy.html#a808c1e1b9c38b21935650ba5ad0b1a65">Satisfy&lt;A&gt;::failure_message_when_negated</a>() {</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  <span class="keywordflow">return</span> std::format(<span class="stringliteral">&quot;expected {} to evaluate to false&quot;</span>, MatcherBase&lt;A, bool&gt;::actual());</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  <span class="keywordflow">return</span> std::format(<span class="stringliteral">&quot;expected {} to evaluate to false&quot;</span>, <a class="code hl_function" href="structCppSpec_1_1Pretty.html#a33579b889af5937608f3b21c15f8d8a6">Pretty::to_word</a>(MatcherBase&lt;A, bool&gt;::actual()));</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>}</div>
 </div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
@@ -152,6 +152,7 @@ $(function(){initNavTree('satisfy_8hpp_source.html','',''); });
 <div class="ttc" id="aclassCppSpec_1_1Matchers_1_1Satisfy_html_a0d78cd0b417db6d8ceb5434e3f29b299"><div class="ttname"><a href="classCppSpec_1_1Matchers_1_1Satisfy.html#a0d78cd0b417db6d8ceb5434e3f29b299">CppSpec::Matchers::Satisfy::failure_message</a></div><div class="ttdeci">std::string failure_message() override</div><div class="ttdoc">Get message to give on match failure.</div><div class="ttdef"><b>Definition</b> satisfy.hpp:35</div></div>
 <div class="ttc" id="aclassCppSpec_1_1Matchers_1_1Satisfy_html_a808c1e1b9c38b21935650ba5ad0b1a65"><div class="ttname"><a href="classCppSpec_1_1Matchers_1_1Satisfy.html#a808c1e1b9c38b21935650ba5ad0b1a65">CppSpec::Matchers::Satisfy::failure_message_when_negated</a></div><div class="ttdeci">std::string failure_message_when_negated() override</div><div class="ttdoc">Get message to give on match failure when negated.</div><div class="ttdef"><b>Definition</b> satisfy.hpp:40</div></div>
 <div class="ttc" id="amatcher__base_8hpp_html"><div class="ttname"><a href="matcher__base_8hpp.html">matcher_base.hpp</a></div><div class="ttdoc">Contains the base class for all Matchers.</div></div>
+<div class="ttc" id="astructCppSpec_1_1Pretty_html_a33579b889af5937608f3b21c15f8d8a6"><div class="ttname"><a href="structCppSpec_1_1Pretty.html#a33579b889af5937608f3b21c15f8d8a6">CppSpec::Pretty::to_word</a></div><div class="ttdeci">static std::string to_word(const T &amp;item)</div><div class="ttdoc">Formats an object as a string when operator&lt;&lt; is available.</div><div class="ttdef"><b>Definition</b> pretty_matchers.hpp:122</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 </div><!-- container -->
