@@ -35,8 +35,10 @@ jobs:
         run: |
           brew install llvm@20
           brew link --force --overwrite llvm@20
-          echo "CC=$(brew --prefix llvm@20)/bin/clang" >> $GITHUB_ENV
-          echo "CXX=$(brew --prefix llvm@20)/bin/clang++" >> $GITHUB_ENV
+          LLVM_PREFIX=$(brew --prefix llvm@20)
+          echo "CC=$LLVM_PREFIX/bin/clang" >> $GITHUB_ENV
+          echo "CXX=$LLVM_PREFIX/bin/clang++" >> $GITHUB_ENV
+          echo "LDFLAGS=-L$LLVM_PREFIX/lib/c++ -Wl,-rpath,$LLVM_PREFIX/lib/c++" >> $GITHUB_ENV
         if: ${{ matrix.compiler == 'llvm-20' && (matrix.os == 'macos-14' || matrix.os == 'macos-15') }}
 
       - name: Install LLVM and Clang (Ubuntu)
