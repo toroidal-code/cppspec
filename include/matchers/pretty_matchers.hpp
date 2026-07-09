@@ -2,6 +2,7 @@
 #pragma once
 
 #include <algorithm>
+#include <optional>
 #include <regex>
 #include <string>
 #include <utility>
@@ -9,6 +10,17 @@
 
 #include "prettyprint.hpp"
 #include "util.hpp"
+
+// C++26 (P3168) gives std::optional begin()/end(), so cxx-prettyprint's
+// has_begin_end/has_const_iterator detection now classifies optional<T> as a
+// container and tries to element-print its value_type — which hard-errors for
+// element types lacking operator<< (and is wrong regardless: an optional is not
+// a container). Exclude it from prettyprint's container detection so optionals
+// fall back to the generic (non-streamable) to_word path.
+namespace pretty_print {
+template <typename T>
+struct is_container<std::optional<T>> : std::false_type {};
+} // namespace pretty_print
 
 namespace CppSpec {
 
