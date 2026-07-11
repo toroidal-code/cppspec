@@ -57,5 +57,8 @@ var annotated_dup =
       [ "Result", "classCppSpec_1_1Result.html", null ],
       [ "Runnable", "classCppSpec_1_1Runnable.html", "classCppSpec_1_1Runnable" ],
       [ "Runner", "classCppSpec_1_1Runner.html", "classCppSpec_1_1Runner" ]
+    ] ],
+    [ "pretty_print", null, [
+      [ "is_container&lt; std::optional&lt; T &gt; &gt;", "structpretty__print_1_1is__container_3_01std_1_1optional_3_01T_01_4_01_4.html", null ]
     ] ]
 ];

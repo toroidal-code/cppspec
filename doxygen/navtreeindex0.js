@@ -200,6 +200,7 @@ var NAVTREEINDEX0 =
 "structCppSpec_1_1Pretty.html":[10,0,0,14],
 "structCppSpec_1_1Pretty.html#a7912661907dcfae358d88caf85cf5879":[10,0,0,14,0],
 "structCppSpec_1_1Util_1_1verbose__assert.html":[10,0,0,2,0],
+"structpretty__print_1_1is__container_3_01std_1_1optional_3_01T_01_4_01_4.html":[10,0,1,0],
 "tap_8hpp.html":[11,0,0,1,3],
 "tap_8hpp_source.html":[11,0,0,1,3],
 "term__colors_8hpp.html":[11,0,0,1,4],

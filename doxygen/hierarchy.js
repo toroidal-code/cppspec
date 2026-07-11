@@ -13,6 +13,9 @@ var hierarchy =
     [ "CppSpec::Expectation&lt; decltype(std::declval&lt; F &gt;()())&gt;", "classCppSpec_1_1Expectation.html", [
       [ "CppSpec::ExpectationFunc< F >", "classCppSpec_1_1ExpectationFunc.html", null ]
     ] ],
+    [ "std::false_type", null, [
+      [ "pretty_print::is_container< std::optional< T > >", "structpretty__print_1_1is__container_3_01std_1_1optional_3_01T_01_4_01_4.html", null ]
+    ] ],
     [ "CppSpec::LetBase", "classCppSpec_1_1LetBase.html", null ],
     [ "CppSpec::NegativeExpectationHandler", "structCppSpec_1_1NegativeExpectationHandler.html", null ],
     [ "CppSpec::PositiveExpectationHandler", "structCppSpec_1_1PositiveExpectationHandler.html", null ],
