@@ -42,6 +42,7 @@ template <typename A, typename E>
 BeWithin<A, E> BeWithinHelper<A, E>::of(E expected) {
   auto matcher = BeWithin<A, E>(expectation, tolerance, expected, "");  // No unit specified
   matcher.set_message(msg);
+  matcher.run();  // of() completes the expectation, like every other to_* matcher
   return matcher;
 }
 
@@ -49,15 +50,18 @@ template <typename A, typename E>
 BeWithin<A, E> BeWithinHelper<A, E>::percent_of(E expected) {
   auto matcher = BeWithin<A, E>(expectation, tolerance, expected, "%");  // Percent unit specified
   matcher.set_message(msg);
+  matcher.run();  // percent_of() completes the expectation, like every other to_* matcher
   return matcher;
 }
 
 template <typename A, typename E>
 bool BeWithin<A, E>::match() {
-  if (!this->expected()) {
-    return false;
-  }
-  return std::abs(this->actual() - this->expected()) <= this->tolerance;
+  const auto actual   = static_cast<long double>(this->actual());
+  const auto expected = static_cast<long double>(this->expected());
+  // A percentage tolerance is relative to the expected value.
+  const auto tolerance = unit == "%" ? std::abs(expected) * static_cast<long double>(this->tolerance) / 100
+                                     : static_cast<long double>(this->tolerance);
+  return std::abs(actual - expected) <= tolerance;
 }
 
 template <typename A, typename E>
