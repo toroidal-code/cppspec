@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <source_location>
 
 #include "cppspec.hpp"
@@ -59,6 +60,20 @@ describe be_within_spec("expect(actual).to_be_within(delta).of(expected)", $  {
 //    }).to_fail_with("expected 5.51 to be within 0.5 of 5.0");
 //  });
 
+  it("reports a failure through expect() when actual is outside the tolerance", _ {
+    expect(4.49).to_be_within(0.5).of(5.0);
+    const bool failed = std::ranges::any_of(self.get_results(), [](const Result& r) { return r.is_failure(); });
+    self.clear_results();
+    expect(failed).to_be_true();
+  });
+
+  it("passes when expected is zero", _ {
+    expect(0.05).to_be_within(0.1).of(0.0);
+    const bool failed = std::ranges::any_of(self.get_results(), [](const Result& r) { return r.is_failure(); });
+    self.clear_results();
+    expect(failed).to_be_false();
+  });
+
   it("provides a description", _ {
     double d = 5.1;
     ExpectationValue ex(self, d, std::source_location::current());
@@ -80,8 +95,14 @@ describe be_within_spec("expect(actual).to_be_within(delta).of(expected)", $  {
       expect(matcher.run()).to_fail_with("expected 20.1 to be within 10% of 10");
     });
 
+    it("scales the tolerance by expected", _ {
+      auto ex = ExpectationValue(12.0, std::source_location::current());
+      auto matcher = Matchers::BeWithinHelper(ex, 10.0).percent_of(10.0);
+      expect(matcher.run()).to_fail_with("expected 12 to be within 10% of 10");
+    });
+
     it("provides a description", _ {
-      auto d = 5.1;
+      auto d = 5.01;  // within 0.5% of 5: percent_of() now runs the matcher
       ExpectationValue<double> ex(self, d, std::source_location::current());
       Matchers::BeWithin matcher = Matchers::BeWithinHelper(ex, 0.5).percent_of(5.0);
       expect(matcher.description()).to_equal("be within 0.5% of 5");
