@@ -35,7 +35,7 @@ var annotated_dup =
         [ "BeWithinHelper", "classCppSpec_1_1Matchers_1_1BeWithinHelper.html", null ],
         [ "Satisfy", "classCppSpec_1_1Matchers_1_1Satisfy.html", "classCppSpec_1_1Matchers_1_1Satisfy" ],
         [ "EndWith", "classCppSpec_1_1Matchers_1_1EndWith.html", null ],
-        [ "Match", "classCppSpec_1_1Matchers_1_1Match.html", null ],
+        [ "Match", "classCppSpec_1_1Matchers_1_1Match.html", "classCppSpec_1_1Matchers_1_1Match" ],
         [ "MatchPartial", "classCppSpec_1_1Matchers_1_1MatchPartial.html", "classCppSpec_1_1Matchers_1_1MatchPartial" ],
         [ "StartWith", "classCppSpec_1_1Matchers_1_1StartWith.html", null ]
       ] ],

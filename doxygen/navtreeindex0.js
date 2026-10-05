@@ -90,6 +90,7 @@ var NAVTREEINDEX0 =
 "classCppSpec_1_1Matchers_1_1HaveValue.html#a01e1a593a0a7379fd0940f135b6364b2":[10,0,0,1,9,0],
 "classCppSpec_1_1Matchers_1_1HaveValueEqualTo.html":[10,0,0,1,10],
 "classCppSpec_1_1Matchers_1_1Match.html":[10,0,0,1,20],
+"classCppSpec_1_1Matchers_1_1Match.html#aad8404f90e646005685ac0d64ddc7301":[10,0,0,1,20,0],
 "classCppSpec_1_1Matchers_1_1MatchPartial.html":[10,0,0,1,21],
 "classCppSpec_1_1Matchers_1_1MatchPartial.html#aec57c5140598b1584cef32b413de8038":[10,0,0,1,21,0],
 "classCppSpec_1_1Matchers_1_1MatcherBase.html":[10,0,0,1,12],

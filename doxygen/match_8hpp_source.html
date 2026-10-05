@@ -102,47 +102,59 @@ $(function(){initNavTree('match_8hpp_source.html','',''); });
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">namespace </span>CppSpec::Matchers {</div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> A&gt;</div>
-<div class="foldopen" id="foldopen00011" data-start="{" data-end="};">
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno"><a class="line" href="classCppSpec_1_1Matchers_1_1Match.html">   11</a></span><span class="keyword">class </span>Match : <span class="keyword">public</span> MatcherBase&lt;A, std::regex&gt; {</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>  <span class="keyword">explicit</span> Match(<a class="code hl_class" href="classCppSpec_1_1Expectation.html">Expectation&lt;A&gt;</a>&amp; expectation, std::string <a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>)</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>      : MatcherBase&lt;A, std::regex&gt;(expectation, std::regex(<a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>)) {}</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">// A std::regex keeps no copy of its source, so a pattern given as text is named by that text; one given as a</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">// std::regex is named only as a regex.</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">inline</span> std::string describe_pattern(<span class="keyword">const</span> std::string&amp; pattern) {</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>  <span class="keywordflow">return</span> pattern.empty() ? std::string{<span class="stringliteral">&quot;a regex&quot;</span>} : <span class="stringliteral">&quot;\&quot;&quot;</span> + pattern + <span class="stringliteral">&quot;\&quot;&quot;</span>;</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>}</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>  <span class="keyword">explicit</span> Match(<a class="code hl_class" href="classCppSpec_1_1Expectation.html">Expectation&lt;A&gt;</a>&amp; expectation, std::regex <a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>)</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>      : MatcherBase&lt;A, std::regex&gt;(expectation, <a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>) {}</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  std::string verb()<span class="keyword"> override </span>{ <span class="keywordflow">return</span> <span class="stringliteral">&quot;match&quot;</span>; }</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>  <span class="keywordtype">bool</span> match()<span class="keyword"> override </span>{</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    std::smatch temp_match;</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <span class="keywordflow">return</span> std::regex_match(this-&gt;actual(), temp_match, this-&gt;expected());</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  }</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>};</div>
-</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> A&gt;</div>
+<div class="foldopen" id="foldopen00017" data-start="{" data-end="};">
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno"><a class="line" href="classCppSpec_1_1Matchers_1_1Match.html">   17</a></span><span class="keyword">class </span>Match : <span class="keyword">public</span> MatcherBase&lt;A, std::regex&gt; {</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>  std::string pattern_;</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>  <span class="keyword">explicit</span> Match(<a class="code hl_class" href="classCppSpec_1_1Expectation.html">Expectation&lt;A&gt;</a>&amp; expectation, std::string <a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>)</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>      : MatcherBase&lt;A, std::regex&gt;(expectation, std::regex(<a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>)), pattern_(std::move(<a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>)) {}</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  <span class="keyword">explicit</span> Match(<a class="code hl_class" href="classCppSpec_1_1Expectation.html">Expectation&lt;A&gt;</a>&amp; expectation, std::regex <a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>)</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>      : MatcherBase&lt;A, std::regex&gt;(expectation, <a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>) {}</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> A&gt;</div>
-<div class="foldopen" id="foldopen00028" data-start="{" data-end="};">
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="classCppSpec_1_1Matchers_1_1MatchPartial.html">   28</a></span><span class="keyword">class </span>MatchPartial : <span class="keyword">public</span> MatcherBase&lt;A, std::regex&gt; {</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>  <span class="keyword">explicit</span> MatchPartial(<a class="code hl_class" href="classCppSpec_1_1Expectation.html">Expectation&lt;A&gt;</a>&amp; expectation, std::string <a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>)</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>      : MatcherBase&lt;A, std::regex&gt;(expectation, std::regex(<a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>)) {}</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>  <span class="keyword">explicit</span> MatchPartial(<a class="code hl_class" href="classCppSpec_1_1Expectation.html">Expectation&lt;A&gt;</a>&amp; expectation, std::regex <a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>)</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>      : MatcherBase&lt;A, std::regex&gt;(expectation, <a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>) {}</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="classCppSpec_1_1Matchers_1_1MatchPartial.html#aec57c5140598b1584cef32b413de8038">   36</a></span>  std::string <a class="code hl_function" href="classCppSpec_1_1Matchers_1_1MatchPartial.html#aec57c5140598b1584cef32b413de8038">description</a>()<span class="keyword"> override </span>{ <span class="keywordflow">return</span> <span class="stringliteral">&quot;partially match &quot;</span> + <a class="code hl_function" href="structCppSpec_1_1Pretty.html#a33579b889af5937608f3b21c15f8d8a6">Pretty::to_word</a>(this-&gt;expected()); }</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>  <span class="keywordtype">bool</span> match()<span class="keyword"> override </span>{ <span class="keywordflow">return</span> std::regex_match(this-&gt;actual(), this-&gt;expected()); }</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>};</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>  std::string verb()<span class="keyword"> override </span>{ <span class="keywordflow">return</span> <span class="stringliteral">&quot;match&quot;</span>; }</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="classCppSpec_1_1Matchers_1_1Match.html#aad8404f90e646005685ac0d64ddc7301">   28</a></span>  std::string <a class="code hl_function" href="classCppSpec_1_1Matchers_1_1Match.html#aad8404f90e646005685ac0d64ddc7301">description</a>()<span class="keyword"> override </span>{ <span class="keywordflow">return</span> verb() + <span class="stringliteral">&quot; &quot;</span> + describe_pattern(pattern_); }</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>  <span class="keywordtype">bool</span> match()<span class="keyword"> override </span>{</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    std::smatch temp_match;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="keywordflow">return</span> std::regex_match(this-&gt;actual(), temp_match, this-&gt;expected());</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>  }</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>};</div>
 </div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>}  <span class="comment">// namespace CppSpec::Matchers</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> A&gt;</div>
+<div class="foldopen" id="foldopen00037" data-start="{" data-end="};">
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno"><a class="line" href="classCppSpec_1_1Matchers_1_1MatchPartial.html">   37</a></span><span class="keyword">class </span>MatchPartial : <span class="keyword">public</span> MatcherBase&lt;A, std::regex&gt; {</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>  std::string pattern_;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  <span class="keyword">explicit</span> MatchPartial(<a class="code hl_class" href="classCppSpec_1_1Expectation.html">Expectation&lt;A&gt;</a>&amp; expectation, std::string <a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>)</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>      : MatcherBase&lt;A, std::regex&gt;(expectation, std::regex(<a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>)), pattern_(std::move(<a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>)) {}</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>  <span class="keyword">explicit</span> MatchPartial(<a class="code hl_class" href="classCppSpec_1_1Expectation.html">Expectation&lt;A&gt;</a>&amp; expectation, std::regex <a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>)</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>      : MatcherBase&lt;A, std::regex&gt;(expectation, <a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>) {}</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="classCppSpec_1_1Matchers_1_1MatchPartial.html#aec57c5140598b1584cef32b413de8038">   47</a></span>  std::string <a class="code hl_function" href="classCppSpec_1_1Matchers_1_1MatchPartial.html#aec57c5140598b1584cef32b413de8038">description</a>()<span class="keyword"> override </span>{ <span class="keywordflow">return</span> <span class="stringliteral">&quot;partially match &quot;</span> + describe_pattern(pattern_); }</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  <span class="comment">// A partial match is a match anywhere in the string: a search, not a match of the whole.</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>  <span class="keywordtype">bool</span> match()<span class="keyword"> override </span>{ <span class="keywordflow">return</span> std::regex_search(this-&gt;actual(), this-&gt;expected()); }</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>};</div>
+</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>}  <span class="comment">// namespace CppSpec::Matchers</span></div>
 <div class="ttc" id="aclassCppSpec_1_1Expectation_html"><div class="ttname"><a href="classCppSpec_1_1Expectation.html">CppSpec::Expectation</a></div><div class="ttdoc">Wraps the target of an expectation.</div><div class="ttdef"><b>Definition</b> expectation.hpp:48</div></div>
-<div class="ttc" id="aclassCppSpec_1_1Matchers_1_1MatchPartial_html_aec57c5140598b1584cef32b413de8038"><div class="ttname"><a href="classCppSpec_1_1Matchers_1_1MatchPartial.html#aec57c5140598b1584cef32b413de8038">CppSpec::Matchers::MatchPartial::description</a></div><div class="ttdeci">std::string description() override</div><div class="ttdoc">Get the description of the Matcher.</div><div class="ttdef"><b>Definition</b> match.hpp:36</div></div>
+<div class="ttc" id="aclassCppSpec_1_1Matchers_1_1MatchPartial_html_aec57c5140598b1584cef32b413de8038"><div class="ttname"><a href="classCppSpec_1_1Matchers_1_1MatchPartial.html#aec57c5140598b1584cef32b413de8038">CppSpec::Matchers::MatchPartial::description</a></div><div class="ttdeci">std::string description() override</div><div class="ttdoc">Get the description of the Matcher.</div><div class="ttdef"><b>Definition</b> match.hpp:47</div></div>
+<div class="ttc" id="aclassCppSpec_1_1Matchers_1_1Match_html_aad8404f90e646005685ac0d64ddc7301"><div class="ttname"><a href="classCppSpec_1_1Matchers_1_1Match.html#aad8404f90e646005685ac0d64ddc7301">CppSpec::Matchers::Match::description</a></div><div class="ttdeci">std::string description() override</div><div class="ttdoc">Get the description of the Matcher.</div><div class="ttdef"><b>Definition</b> match.hpp:28</div></div>
 <div class="ttc" id="aconceptCppSpec_1_1Matchers_1_1expected_html"><div class="ttname"><a href="conceptCppSpec_1_1Matchers_1_1expected.html">CppSpec::Matchers::expected</a></div><div class="ttdef"><b>Definition</b> have_error.hpp:9</div></div>
 <div class="ttc" id="amatcher__base_8hpp_html"><div class="ttname"><a href="matcher__base_8hpp.html">matcher_base.hpp</a></div><div class="ttdoc">Contains the base class for all Matchers.</div></div>
-<div class="ttc" id="astructCppSpec_1_1Pretty_html_a33579b889af5937608f3b21c15f8d8a6"><div class="ttname"><a href="structCppSpec_1_1Pretty.html#a33579b889af5937608f3b21c15f8d8a6">CppSpec::Pretty::to_word</a></div><div class="ttdeci">static std::string to_word(const T &amp;item)</div><div class="ttdoc">Formats an object as a string when operator&lt;&lt; is available.</div><div class="ttdef"><b>Definition</b> pretty_matchers.hpp:134</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 </div><!-- container -->
