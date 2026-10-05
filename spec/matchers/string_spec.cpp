@@ -6,6 +6,7 @@
 
 using namespace CppSpec;
 
+// clang-format off
 describe string_spec("string matchers", $ {
   context("to_start_with (string)", _ {
     it("passes when string starts with prefix", _ {
@@ -102,6 +103,32 @@ describe string_spec("string matchers", $ {
 
     it("matches case-insensitively with flag", _ {
       expect(std::string{"HELLO"}).to_match(std::regex("hello", std::regex::icase));
+    });
+  });
+
+  context("to_partially_match (regex search)", _ {
+    it("passes when the pattern occurs anywhere in the string", _ {
+      expect(std::string{"the groove differs"}).to_partially_match("groove");
+    });
+
+    it("passes for a pattern at the start or the end", _ {
+      expect(std::string{"groove differs"}).to_partially_match("^groove");
+      expect(std::string{"it differs"}).to_partially_match("differs$");
+    });
+
+    it("fails when the pattern does not occur", _ {
+      expect(std::string{"the groove differs"}).not_().to_partially_match("drum");
+    });
+
+    it("searches with a regex too", _ {
+      expect(std::string{"OUTPUT 1 DIFFERS"}).to_partially_match(std::regex("output [0-9]", std::regex::icase));
+    });
+
+    it("names a string pattern by its text", _ {
+      auto e = expect(std::string{"x"});
+      expect(Matchers::MatchPartial<std::string>(e, "groove").description())
+          .to_equal(std::string{"partially match \"groove\""});
+      expect(Matchers::Match<std::string>(e, "gr.*ve").description()).to_equal(std::string{"match \"gr.*ve\""});
     });
   });
 
