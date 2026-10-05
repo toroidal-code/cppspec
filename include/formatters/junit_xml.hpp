@@ -189,7 +189,8 @@ class JUnitXML : public BaseFormatter {
                         [](size_t sum, const JUnitNodes::TestSuite& suite) { return sum + suite.failures; });
     test_suites.time = std::ranges::fold_left(test_suites.suites, std::chrono::duration<double>(0),
                                               [](const auto& acc, const auto& suite) { return acc + suite.time; });
-    test_suites.timestamp = test_suites.suites.front().timestamp;
+    test_suites.timestamp =
+        test_suites.suites.empty() ? std::chrono::system_clock::now() : test_suites.suites.front().timestamp;
 
     out_stream << std::fixed;  // disable scientific notation
     // out_stream << std::setprecision(6); // set precision to 6 decimal places
