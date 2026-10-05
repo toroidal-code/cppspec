@@ -41,6 +41,22 @@ inline std::string encode_xml(const std::string& data) {
   return buffer;
 }
 
+// Format a timestamp as local time, as JUnit XML expects (ISO 8601 without a time zone)
+inline std::string format_timestamp(std::chrono::time_point<std::chrono::system_clock> timestamp) {
+#if defined(__APPLE__) || defined(CPPSPEC_SEMIHOSTED)
+  // Cludge because macOS doesn't have std::chrono::current_zone() or std::chrono::zoned_time()
+  std::time_t time_t_timestamp = std::chrono::system_clock::to_time_t(timestamp);
+  std::tm localtime = *std::localtime(&time_t_timestamp);
+  std::ostringstream oss;
+  oss << std::put_time(&localtime, "%Y-%m-%dT%H:%M:%S");
+  return oss.str();
+#else
+  // Use std::chrono::current_zone() and std::chrono::zoned_time() if available (C++20)
+  auto localtime = std::chrono::zoned_time(std::chrono::current_zone(), timestamp).get_local_time();
+  return std::format("{0:%F}T{0:%T}", localtime);
+#endif
+}
+
 namespace JUnitNodes {
 struct Result {
   enum class Status { Failure, Error, Skipped };
@@ -117,19 +133,7 @@ struct TestSuite {
       : id(get_next_id()), name(std::move(name)), time(time), timestamp(timestamp), tests(tests), failures(failures) {}
 
   [[nodiscard]] std::string to_xml() const {
-    std::string timestamp_str;
-#if defined(__APPLE__) || defined(CPPSPEC_SEMIHOSTED)
-    // Cludge because macOS doesn't have std::chrono::current_zone() or std::chrono::zoned_time()
-    std::time_t time_t_timestamp = std::chrono::system_clock::to_time_t(timestamp);
-    std::tm localtime = *std::localtime(&time_t_timestamp);
-    std::ostringstream oss;
-    oss << std::put_time(&localtime, "%Y-%m-%dT%H:%M:%S");
-    timestamp_str = oss.str();
-#else
-    // Use std::chrono::current_zone() and std::chrono::zoned_time() if available (C++20)
-    auto localtime = std::chrono::zoned_time(std::chrono::current_zone(), timestamp).get_local_time();
-    timestamp_str = std::format("{0:%F}T{0:%T}", localtime);
-#endif
+    std::string timestamp_str = format_timestamp(timestamp);
 
     std::stringstream ss;
     ss << "  "
@@ -160,7 +164,7 @@ struct TestSuites {
 
   [[nodiscard]] std::string to_xml() const {
     std::stringstream ss;
-    auto timestamp_str = std::format("{0:%F}T{0:%T}", timestamp);
+    auto timestamp_str = format_timestamp(timestamp);
     ss << std::format(R"(<testsuites name="{}" tests="{}" failures="{}" time="{:f}" timestamp="{}">)", encode_xml(name),
                       tests, failures, time.count(), timestamp_str);
     ss << std::endl;
