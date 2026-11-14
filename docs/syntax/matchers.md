@@ -8,6 +8,17 @@ expect(x).to_equal(0);          // passes when x == 0
 expect(x).not_().to_equal(0);   // passes when x != 0
 ```
 
+Every matcher also takes an optional last argument, a message printed above the matcher's own
+text when the expectation fails (see [Expect](expect.md#custom-messages)):
+
+```cpp
+expect(gain).to_equal(2, "the gain");
+```
+
+Text in any form (`std::string`, `std::string_view`, a char array or a C string) is read
+through `CppSpec::string_view_of()`; see [Expect](expect.md#c-strings) for how C strings, null
+ones included, are compared and printed.
+
 ---
 
 ## Equality & boolean
@@ -20,6 +31,9 @@ Compares using `operator==`. Works with any type that defines equality:
 expect(1 + 1).to_equal(2);
 expect(std::string{"hi"}).to_equal("hi");
 ```
+
+Two pieces of text are compared as text, whatever form each is in, so two C strings with the same
+text at different addresses are equal. A null C string equals only another null C string.
 
 ### to_be_true / to_be_false
 
@@ -50,6 +64,9 @@ expect(p).to_be_null();
 
 int x = 1;
 expect(&x).not_().to_be_null();
+
+const char* name = nullptr;     // a C string stays a pointer, so this works too
+expect(name).to_be_null();
 ```
 
 ---
@@ -63,7 +80,12 @@ Passes when the container holds the given element (uses `std::ranges::find`):
 ```cpp
 expect(std::vector<int>{1, 2, 3}).to_contain(2);
 expect(std::string{"hello"}).to_contain('e');
+expect("hello").to_contain("ell");
 ```
+
+On text, a null C string, as the text searched or the text looked for, fails both positive and
+negated. In a container that is not text, such as `std::vector<const char*>`, a null pointer is an
+element like any other.
 
 ### to_contain (multiple elements)
 
@@ -80,8 +102,15 @@ For strings, checks the leading prefix. For containers, checks the leading sub-s
 
 ```cpp
 expect(std::string{"hello world"}).to_start_with("hello");
+expect(std::string_view{"hello world"}).to_start_with(std::string{"hello"});
 expect(std::vector<int>{1, 2, 3, 4}).to_start_with({1, 2});
+expect(std::vector<char>{'a', 'b', 'c'}).to_start_with("ab");
 ```
+
+The text may be in any form `string_view_of()` reads. Of the ranges that are not text, only a range
+of `char`, such as `std::vector<char>`, takes text to compare with; for any other range,
+`to_start_with("ab")` does not compile. A null C string, on either side, fails both positive and
+negated.
 
 ### to_end_with
 
@@ -91,6 +120,8 @@ For strings, checks the trailing suffix. For containers, checks the trailing sub
 expect(std::string{"hello world"}).to_end_with("world");
 expect(std::vector<int>{1, 2, 3, 4}).to_end_with({3, 4});
 ```
+
+As with `to_start_with`, a null C string on either side fails both positive and negated.
 
 ---
 
@@ -135,6 +166,17 @@ expect(std::string{"HELLO"}).to_match(std::regex("hello", std::regex::icase));
 
 Note: `to_match` uses `std::regex_match` which requires the **entire** string to match the
 pattern.
+
+### to_partially_match
+
+Passes when the pattern matches **somewhere** in the string (`std::regex_search`):
+
+```cpp
+expect(std::string{"hello123"}).to_partially_match("[0-9]+");
+```
+
+For both, the pattern may be given as text in any form `string_view_of()` reads. A null C string,
+as the text or as the pattern, fails both positive and negated.
 
 ---
 
