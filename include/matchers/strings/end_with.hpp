@@ -33,7 +33,10 @@ class EndWith : public MatcherBase<A, E> {
     } else {
       A& actual = this->actual();
       E& expected = this->expected();
-      return std::equal(std::ranges::rbegin(expected), std::ranges::rend(expected), std::ranges::rbegin(actual));
+      // std::equal reads as many elements of the actual range as the expected one has, so a shorter actual range
+      // fails before it is read.
+      return std::ranges::distance(expected) <= std::ranges::distance(actual) &&
+             std::equal(std::ranges::rbegin(expected), std::ranges::rend(expected), std::ranges::rbegin(actual));
     }
   }
 

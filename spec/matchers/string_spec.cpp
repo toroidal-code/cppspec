@@ -1,10 +1,80 @@
+#include <cstddef>
+#include <iterator>
+#include <ostream>
 #include <regex>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "cppspec.hpp"
 
 using namespace CppSpec;
+
+namespace {
+
+// A sequence of ints that counts every read outside its bounds, so a spec can show that a matcher reads only the
+// elements that are there. A read outside gives -1, which no spec expects.
+class Bounded {
+ public:
+  class iterator {
+   public:
+    using iterator_category = std::bidirectional_iterator_tag;
+    using value_type = int;
+    using difference_type = std::ptrdiff_t;
+    using pointer = const int*;
+    using reference = const int&;
+
+    iterator() = default;
+    iterator(const Bounded* owner, difference_type index) : owner_(owner), index_(index) {}
+
+    reference operator*() const {
+      if (index_ < 0 || index_ >= std::ssize(owner_->items_)) {
+        ++*owner_->overreads_;
+        return outside;
+      }
+      return owner_->items_[index_];
+    }
+    iterator& operator++() {
+      ++index_;
+      return *this;
+    }
+    iterator operator++(int) {
+      iterator before = *this;
+      ++index_;
+      return before;
+    }
+    iterator& operator--() {
+      --index_;
+      return *this;
+    }
+    iterator operator--(int) {
+      iterator before = *this;
+      --index_;
+      return before;
+    }
+    bool operator==(const iterator&) const = default;
+
+   private:
+    static constexpr int outside = -1;
+    const Bounded* owner_ = nullptr;
+    difference_type index_ = 0;
+  };
+
+  Bounded(std::vector<int> items, int* overreads) : items_(std::move(items)), overreads_(overreads) {}
+
+  [[nodiscard]] iterator begin() const { return {this, 0}; }
+  [[nodiscard]] iterator end() const { return {this, std::ssize(items_)}; }
+
+  friend std::ostream& operator<<(std::ostream& os, const Bounded& bounded) {
+    return os << "Bounded(" << bounded.items_.size() << " items)";
+  }
+
+ private:
+  std::vector<int> items_;
+  int* overreads_;
+};
+
+}  // namespace
 
 // clang-format off
 describe string_spec("string matchers", $ {
@@ -64,6 +134,13 @@ describe string_spec("string matchers", $ {
     it("passes for single-element prefix", _ {
       expect(std::vector<int>{7, 8, 9}).to_start_with({7});
     });
+
+    it("reads nothing past the end of a sequence shorter than the prefix", _ {
+      int overreads = 0;
+      expect(Bounded({1}, &overreads)).not_().to_start_with({1, 2});
+      expect(Bounded({}, &overreads)).not_().to_start_with({1});
+      expect(overreads).to_equal(0);
+    });
   });
 
   context("to_end_with (container sequences)", _ {
@@ -77,6 +154,13 @@ describe string_spec("string matchers", $ {
 
     it("passes for single-element suffix", _ {
       expect(std::vector<int>{7, 8, 9}).to_end_with({9});
+    });
+
+    it("reads nothing before the start of a sequence shorter than the suffix", _ {
+      int overreads = 0;
+      expect(Bounded({2}, &overreads)).not_().to_end_with({1, 2});
+      expect(Bounded({}, &overreads)).not_().to_end_with({1});
+      expect(overreads).to_equal(0);
     });
   });
 
