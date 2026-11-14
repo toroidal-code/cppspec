@@ -2,12 +2,25 @@
 #pragma once
 
 #include <algorithm>
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <deque>
 #include <format>
+#include <forward_list>
+#include <list>
+#include <map>
 #include <optional>
+#include <ranges>
 #include <regex>
+#include <set>
+#include <span>
 #include <string>
 #include <string_view>
+#include <tuple>
 #include <type_traits>
+#include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -26,6 +39,94 @@ struct is_container<std::optional<T>> : std::false_type {};
 } // namespace pretty_print
 
 namespace CppSpec {
+
+namespace Util {
+
+// Whether T is Template<Args...> for some type arguments; std::array and std::span, which take a size, have their own.
+template <typename T, template <typename...> class Template>
+inline constexpr bool is_specialization_of = false;
+
+template <template <typename...> class Template, typename... Args>
+inline constexpr bool is_specialization_of<Template<Args...>, Template> = true;
+
+template <typename T>
+inline constexpr bool is_std_array = false;
+
+template <typename T, std::size_t N>
+inline constexpr bool is_std_array<std::array<T, N>> = true;
+
+template <typename T>
+inline constexpr bool is_std_span = false;
+
+template <typename T, std::size_t Extent>
+inline constexpr bool is_std_span<std::span<T, Extent>> = true;
+
+/**
+ * @brief Checks whether T is a standard container, a std::span, a std::pair, a std::tuple or a built-in array: a type
+ *        whose operator<< is cxx-prettyprint's, so Pretty may print it element by element in its place.
+ *
+ * @tparam T a type to check, without cv-qualifiers
+ */
+template <typename T>
+concept is_std_container_like =
+    std::is_array_v<T> || is_std_array<T> || is_std_span<T> || is_specialization_of<T, std::vector> ||
+    is_specialization_of<T, std::deque> || is_specialization_of<T, std::list> ||
+    is_specialization_of<T, std::forward_list> || is_specialization_of<T, std::set> ||
+    is_specialization_of<T, std::multiset> || is_specialization_of<T, std::unordered_set> ||
+    is_specialization_of<T, std::unordered_multiset> || is_specialization_of<T, std::map> ||
+    is_specialization_of<T, std::multimap> || is_specialization_of<T, std::unordered_map> ||
+    is_specialization_of<T, std::unordered_multimap> || is_specialization_of<T, std::pair> ||
+    is_specialization_of<T, std::tuple>;
+
+/**
+ * @brief Whether T prints differently through Pretty than through operator<<, so a container holding it is printed
+ *        element by element through Pretty.
+ *
+ * True for a bool, a byte-sized integer, a wide character, a C string, a pointer to other characters, an enum with no
+ * operator<< and an optional, and for a pair, a tuple, a standard container, a built-in array or a range with no
+ * operator<< of its own that holds one of these, however deeply. A range type with its own operator<< prints through
+ * it.
+ *
+ * @tparam T a type to check, without cv-qualifiers
+ */
+template <typename T>
+struct prints_through_pretty
+    : std::bool_constant<std::same_as<T, bool> || std::same_as<T, signed char> || std::same_as<T, unsigned char> ||
+                         is_wide_character<T> || is_c_string<T> || is_non_text_character_pointer<T> ||
+                         (std::is_enum_v<T> && !is_streamable<T>)> {};
+
+template <typename T>
+struct prints_through_pretty<std::optional<T>> : std::true_type {};
+
+template <typename A, typename B>
+struct prints_through_pretty<std::pair<A, B>> : std::bool_constant<prints_through_pretty<std::remove_cv_t<A>>::value ||
+                                                                   prints_through_pretty<std::remove_cv_t<B>>::value> {
+};
+
+template <typename... Ts>
+struct prints_through_pretty<std::tuple<Ts...>>
+    : std::bool_constant<(prints_through_pretty<std::remove_cv_t<Ts>>::value || ...)> {};
+
+// A range whose elements are of its own type, such as std::filesystem::path, is printed whole, and so is a range type
+// with an operator<< of its own.
+template <typename R>
+  requires std::ranges::input_range<const R> && (!is_string_like<R>) &&
+           (!std::same_as<std::remove_cv_t<std::ranges::range_value_t<const R>>, R>) &&
+           (is_std_container_like<R> || !is_streamable<R>)
+struct prints_through_pretty<R> : prints_through_pretty<std::remove_cv_t<std::ranges::range_value_t<const R>>> {};
+
+/**
+ * @brief Checks whether T is a container, pair or tuple that Pretty prints element by element, because an element
+ *        prints differently through Pretty than through operator<<.
+ *
+ * @tparam T a type to check
+ */
+template <typename T>
+concept prints_elements_through_pretty =
+    (std::is_class_v<T> || std::is_array_v<T>) && !is_string_like<T> && !is_optional_v<std::remove_cv_t<T>> &&
+    prints_through_pretty<std::remove_cv_t<T>>::value;
+
+}  // namespace Util
 
 namespace Matchers {
 template <typename A, typename E>
@@ -48,10 +149,24 @@ struct Pretty {
   static std::string last(const std::string& s, char delim);
   static std::string improve_hash_formatting(const std::string& inspect_string);
 
-  template <Util::is_streamable T>
+  template <typename T>
+    requires Util::is_streamable<T> && (!Util::prints_elements_through_pretty<T>) &&
+             (!Util::is_non_text_character_pointer<T>)
   static std::string to_word(const T& item);
 
   template <typename T>
+  static std::string to_word(const T& item);
+
+  template <typename T>
+    requires Util::is_wide_character<T>
+  static std::string to_word(const T& item);
+
+  template <typename T>
+    requires Util::is_non_text_character_pointer<T>
+  static std::string to_word(const T& item);
+
+  template <typename T>
+    requires Util::prints_elements_through_pretty<T>
   static std::string to_word(const T& item);
 
   template <typename T>
@@ -140,7 +255,9 @@ inline std::string Pretty::to_sentence(const T& item) {
  *
  * @return the string representation
  */
-template <Util::is_streamable T>
+template <typename T>
+  requires Util::is_streamable<T> && (!Util::prints_elements_through_pretty<T>) &&
+           (!Util::is_non_text_character_pointer<T>)
 inline std::string Pretty::to_word(const T& item) {
   if constexpr (Util::is_c_string<T>) {
     // A C string is printed through its view, so a null one prints as nullptr instead of being read.
@@ -195,6 +312,79 @@ inline std::string Pretty::to_word(const T& item) {
 }
 
 /**
+ * @brief Formats a wide character (wchar_t, char8_t, char16_t or char32_t) as the number of its code unit
+ *
+ * std::ostream has no operator<< for these, so they are printed as numbers, like byte-sized integers.
+ *
+ * @param item the character to be processed
+ *
+ * @return the string representation, e.g. `97` for `u'a'`
+ */
+template <typename T>
+  requires Util::is_wide_character<T>
+inline std::string Pretty::to_word(const T& item) {
+  return std::to_string(static_cast<std::uint_least32_t>(item));
+}
+
+/**
+ * @brief Formats a pointer to signed char, unsigned char or a wide character as an address, or `nullptr`
+ *
+ * Only a char pointer is read as text. These point at bytes or code units, which std::ostream would otherwise read
+ * up to a NUL (signed and unsigned char) or not print at all (wide characters).
+ *
+ * @param item the pointer to be processed
+ *
+ * @return the string representation
+ */
+template <typename T>
+  requires Util::is_non_text_character_pointer<T>
+inline std::string Pretty::to_word(const T& item) {
+  if (item == nullptr) {
+    return "nullptr";
+  }
+  std::ostringstream oss;
+  oss << static_cast<const void*>(item);
+  return oss.str();
+}
+
+/**
+ * @brief Formats a container, pair or tuple whose elements Pretty prints differently from operator<<, element by
+ *        element through to_word()
+ *
+ * The container keeps cxx-prettyprint's delimiters (`[1, 2]`, `{1, 2}` for a set, `(1, 2)` for a pair or tuple), so
+ * only the elements read differently: `std::vector<std::uint8_t>{65, 66}` prints `[65, 66]`, not `[A, B]`.
+ *
+ * @param item the container, pair or tuple to be processed
+ *
+ * @return the string representation
+ */
+template <typename T>
+  requires Util::prints_elements_through_pretty<T>
+inline std::string Pretty::to_word(const T& item) {
+  const auto& delimiters = pretty_print::delimiters<T, char>::values;
+  std::string word = delimiters.prefix != nullptr ? delimiters.prefix : "";
+  bool first = true;
+  auto append = [&](const auto& element) {
+    if (!first && delimiters.delimiter != nullptr) {
+      word += delimiters.delimiter;
+    }
+    word += to_word(element);
+    first = false;
+  };
+  if constexpr (std::ranges::input_range<const T>) {
+    for (const auto& element : item) {
+      append(element);
+    }
+  } else {
+    std::apply([&](const auto&... elements) { (append(elements), ...); }, item);
+  }
+  if (delimiters.postfix != nullptr) {
+    word += delimiters.postfix;
+  }
+  return word;
+}
+
+/**
  * @brief Formats an enum that has no operator<< as its type and underlying value as a number, e.g. `Colour(2)`
  *
  * The value is widened to the largest integer of its signedness first, so an enum based on a character type prints
@@ -214,13 +404,23 @@ inline std::string Pretty::to_word(const T& item) {
 /**
  * @brief Formats an optional as its value, or `std::nullopt` when it holds none
  *
+ * An optional that holds another optional wraps the value it holds, so it reads apart from an empty one:
+ * `std::optional(std::nullopt)` against `std::nullopt`.
+ *
  * @param item the optional to be processed
  *
  * @return the string representation
  */
 template <typename T>
 inline std::string Pretty::to_word(const std::optional<T>& item) {
-  return item.has_value() ? to_word(*item) : std::string("std::nullopt");
+  if (!item.has_value()) {
+    return "std::nullopt";
+  }
+  if constexpr (Util::is_optional_v<T>) {
+    return "std::optional(" + to_word(*item) + ")";
+  } else {
+    return to_word(*item);
+  }
 }
 
 /**

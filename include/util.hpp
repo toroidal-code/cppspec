@@ -118,6 +118,45 @@ concept is_c_string = std::is_pointer_v<std::decay_t<T>> &&
                       std::same_as<std::remove_const_t<std::remove_pointer_t<std::decay_t<T>>>, char>;
 
 /**
+ * @brief Checks whether T is a character type that std::ostream does not print as a character: wchar_t, char8_t,
+ *        char16_t or char32_t.
+ *
+ * @tparam T a type to check
+ */
+template <typename T>
+concept is_wide_character = std::same_as<std::remove_cv_t<T>, wchar_t> || std::same_as<std::remove_cv_t<T>, char8_t> ||
+                            std::same_as<std::remove_cv_t<T>, char16_t> || std::same_as<std::remove_cv_t<T>, char32_t>;
+
+/**
+ * @brief Checks whether T is a pointer to a character type other than char: signed char, unsigned char, or a wide
+ *        character type.
+ *
+ * Only a char pointer is a C string. These point at bytes or code units, so they are printed as addresses and
+ * compared as pointers.
+ *
+ * @tparam T a type to check
+ */
+template <typename T>
+concept is_non_text_character_pointer =
+    std::is_pointer_v<T> && (std::same_as<std::remove_const_t<std::remove_pointer_t<T>>, signed char> ||
+                             std::same_as<std::remove_const_t<std::remove_pointer_t<T>>, unsigned char> ||
+                             std::same_as<std::remove_const_t<std::remove_pointer_t<T>>, wchar_t> ||
+                             std::same_as<std::remove_const_t<std::remove_pointer_t<T>>, char8_t> ||
+                             std::same_as<std::remove_const_t<std::remove_pointer_t<T>>, char16_t> ||
+                             std::same_as<std::remove_const_t<std::remove_pointer_t<T>>, char32_t>);
+
+/**
+ * @brief Checks whether T is a std::optional.
+ *
+ * @tparam T a type to check
+ */
+template <typename T>
+inline constexpr bool is_optional_v = false;
+
+template <typename T>
+inline constexpr bool is_optional_v<std::optional<T>> = true;
+
+/**
  * @brief Checks whether T is text that CppSpec::string_view_of() can view: a C string, or a type that converts to
  *        std::string_view, such as std::string and std::string_view.
  *
