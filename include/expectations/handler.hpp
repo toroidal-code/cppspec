@@ -49,7 +49,7 @@ Result PositiveExpectationHandler::handle_matcher(Matcher& matcher) {
     return Result::error_with(matcher.get_location(), "Unknown exception thrown during matcher execution.");
   }
 
-  return !matched ? Result::failure_with(matcher.get_location(), matcher.failure_message())
+  return !matched ? Result::failure_with(matcher.get_location(), matcher.full_failure_message())
                   : Result::success(matcher.get_location());
 }
 
@@ -71,7 +71,7 @@ Result NegativeExpectationHandler::handle_matcher(Matcher& matcher) {
   } catch (...) {
     return Result::error_with(matcher.get_location(), "Unhandled exception thrown during matcher execution.");
   }
-  return !matched ? Result::failure_with(matcher.get_location(), matcher.failure_message_when_negated())
+  return !matched ? Result::failure_with(matcher.get_location(), matcher.full_failure_message_when_negated())
                   : Result::success(matcher.get_location());
 }
 

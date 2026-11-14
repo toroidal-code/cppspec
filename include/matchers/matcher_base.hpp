@@ -11,6 +11,7 @@
 
 #include <source_location>
 #include <string>
+#include <string_view>
 
 #include "expectations/handler.hpp"
 #include "it_base.hpp"
@@ -36,6 +37,15 @@ namespace Matchers {
 template <typename Actual, typename Expected>
 class MatcherBase : public Pretty {
   std::string custom_failure_message;
+
+  // The custom message, when one was set, on the line above the matcher's own. An empty own message is replaced by
+  // a diagnostic here, so a custom message never sits above a blank line.
+  [[nodiscard]] std::string with_custom_message(std::string own) const {
+    if (own.empty()) {
+      own = empty_failure_message;
+    }
+    return custom_failure_message.empty() ? own : custom_failure_message + "\n" + own;
+  }
 
  protected:
   Expected expected_;  // The expected object contained by the matcher
@@ -77,6 +87,25 @@ class MatcherBase : public Pretty {
   // Set the message to give on match failure
   virtual MatcherBase& set_message(std::string message);
 
+  /**
+   * @brief What a failed match reports: the custom message, when one was set, on the line above the matcher's own
+   *        failure_message()
+   */
+  [[nodiscard]] std::string full_failure_message() { return with_custom_message(failure_message()); }
+
+  /**
+   * @brief What a failed negated match reports: the custom message, when one was set, on the line above the
+   *        matcher's own failure_message_when_negated()
+   */
+  [[nodiscard]] std::string full_failure_message_when_negated() {
+    return with_custom_message(failure_message_when_negated());
+  }
+
+  /** @brief What a failure reports in place of a matcher's own message that is empty */
+  static constexpr std::string_view empty_failure_message =
+      "Failure message is empty. Does your matcher define the appropriate failure_message[_when_negated] method to "
+      "return a string?";
+
   [[nodiscard]] std::source_location get_location() const { return expectation_.get_location(); }
 
   /*--------- Primary functions -------------*/
@@ -104,28 +133,22 @@ MatcherBase<A, E>& MatcherBase<A, E>::set_message(std::string message) {
 }
 
 /**
- * @brief Get message to give on match failure
+ * @brief Get the matcher's own message for a failed match; the handler puts any custom message above it
  *
  * @return the message
  */
 template <typename A, typename E>
 std::string MatcherBase<A, E>::failure_message() {
-  if (not custom_failure_message.empty()) {
-    return this->custom_failure_message;
-  }
   return std::format("expected {} to {}", Pretty::to_word(actual()), description());
 }
 
 /**
- * @brief Get message to give on match failure when negated
+ * @brief Get the matcher's own message for a failed negated match; the handler puts any custom message above it
  *
  * @return the message
  */
 template <typename A, typename E>
 std::string MatcherBase<A, E>::failure_message_when_negated() {
-  if (not custom_failure_message.empty()) {
-    return this->custom_failure_message;
-  }
   return std::format("expected {} to not {}", Pretty::to_word(actual()), description());
 }
 
@@ -160,11 +183,9 @@ Result MatcherBase<A, E>::run() {
 
   // If our items didn't match, we obviously failed.
   // Only report the failure if we aren't actively ignoring it.
+  // A handler that does not build its message with full_failure_message*() can still report an empty one.
   if (result.is_failure() && result.get_message().empty()) {
-    result.set_message(
-        "Failure message is empty. Does your matcher define the "
-        "appropriate failure_message[_when_negated] method to "
-        "return a string?");
+    result.set_message(std::string(empty_failure_message));
   }
 
   if (expectation_.ignored()) {
