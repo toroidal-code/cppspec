@@ -2,9 +2,11 @@
 #pragma once
 
 #include <algorithm>
+#include <format>
 #include <optional>
 #include <regex>
 #include <string>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -16,7 +18,7 @@
 // container and tries to element-print its value_type — which hard-errors for
 // element types lacking operator<< (and is wrong regardless: an optional is not
 // a container). Exclude it from prettyprint's container detection so optionals
-// fall back to the generic (non-streamable) to_word path.
+// reach Pretty's own optional to_word overload.
 namespace pretty_print {
 template <typename T>
 struct is_container<std::optional<T>> : std::false_type {};
@@ -50,6 +52,13 @@ struct Pretty {
 
   template <typename T>
   static std::string to_word(const T& item);
+
+  template <typename T>
+    requires std::is_enum_v<T> && (!Util::is_streamable<T>)
+  static std::string to_word(const T& item);
+
+  template <typename T>
+  static std::string to_word(const std::optional<T>& item);
 
   template <typename T>
   static std::string to_word_type(const T& item);
@@ -142,6 +151,17 @@ inline std::string Pretty::to_word<bool>(const bool& item) {
   return item ? "true" : "false";
 }
 
+// A byte-sized integer streams as a character; it is printed as the number it holds.
+template <>
+inline std::string Pretty::to_word<unsigned char>(const unsigned char& item) {
+  return std::to_string(item);
+}
+
+template <>
+inline std::string Pretty::to_word<signed char>(const signed char& item) {
+  return std::to_string(item);
+}
+
 template <>
 inline std::string Pretty::to_word<std::true_type>(const std::true_type& /* item */) {
   return "true";
@@ -165,6 +185,35 @@ inline std::string Pretty::to_word(const T& item) {
   // Ruby-style inspect for objects without an overloaded operator<<
   ss << "#<" << Util::demangle(typeid(item).name()) << ":" << &item << ">";
   return ss.str();
+}
+
+/**
+ * @brief Formats an enum that has no operator<< as its type and underlying value as a number, e.g. `Colour(2)`
+ *
+ * The value is widened to the largest integer of its signedness first, so an enum based on a character type prints
+ * a number too, not a character.
+ *
+ * @param item the enumerator to be processed
+ *
+ * @return the string representation
+ */
+template <typename T>
+  requires std::is_enum_v<T> && (!Util::is_streamable<T>)
+inline std::string Pretty::to_word(const T& item) {
+  using Widest = std::conditional_t<std::is_signed_v<std::underlying_type_t<T>>, long long, unsigned long long>;
+  return std::format("{}({})", Util::demangle(typeid(T).name()), static_cast<Widest>(std::to_underlying(item)));
+}
+
+/**
+ * @brief Formats an optional as its value, or `std::nullopt` when it holds none
+ *
+ * @param item the optional to be processed
+ *
+ * @return the string representation
+ */
+template <typename T>
+inline std::string Pretty::to_word(const std::optional<T>& item) {
+  return item.has_value() ? to_word(*item) : std::string("std::nullopt");
 }
 
 /**
