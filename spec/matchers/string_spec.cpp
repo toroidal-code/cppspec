@@ -164,6 +164,22 @@ describe string_spec("string matchers", $ {
     });
   });
 
+  context("to_contain (container sequences)", _ {
+    it("reads no element of an empty sequence", _ {
+      int overreads = 0;
+      expect(Bounded({}, &overreads)).not_().to_contain(1);
+      expect(Bounded({}, &overreads)).not_().to_contain({1, 2});
+      expect(overreads).to_equal(0);
+    });
+
+    it("reads only the elements of a sequence that holds some", _ {
+      int overreads = 0;
+      expect(Bounded({1, 2}, &overreads)).to_contain(2);
+      expect(Bounded({1, 2}, &overreads)).not_().to_contain(3);
+      expect(overreads).to_equal(0);
+    });
+  });
+
   context("to_match (full regex)", _ {
     it("matches an exact string pattern", _ {
       expect(std::string{"hello"}).to_match("hello");

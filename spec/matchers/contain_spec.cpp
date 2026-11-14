@@ -1,11 +1,38 @@
 #include <list>
 #include <set>
+#include <source_location>
+#include <span>
+#include <string>
 #include <vector>
 
 #include "cppspec.hpp"
 
 using namespace CppSpec;
 
+namespace {
+
+// The results an expectation on actual reports to an example of its own when search runs it, positive and then
+// negated.
+template <typename A, typename Search>
+std::list<Result> searched_both_ways(A actual, Search search) {
+  auto location = std::source_location::current();
+  ItD example(location, "searches", [](ItD&) {});
+  ExpectationValue<A> positive(example, actual, location);
+  search(positive);
+  ExpectationValue<A> negative(example, actual, location);
+  negative.not_();
+  search(negative);
+  return example.get_results();
+}
+
+// Whether a search failed positive and passed negated.
+bool fails_and_passes_negated(const std::list<Result>& results) {
+  return results.size() == 2 && results.front().is_failure() && results.back().is_success();
+}
+
+}  // namespace
+
+// clang-format off
 describe contain_spec("to_contain matcher", $ {
   context("with a single element", _ {
     it("passes when element is in vector", _ {
@@ -78,6 +105,44 @@ describe contain_spec("to_contain matcher", $ {
 
     it("negated passes when string absent", _ {
       expect(std::vector<std::string>{"foo", "bar"}).not_().to_contain(std::string{"quux"});
+    });
+  });
+
+  context("on an empty collection", _ {
+    it("fails, and passes negated, without reading an element", _ {
+      const std::vector<int> none;
+      const std::vector<std::string> no_words;
+      expect(fails_and_passes_negated(searched_both_ways(none, [](auto& e) { e.to_contain(1); }))).to_be_true();
+      expect(fails_and_passes_negated(searched_both_ways(none, [](auto& e) { e.to_contain({1, 2}); }))).to_be_true();
+      expect(fails_and_passes_negated(searched_both_ways(std::span<const int>{}, [](auto& e) { e.to_contain(1); })))
+          .to_be_true();
+      expect(fails_and_passes_negated(searched_both_ways(std::list<int>{}, [](auto& e) { e.to_contain(1); })))
+          .to_be_true();
+      expect(fails_and_passes_negated(searched_both_ways(no_words, [](auto& e) { e.to_contain(std::string{"foo"}); })))
+          .to_be_true();
+    });
+
+    it("prints the empty collection when it fails", _ {
+      const std::list<Result> results = searched_both_ways(std::vector<int>{}, [](auto& e) { e.to_contain(1); });
+      expect(results.front().get_message()).to_partially_match("expected \\[\\] to contain 1");
+    });
+  });
+
+  context("on empty text", _ {
+    it("fails, and passes negated, for a character or text to look for", _ {
+      const std::string empty;
+      const char* const empty_c_string = "";
+      expect(fails_and_passes_negated(searched_both_ways(empty, [](auto& e) { e.to_contain('a'); }))).to_be_true();
+      expect(fails_and_passes_negated(searched_both_ways(empty, [](auto& e) { e.to_contain("a"); }))).to_be_true();
+      expect(fails_and_passes_negated(searched_both_ways(empty_c_string, [](auto& e) { e.to_contain('a'); })))
+          .to_be_true();
+      expect(fails_and_passes_negated(searched_both_ways(empty_c_string, [](auto& e) { e.to_contain("a"); })))
+          .to_be_true();
+    });
+
+    it("contains empty text", _ {
+      expect(std::string{}).to_contain(std::string{});
+      expect("").to_contain("");
     });
   });
 });

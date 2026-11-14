@@ -1,7 +1,9 @@
 /** @file */
 #pragma once
 #include <algorithm>
+#include <ranges>
 #include <string>
+#include <type_traits>
 
 #include "matcher_base.hpp"
 
@@ -111,13 +113,14 @@ bool ContainBase<A, E, U>::expected_is_null_text() {
   }
 }
 
+// The element type is checked from the range's type alone, so an empty collection is searched without reading an
+// element.
 template <typename A, typename E, typename U>
 bool ContainBase<A, E, U>::collection_includes(U expected_item) {
-  auto actual = this->actual();
-  auto last = *(actual.begin());
-  static_assert(Util::verbose_assert<std::is_convertible_v<U, decltype(last)>>::value,
+  static_assert(Util::verbose_assert<std::is_convertible_v<U, std::ranges::range_value_t<A>>>::value,
                 "Expected item is not comparable against what is inside container.");
-  return std::ranges::find(actual, expected_item) != actual.end();
+  auto& actual = this->actual();
+  return std::ranges::find(actual, expected_item) != std::ranges::end(actual);
 }
 
 /**

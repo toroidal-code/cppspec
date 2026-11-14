@@ -36,7 +36,7 @@
 namespace pretty_print {
 template <typename T>
 struct is_container<std::optional<T>> : std::false_type {};
-} // namespace pretty_print
+}  // namespace pretty_print
 
 namespace CppSpec {
 
@@ -475,6 +475,7 @@ inline std::string Pretty::underscore(const std::string& word) {
   return str;
 }
 
+// The last non-empty piece of s between delimiters, or an empty string when s has none.
 inline std::string Pretty::last(const std::string& s, const char delim) {
   std::vector<std::string> elems;
   std::stringstream ss(s);
@@ -484,7 +485,7 @@ inline std::string Pretty::last(const std::string& s, const char delim) {
       elems.push_back(item);
     }
   }
-  return elems.back();
+  return elems.empty() ? std::string() : elems.back();
 }
 
 inline std::string Pretty::improve_hash_formatting(const std::string& inspect_string) {

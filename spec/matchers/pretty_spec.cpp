@@ -149,6 +149,12 @@ describe pretty_spec("Pretty::to_word", $ {
       expect(Pretty::to_word(std::vector<bool>{true, false})).to_equal(std::string("[true, false]"));
     });
 
+    it("prints an empty container as its delimiters alone", _ {
+      expect(Pretty::to_word(std::vector<int>{})).to_equal(std::string("[]"));
+      expect(Pretty::to_word(std::vector<std::uint8_t>{})).to_equal(std::string("[]"));
+      expect(Pretty::to_word(std::set<char>{})).to_equal(std::string("{}"));
+    });
+
     it("prints any other container as before", _ {
       expect(Pretty::to_word(std::vector<int>{1, 2})).to_equal(std::string("[1, 2]"));
       expect(Pretty::to_word(std::set<char>{'a'})).to_equal(std::string("{a}"));
@@ -176,6 +182,12 @@ describe pretty_spec("Pretty::to_word", $ {
       expect(equal_failure(std::vector<std::optional<int>>{1}, std::vector<std::optional<int>>{std::nullopt}))
           .to_partially_match("=> \\[std::nullopt\\]\n +got .* => \\[1\\]");
     });
+  });
+
+  it("takes the last piece of a name, or nothing from a name with no pieces", _ {
+    expect(Pretty::last("CppSpec::Matchers::Equal", ':')).to_equal(std::string("Equal"));
+    expect(Pretty::last("", ':')).to_equal(std::string());
+    expect(Pretty::last("::", ':')).to_equal(std::string());
   });
 
   it("prints both enum values when Equal fails", _ {
