@@ -136,6 +136,8 @@ expect(5).to_be_between(1, 10);
 expect(5).to_be_between(1, 10, RangeMode::exclusive);  // strict bounds
 ```
 
+Negated, it passes only for a value below the lower bound or above the upper one.
+
 ### to_be_within
 
 Floating-point proximity check. Use `.of(expected)` to specify the target:
@@ -150,6 +152,12 @@ expect(3.14159).to_be_within(0.001).of(std::numbers::pi);
 expect(3).to_be_less_than(5);
 expect(7).to_be_greater_than(4);
 ```
+
+`to_be_less_than`, `to_be_greater_than` and `to_be_between` compare two integers by value, as `std::cmp_less` does,
+so a negative number is below every unsigned one: `expect(-1).to_be_less_than(0u)` passes. `bool` and the character
+types, and every non-integer type, are compared with the operators instead. Negated, each checks the strict opposite
+(`not_().to_be_greater_than(x)` is `actual <= x`), so NaN fails these matchers negated or not, and a type compared
+negated needs that opposite operator too.
 
 ---
 

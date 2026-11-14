@@ -12,6 +12,7 @@
 #include <string>
 #include <string_view>
 #include <type_traits>
+#include <utility>
 
 #ifdef __GNUG__
 #include <cxxabi.h>
@@ -178,6 +179,65 @@ concept compares_start_and_end =
     (std::ranges::range<A> &&
      (std::ranges::range<E> ||
       (is_string_like<E> && std::same_as<std::remove_cv_t<std::ranges::range_value_t<A>>, char>)));
+
+/**
+ * @brief Checks whether T is an integer type that std::cmp_less and its kin accept: every integral type but bool and
+ *        the character types (int8_t and uint8_t are in).
+ *
+ * @tparam T a type to check
+ */
+template <typename T>
+concept is_cmp_integer = std::integral<std::remove_cv_t<T>> && !std::same_as<std::remove_cv_t<T>, bool> &&
+                         !std::same_as<std::remove_cv_t<T>, char> && !is_wide_character<T>;
+
+/**
+ * @brief `a < b`, by value when both are integers (std::cmp_less, so a negative signed value is below any unsigned
+ *        one), and with `<` otherwise.
+ */
+template <typename A, typename B>
+constexpr bool less(const A& a, const B& b) {
+  if constexpr (is_cmp_integer<A> && is_cmp_integer<B>) {
+    return std::cmp_less(a, b);
+  } else {
+    return a < b;
+  }
+}
+
+/**
+ * @brief `a <= b`, by value when both are integers (std::cmp_less_equal), and with `<=` otherwise.
+ */
+template <typename A, typename B>
+constexpr bool less_equal(const A& a, const B& b) {
+  if constexpr (is_cmp_integer<A> && is_cmp_integer<B>) {
+    return std::cmp_less_equal(a, b);
+  } else {
+    return a <= b;
+  }
+}
+
+/**
+ * @brief `a > b`, by value when both are integers (std::cmp_greater), and with `>` otherwise.
+ */
+template <typename A, typename B>
+constexpr bool greater(const A& a, const B& b) {
+  if constexpr (is_cmp_integer<A> && is_cmp_integer<B>) {
+    return std::cmp_greater(a, b);
+  } else {
+    return a > b;
+  }
+}
+
+/**
+ * @brief `a >= b`, by value when both are integers (std::cmp_greater_equal), and with `>=` otherwise.
+ */
+template <typename A, typename B>
+constexpr bool greater_equal(const A& a, const B& b) {
+  if constexpr (is_cmp_integer<A> && is_cmp_integer<B>) {
+    return std::cmp_greater_equal(a, b);
+  } else {
+    return a >= b;
+  }
+}
 
 template <typename T>
 concept not_c_string = !std::is_same_v<T, const char*> && !std::is_same_v<T, char*> &&
