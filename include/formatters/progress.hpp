@@ -3,6 +3,7 @@
 
 #include <forward_list>
 #include <list>
+#include <ranges>
 #include <string>
 
 #include "term_colors.hpp"
@@ -17,6 +18,8 @@ class Progress : public BaseFormatter {
   std::string prep_failure_helper(const ItBase& it);
 
  public:
+  using BaseFormatter::BaseFormatter;
+
   ~Progress() override {
     format_failure_messages();  // Print any failures that we have
   }
@@ -76,9 +79,12 @@ inline std::string Progress::prep_failure_helper(const ItBase& it) {
 }
 
 inline void Progress::prep_failure(const ItBase& it) {
-  std::list<std::string> raw_failure_messages;  // raw failure messages
-  std::ranges::transform(it.get_results(), std::back_inserter(raw_failure_messages),
-                         [](const Result& result) { return result.get_message(); });
+  // Only the expectations that failed or raised an error are listed, each led by its file and line; a passing or
+  // skipped one adds no line.
+  std::list<std::string> raw_failure_messages;
+  std::ranges::transform(
+      it.get_results() | std::views::filter([](const Result& r) { return r.is_failure() || r.is_error(); }),
+      std::back_inserter(raw_failure_messages), &BaseFormatter::located_message);
 
   std::ostringstream string_builder;                               // oss is used as the local string builder
   string_builder << set_color(RED);                                // if we're doing color, make it red

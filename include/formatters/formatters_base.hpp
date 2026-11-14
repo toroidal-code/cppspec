@@ -2,7 +2,9 @@
 #pragma once
 
 #include <cstdio>
+#include <format>
 #include <iostream>
+#include <string>
 
 #include "description.hpp"
 #include "it_base.hpp"
@@ -96,6 +98,21 @@ class BaseFormatter {
   }
 
   const char* reset_color() { return color_output ? RESET : ""; }
+
+  /**
+   * @brief Prefix a result's message with the file and line of the expectation that reported it.
+   *
+   * Every formatter that prints failure messages as text uses this, so an editor or terminal can jump from any of
+   * them to the failing expectation.
+   *
+   * @param result the result to describe
+   *
+   * @return `file:line: message`
+   */
+  [[nodiscard]] static std::string located_message(const Result& result) {
+    return std::format("{}:{}: {}", result.get_location().file_name(), result.get_location().line(),
+                       result.get_message());
+  }
 };
 
 inline BaseFormatter& BaseFormatter::set_color_output(bool value) {

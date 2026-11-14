@@ -41,9 +41,7 @@ inline void Verbose::format(const ItBase& it) {
   for (const Result& result : it.get_results()) {
     if (result.is_failure()) {
       out_stream << set_color(RED);
-      // file:line: leads the message, so an editor or terminal can jump to the failing expectation.
-      out_stream << result.get_location().file_name() << ':' << result.get_location().line() << ": "
-                 << result.get_message() << std::endl;
+      out_stream << located_message(result) << std::endl;
       out_stream << reset_color();
     }
   }
