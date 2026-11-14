@@ -140,7 +140,8 @@ std::string MatcherBase<A, E>::description() {
   //   ss << "match " <<
   //   this->name_to_sentence(Util::demangle(typeid(*this).name()))
   //      << "(" << pretty_expected.substr(1, pretty_expected.length()) << ")";
-  return std::format("{} {}", verb(), Pretty::to_sentence(expected_));
+  // to_sentence() leads with the space that separates it from the verb.
+  return std::format("{}{}", verb(), Pretty::to_sentence(expected_));
 }
 
 /**
