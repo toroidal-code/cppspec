@@ -366,7 +366,7 @@ void Expectation<A>::to_satisfy(F test, std::string msg) {
 
 template <typename A>
 void Expectation<A>::to_start_with(std::string start, std::string msg) {
-  Matchers::StartWith<std::string, std::string>(*this, start).set_message(std::move(msg)).run();
+  Matchers::StartWith<A, std::string>(*this, start).set_message(std::move(msg)).run();
 }
 
 template <typename A>
@@ -377,7 +377,7 @@ void Expectation<A>::to_start_with(std::initializer_list<U> start_sequence, std:
 
 template <typename A>
 void Expectation<A>::to_end_with(std::string ending, std::string msg) {
-  Matchers::EndWith<std::string, std::string>(*this, ending).set_message(std::move(msg)).run();
+  Matchers::EndWith<A, std::string>(*this, ending).set_message(std::move(msg)).run();
 }
 
 template <typename A>

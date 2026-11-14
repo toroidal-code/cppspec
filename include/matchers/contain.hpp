@@ -26,6 +26,10 @@ class ContainBase : public MatcherBase<A, E> {
 
  protected:
   bool actual_collection_includes(U expected_item);
+  bool actual_is_null_text();
+
+ private:
+  bool collection_includes(U expected_item);
 };
 
 template <typename A, typename E, typename U>
@@ -36,16 +40,44 @@ std::string ContainBase<A, E, U>::description() {
 
 template <typename A, typename E, typename U>
 std::string ContainBase<A, E, U>::failure_message() {
-  return Pretty::improve_hash_formatting(MatcherBase<A, E>::failure_message());
+  return Pretty::improve_hash_formatting(MatcherBase<A, E>::failure_message()) + no_text_to_search(this->actual());
 }
 
 template <typename A, typename E, typename U>
 std::string ContainBase<A, E, U>::failure_message_when_negated() {
-  return Pretty::improve_hash_formatting(MatcherBase<A, E>::failure_message_when_negated());
+  return Pretty::improve_hash_formatting(MatcherBase<A, E>::failure_message_when_negated()) +
+         no_text_to_search(this->actual());
+}
+
+// Text contains a piece of text or a character, both read through string_view_of(); any other collection contains
+// an element.
+template <typename A, typename E, typename U>
+bool ContainBase<A, E, U>::actual_collection_includes(U expected_item) {
+  if constexpr (Util::is_string_like<A>) {
+    const auto text = string_view_of(this->actual());
+    if constexpr (Util::is_string_like<U>) {
+      const auto part = string_view_of(expected_item);
+      return text && part && text->contains(*part);
+    } else {
+      return text && text->contains(expected_item);
+    }
+  } else {
+    return collection_includes(expected_item);
+  }
+}
+
+// A null C string is no text, so it contains nothing, negated or not.
+template <typename A, typename E, typename U>
+bool ContainBase<A, E, U>::actual_is_null_text() {
+  if constexpr (Util::is_string_like<A>) {
+    return !string_view_of(this->actual());
+  } else {
+    return false;
+  }
 }
 
 template <typename A, typename E, typename U>
-bool ContainBase<A, E, U>::actual_collection_includes(U expected_item) {
+bool ContainBase<A, E, U>::collection_includes(U expected_item) {
   auto actual = this->actual();
   auto last = *(actual.begin());
   static_assert(Util::verbose_assert<std::is_convertible_v<U, decltype(last)>>::value,
@@ -72,12 +104,12 @@ class Contain : public ContainBase<A, E, U> {
 
 template <typename A, typename E, typename U>
 bool Contain<A, E, U>::match() {
-  return perform_match(Predicate::all, Predicate::all);
+  return !this->actual_is_null_text() && perform_match(Predicate::all, Predicate::all);
 }
 
 template <typename A, typename E, typename U>
 bool Contain<A, E, U>::negated_match() {
-  return perform_match(Predicate::none, Predicate::any);
+  return !this->actual_is_null_text() && perform_match(Predicate::none, Predicate::any);
 }
 
 // TODO: support std::map<E,_>
@@ -122,11 +154,17 @@ class Contain<A, U, U> : public ContainBase<A, U, U> {
   Contain(Expectation<A>& expectation, U expected) : ContainBase<A, U, U>(expectation, expected) {};
 
   bool match() override;
+  bool negated_match() override;
 };
 
 template <typename A, typename U>
 bool Contain<A, U, U>::match() {
   return this->actual_collection_includes(this->expected());
+}
+
+template <typename A, typename U>
+bool Contain<A, U, U>::negated_match() {
+  return !this->actual_is_null_text() && !match();
 }
 
 }  // namespace CppSpec::Matchers

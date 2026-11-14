@@ -3,10 +3,14 @@
  * @brief Utility functions and classes
  */
 #pragma once
+#include <algorithm>
+#include <concepts>
 #include <functional>
+#include <optional>
 #include <ranges>
 #include <sstream>
 #include <string>
+#include <string_view>
 #include <type_traits>
 
 #ifdef __GNUG__
@@ -102,6 +106,26 @@ concept is_functional =
 template <typename C>
 concept is_not_functional = !is_functional<C>;
 
+/**
+ * @brief Checks whether T is a C string: a pointer to char, const or not, or a char array, which decays to one.
+ *
+ * A pointer to volatile char is not a C string: it is printed and compared as a plain pointer.
+ *
+ * @tparam T a type to check
+ */
+template <typename T>
+concept is_c_string = std::is_pointer_v<std::decay_t<T>> &&
+                      std::same_as<std::remove_const_t<std::remove_pointer_t<std::decay_t<T>>>, char>;
+
+/**
+ * @brief Checks whether T is text that CppSpec::string_view_of() can view: a C string, or a type that converts to
+ *        std::string_view, such as std::string and std::string_view.
+ *
+ * @tparam T a type to check
+ */
+template <typename T>
+concept is_string_like = is_c_string<T> || std::convertible_to<const std::remove_cvref_t<T>&, std::string_view>;
+
 template <typename T>
 concept not_c_string = !std::is_same_v<T, const char*> && !std::is_same_v<T, char*> &&
                        !std::is_convertible_v<T, const char*> && !std::is_convertible_v<T, char*>;
@@ -143,3 +167,32 @@ concept not_c_string = !std::is_same_v<T, const char*> && !std::is_same_v<T, cha
 }
 
 }  // namespace CppSpec::Util
+
+namespace CppSpec {
+
+/**
+ * @brief View text as a std::string_view, the one form the string matchers and the printer compare and print.
+ *
+ * A char array is read up to its first NUL and no further than its end. A null C string is no text at all: it
+ * equals only another null C string, the matchers that search text fail on it, negated or not, and it prints as
+ * `nullptr`.
+ *
+ * @param text a std::string, std::string_view, char array or char pointer
+ *
+ * @return a view of the text, or std::nullopt for a null C string
+ */
+template <Util::is_string_like T>
+[[nodiscard]] constexpr std::optional<std::string_view> string_view_of(const T& text) {
+  if constexpr (std::is_array_v<T>) {
+    return std::string_view(std::ranges::begin(text), std::ranges::find(text, '\0'));
+  } else if constexpr (Util::is_c_string<T>) {
+    if (text == nullptr) {
+      return std::nullopt;
+    }
+    return std::string_view(text);
+  } else {
+    return std::string_view(text);
+  }
+}
+
+}  // namespace CppSpec

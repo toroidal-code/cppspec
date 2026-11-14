@@ -25,6 +25,23 @@ class Expectation;  // Forward declaration of Expectation
 namespace Matchers {
 
 /**
+ * @brief The line a matcher that searches text puts below its own message when the actual value is a null C string,
+ *        which has no text to search, so the matcher fails it negated as well as positive
+ *
+ * @param actual the actual value
+ * @return the line, led by a newline, or an empty string when the actual value is text
+ */
+template <typename A>
+[[nodiscard]] std::string no_text_to_search(const A& actual) {
+  if constexpr (Util::is_string_like<A>) {
+    if (!string_view_of(actual)) {
+      return "\nnullptr is not text, so there is nothing to search";
+    }
+  }
+  return {};
+}
+
+/**
  * @brief the base class for all Matcher classes and objects
  *
  * @tparam Actual the type of Actual 'thing' to match against

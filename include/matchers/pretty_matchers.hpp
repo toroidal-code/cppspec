@@ -6,6 +6,7 @@
 #include <optional>
 #include <regex>
 #include <string>
+#include <string_view>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -141,9 +142,15 @@ inline std::string Pretty::to_sentence(const T& item) {
  */
 template <Util::is_streamable T>
 inline std::string Pretty::to_word(const T& item) {
-  std::ostringstream oss;
-  oss << item;  // use operator<< to convert and append
-  return oss.str();
+  if constexpr (Util::is_c_string<T>) {
+    // A C string is printed through its view, so a null one prints as nullptr instead of being read.
+    const auto text = string_view_of(item);
+    return text ? std::string(*text) : std::string("nullptr");
+  } else {
+    std::ostringstream oss;
+    oss << item;  // use operator<< to convert and append
+    return oss.str();
+  }
 }
 
 template <>
@@ -293,19 +300,16 @@ inline std::string Pretty::improve_hash_formatting(const std::string& inspect_st
  */
 template <typename O>
 inline std::string Pretty::inspect_object(const O& o) {
-  return std::format("({}) => {}", Util::demangle(typeid(o).name()), to_word(o));
-}
-
-/**
- * @brief Specialization for C-style strings
- *
- * @param o the input string
- *
- * @return the generated string
- */
-template <>
-inline std::string Pretty::inspect_object<const char*>(const char* const& o) {
-  return std::format("(const char *) => \"{}\"", o);
+  if constexpr (Util::is_c_string<O>) {
+    // A C string is named by its type and printed quoted, or as nullptr when it is null.
+    constexpr std::string_view constness = std::is_const_v<std::remove_pointer_t<std::decay_t<O>>> ? "const " : "";
+    const std::string type = std::is_array_v<O> ? std::format("{}char [{}]", constness, std::extent_v<O>)
+                                                : std::format("{}char *", constness);
+    const auto text = string_view_of(o);
+    return text ? std::format("({}) => \"{}\"", type, *text) : std::format("({}) => nullptr", type);
+  } else {
+    return std::format("({}) => {}", Util::demangle(typeid(o).name()), to_word(o));
+  }
 }
 
 /**

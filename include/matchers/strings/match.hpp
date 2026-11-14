@@ -13,7 +13,9 @@ inline std::string describe_pattern(const std::string& pattern) {
   return pattern.empty() ? std::string{"a regex"} : "\"" + pattern + "\"";
 }
 
-template <typename A>
+// The actual text is read through string_view_of(); a null C string is no text, so it fails negated as well as
+// positive.
+template <Util::is_string_like A>
 class Match : public MatcherBase<A, std::regex> {
   std::string pattern_;
 
@@ -26,14 +28,22 @@ class Match : public MatcherBase<A, std::regex> {
 
   std::string verb() override { return "match"; }
   std::string description() override { return verb() + " " + describe_pattern(pattern_); }
+  std::string failure_message() override {
+    return MatcherBase<A, std::regex>::failure_message() + no_text_to_search(this->actual());
+  }
+  std::string failure_message_when_negated() override {
+    return MatcherBase<A, std::regex>::failure_message_when_negated() + no_text_to_search(this->actual());
+  }
 
   bool match() override {
-    std::smatch temp_match;
-    return std::regex_match(this->actual(), temp_match, this->expected());
+    const auto actual = string_view_of(this->actual());
+    return actual && std::regex_match(actual->begin(), actual->end(), this->expected());
   }
+
+  bool negated_match() override { return string_view_of(this->actual()) && !match(); }
 };
 
-template <typename A>
+template <Util::is_string_like A>
 class MatchPartial : public MatcherBase<A, std::regex> {
   std::string pattern_;
 
@@ -45,9 +55,20 @@ class MatchPartial : public MatcherBase<A, std::regex> {
       : MatcherBase<A, std::regex>(expectation, expected) {}
 
   std::string description() override { return "partially match " + describe_pattern(pattern_); }
+  std::string failure_message() override {
+    return MatcherBase<A, std::regex>::failure_message() + no_text_to_search(this->actual());
+  }
+  std::string failure_message_when_negated() override {
+    return MatcherBase<A, std::regex>::failure_message_when_negated() + no_text_to_search(this->actual());
+  }
 
   // A partial match is a match anywhere in the string: a search, not a match of the whole.
-  bool match() override { return std::regex_search(this->actual(), this->expected()); }
+  bool match() override {
+    const auto actual = string_view_of(this->actual());
+    return actual && std::regex_search(actual->begin(), actual->end(), this->expected());
+  }
+
+  bool negated_match() override { return string_view_of(this->actual()) && !match(); }
 };
 
 }  // namespace CppSpec::Matchers
