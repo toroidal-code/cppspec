@@ -1,5 +1,7 @@
 #include <cstdlib>
+#include <memory>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 #include "cppspec.hpp"
@@ -10,6 +12,11 @@ namespace {
 int let_calls_1  = 0;
 int let_a_calls  = 0;
 int let_b_calls  = 0;
+int counted_destroyed = 0;
+
+struct Counted {
+  ~Counted() { ++counted_destroyed; }
+};
 }  // namespace
 
 // Memoization within a single it block
@@ -113,5 +120,20 @@ describe let_nested_spec("let in nested context", $ {
   });
 });
 
+// A Description owns each of its lets through LetBase
+describe let_owned_through_base_spec("a let owned through LetBase", $ {
+  it("has a virtual destructor", _ {
+    expect(std::has_virtual_destructor_v<LetBase>).to_be_true();
+  });
+
+  it("destroys its value when deleted through LetBase", _ {
+    std::unique_ptr<LetBase> owned = std::make_unique<Let<Counted>>([] { return Counted{}; });
+    static_cast<Let<Counted>&>(*owned).value();
+    counted_destroyed = 0;
+    owned.reset();
+    expect(counted_destroyed).to_equal(1);
+  });
+});
+
 CPPSPEC_MAIN(let_memoize_spec, multiple_lets_spec, let_complex_type_spec,
-             let_string_spec, let_nested_spec);
+             let_string_spec, let_nested_spec, let_owned_through_base_spec);

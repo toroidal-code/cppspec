@@ -20,6 +20,11 @@ class LetBase {
  public:
   constexpr LetBase() noexcept = default;
   LetBase(const LetBase& copy) = default;
+  LetBase(LetBase&& other) noexcept = default;
+  LetBase& operator=(const LetBase& copy) = default;
+  LetBase& operator=(LetBase&& other) noexcept = default;
+  /** @brief Virtual, as a Description owns its lets through `std::unique_ptr<LetBase>` */
+  virtual ~LetBase() = default;
   void reset() noexcept { delivered = false; }
   [[nodiscard]] constexpr bool has_result() const noexcept { return this->delivered; }
 };
