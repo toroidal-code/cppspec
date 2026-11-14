@@ -18,8 +18,10 @@ class Equal : public MatcherBase<A, E> {
  public:
   Equal(Expectation<A>& expectation, E expected) : MatcherBase<A, E>(expectation, expected) {}
 
-  // Two pieces of text are compared as strings, whatever form each is in, so two C strings are compared by their
-  // text and not by their addresses.
+  /**
+   * @brief Whether the two values are compared as text, through string_view_of(), whatever form each is in, so two
+   *        C strings are compared by their text and not by their addresses
+   */
   static constexpr bool compares_text = Util::is_string_like<A> && Util::is_string_like<E>;
 
   std::string verb() override { return "equal"; }

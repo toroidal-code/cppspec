@@ -1,5 +1,8 @@
 /** @file */
 #pragma once
+#include <algorithm>
+#include <string>
+
 #include "matcher_base.hpp"
 
 namespace CppSpec::Matchers {
@@ -26,7 +29,21 @@ class ContainBase : public MatcherBase<A, E> {
 
  protected:
   bool actual_collection_includes(U expected_item);
+
+  /**
+   * @brief Whether the actual value is a null C string, which is no text, so the matcher fails it negated as well as
+   *        positive
+   */
   bool actual_is_null_text();
+
+  /**
+   * @brief Whether the actual value is text and a piece of text to look for in it is a null C string, which is
+   *        nothing to look for, so the matcher fails it negated as well as positive
+   */
+  bool expected_is_null_text();
+
+  /** @brief The lines that say why there is no text to search or nothing to look for, or an empty string */
+  std::string null_text_notes();
 
  private:
   bool collection_includes(U expected_item);
@@ -40,13 +57,18 @@ std::string ContainBase<A, E, U>::description() {
 
 template <typename A, typename E, typename U>
 std::string ContainBase<A, E, U>::failure_message() {
-  return Pretty::improve_hash_formatting(MatcherBase<A, E>::failure_message()) + no_text_to_search(this->actual());
+  return Pretty::improve_hash_formatting(MatcherBase<A, E>::failure_message()) + null_text_notes();
 }
 
 template <typename A, typename E, typename U>
 std::string ContainBase<A, E, U>::failure_message_when_negated() {
-  return Pretty::improve_hash_formatting(MatcherBase<A, E>::failure_message_when_negated()) +
-         no_text_to_search(this->actual());
+  return Pretty::improve_hash_formatting(MatcherBase<A, E>::failure_message_when_negated()) + null_text_notes();
+}
+
+template <typename A, typename E, typename U>
+std::string ContainBase<A, E, U>::null_text_notes() {
+  return no_text_to_search(this->actual()) +
+         (expected_is_null_text() ? std::string(nothing_to_look_for) : std::string());
 }
 
 // Text contains a piece of text or a character, both read through string_view_of(); any other collection contains
@@ -66,11 +88,24 @@ bool ContainBase<A, E, U>::actual_collection_includes(U expected_item) {
   }
 }
 
-// A null C string is no text, so it contains nothing, negated or not.
 template <typename A, typename E, typename U>
 bool ContainBase<A, E, U>::actual_is_null_text() {
   if constexpr (Util::is_string_like<A>) {
     return !string_view_of(this->actual());
+  } else {
+    return false;
+  }
+}
+
+// In a collection that is not text, a null C string is an element like any other, and is looked for as one.
+template <typename A, typename E, typename U>
+bool ContainBase<A, E, U>::expected_is_null_text() {
+  if constexpr (Util::is_string_like<A> && Util::is_string_like<U>) {
+    if constexpr (std::same_as<E, U>) {
+      return !string_view_of(this->expected());
+    } else {
+      return std::ranges::any_of(this->expected(), [](const U& item) { return !string_view_of(item); });
+    }
   } else {
     return false;
   }
@@ -104,12 +139,14 @@ class Contain : public ContainBase<A, E, U> {
 
 template <typename A, typename E, typename U>
 bool Contain<A, E, U>::match() {
-  return !this->actual_is_null_text() && perform_match(Predicate::all, Predicate::all);
+  return !this->actual_is_null_text() && !this->expected_is_null_text() &&
+         perform_match(Predicate::all, Predicate::all);
 }
 
 template <typename A, typename E, typename U>
 bool Contain<A, E, U>::negated_match() {
-  return !this->actual_is_null_text() && perform_match(Predicate::none, Predicate::any);
+  return !this->actual_is_null_text() && !this->expected_is_null_text() &&
+         perform_match(Predicate::none, Predicate::any);
 }
 
 // TODO: support std::map<E,_>
@@ -164,7 +201,7 @@ bool Contain<A, U, U>::match() {
 
 template <typename A, typename U>
 bool Contain<A, U, U>::negated_match() {
-  return !this->actual_is_null_text() && !match();
+  return !this->actual_is_null_text() && !this->expected_is_null_text() && !match();
 }
 
 }  // namespace CppSpec::Matchers

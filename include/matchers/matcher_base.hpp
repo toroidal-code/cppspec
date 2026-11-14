@@ -42,6 +42,28 @@ template <typename A>
 }
 
 /**
+ * @brief The line a matcher that searches text puts below its own message when the text or pattern it looks for is
+ *        a null C string, which is nothing to look for, so the matcher fails it negated as well as positive
+ */
+inline constexpr std::string_view nothing_to_look_for = "\nnullptr is not text, so there is nothing to look for";
+
+/**
+ * @brief The line nothing_to_look_for when the expected value is a null C string
+ *
+ * @param expected the expected value
+ * @return the line, led by a newline, or an empty string when the expected value is not a null C string
+ */
+template <typename E>
+[[nodiscard]] std::string no_text_to_look_for(const E& expected) {
+  if constexpr (Util::is_string_like<E>) {
+    if (!string_view_of(expected)) {
+      return std::string(nothing_to_look_for);
+    }
+  }
+  return {};
+}
+
+/**
  * @brief the base class for all Matcher classes and objects
  *
  * @tparam Actual the type of Actual 'thing' to match against

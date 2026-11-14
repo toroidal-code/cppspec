@@ -165,6 +165,20 @@ inline constexpr bool is_optional_v<std::optional<T>> = true;
 template <typename T>
 concept is_string_like = is_c_string<T> || std::convertible_to<const std::remove_cvref_t<T>&, std::string_view>;
 
+/**
+ * @brief Checks whether to_start_with and to_end_with compare an actual value of type A with an expected one of type
+ *        E: text with text, a range with a range element by element, or a range of char with text.
+ *
+ * @tparam A the type of the actual value
+ * @tparam E the type of the expected value
+ */
+template <typename A, typename E>
+concept compares_start_and_end =
+    (is_string_like<A> && is_string_like<E>) ||
+    (std::ranges::range<A> &&
+     (std::ranges::range<E> ||
+      (is_string_like<E> && std::same_as<std::remove_cv_t<std::ranges::range_value_t<A>>, char>)));
+
 template <typename T>
 concept not_c_string = !std::is_same_v<T, const char*> && !std::is_same_v<T, char*> &&
                        !std::is_convertible_v<T, const char*> && !std::is_convertible_v<T, char*>;
@@ -212,9 +226,14 @@ namespace CppSpec {
 /**
  * @brief View text as a std::string_view, the one form the string matchers and the printer compare and print.
  *
- * A char array is read up to its first NUL and no further than its end. A null C string is no text at all: it
- * equals only another null C string, the matchers that search text fail on it, negated or not, and it prints as
- * `nullptr`.
+ * A char array passed here itself is read up to its first NUL and no further than its end. A char array given to
+ * expect() or to a matcher has already decayed to a pointer by the time it is viewed, so it is read as a C string,
+ * up to its first NUL, and must be NUL-terminated; wrap a fixed-size buffer in `std::string_view(buffer, size)`.
+ *
+ * A null C string is no text at all: it equals only another null C string, the matchers that search text fail on
+ * it, negated or not, whether it is the actual value or the text looked for, and it prints as `nullptr`.
+ *
+ * A temporary std::string is refused, because the view would outlive its text.
  *
  * @param text a std::string, std::string_view, char array or char pointer
  *
@@ -233,5 +252,7 @@ template <Util::is_string_like T>
     return std::string_view(text);
   }
 }
+
+std::optional<std::string_view> string_view_of(const std::string&& text) = delete;
 
 }  // namespace CppSpec

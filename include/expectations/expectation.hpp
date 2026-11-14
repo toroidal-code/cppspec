@@ -110,17 +110,23 @@ class Expectation {
 
   /*-------- to... ----------*/
 
-  void to_end_with(std::string ending, std::string msg = "");
+  template <Util::is_string_like T>
+    requires Util::compares_start_and_end<A, T>
+  void to_end_with(T ending, std::string msg = "");
   void to_fail(std::string msg = "");
   void to_fail_with(std::string failure_message, std::string msg = "");
   void to_match(std::regex regex, std::string msg = "");
-  void to_match(std::string str, std::string msg = "");
+  template <Util::is_string_like T>
+  void to_match(T pattern, std::string msg = "");
   void to_partially_match(std::regex regex, std::string msg = "");
-  void to_partially_match(std::string str, std::string msg = "");
+  template <Util::is_string_like T>
+  void to_partially_match(T pattern, std::string msg = "");
   template <typename F>
     requires std::invocable<F, A> && std::convertible_to<std::invoke_result_t<F, A>, bool>
   void to_satisfy(F test, std::string msg = "");
-  void to_start_with(std::string start, std::string msg = "");
+  template <Util::is_string_like T>
+    requires Util::compares_start_and_end<A, T>
+  void to_start_with(T start, std::string msg = "");
 
   template <typename U>
   void to_contain(std::initializer_list<U> expected, std::string msg = "");
@@ -328,9 +334,16 @@ void Expectation<A>::to_fail_with(std::string failure_message, std::string msg) 
   Matchers::FailWith<A>(*this, failure_message).set_message(std::move(msg)).run();
 }
 
+/**
+ * @brief Match using the Matchers::Match matcher, with a pattern given as text.
+ *
+ * @param pattern the pattern, in any form string_view_of() reads; a null C string fails, negated or not.
+ * @param msg Optional message to give on failure.
+ */
 template <typename A>
-void Expectation<A>::to_match(std::string str, std::string msg) {
-  Matchers::Match<A>(*this, str).set_message(std::move(msg)).run();
+template <Util::is_string_like T>
+void Expectation<A>::to_match(T pattern, std::string msg) {
+  Matchers::Match<A>(*this, pattern).set_message(std::move(msg)).run();
 }
 
 template <typename A>
@@ -338,9 +351,16 @@ void Expectation<A>::to_match(std::regex regex, std::string msg) {
   Matchers::Match<A>(*this, regex).set_message(std::move(msg)).run();
 }
 
+/**
+ * @brief Match using the Matchers::MatchPartial matcher, with a pattern given as text.
+ *
+ * @param pattern the pattern, in any form string_view_of() reads; a null C string fails, negated or not.
+ * @param msg Optional message to give on failure.
+ */
 template <typename A>
-void Expectation<A>::to_partially_match(std::string str, std::string msg) {
-  Matchers::MatchPartial<A>(*this, str).set_message(std::move(msg)).run();
+template <Util::is_string_like T>
+void Expectation<A>::to_partially_match(T pattern, std::string msg) {
+  Matchers::MatchPartial<A>(*this, pattern).set_message(std::move(msg)).run();
 }
 
 template <typename A>
@@ -364,9 +384,17 @@ void Expectation<A>::to_satisfy(F test, std::string msg) {
   Matchers::Satisfy<A>(*this, std::function<bool(A)>(std::move(test))).set_message(std::move(msg)).run();
 }
 
+/**
+ * @brief Match using the Matchers::StartWith matcher, with the start given as text.
+ *
+ * @param start the text, in any form string_view_of() reads; a null C string fails, negated or not.
+ * @param msg Optional message to give on failure.
+ */
 template <typename A>
-void Expectation<A>::to_start_with(std::string start, std::string msg) {
-  Matchers::StartWith<A, std::string>(*this, start).set_message(std::move(msg)).run();
+template <Util::is_string_like T>
+  requires Util::compares_start_and_end<A, T>
+void Expectation<A>::to_start_with(T start, std::string msg) {
+  Matchers::StartWith<A, T>(*this, start).set_message(std::move(msg)).run();
 }
 
 template <typename A>
@@ -375,9 +403,17 @@ void Expectation<A>::to_start_with(std::initializer_list<U> start_sequence, std:
   Matchers::StartWith<A, std::initializer_list<U>>(*this, start_sequence).set_message(std::move(msg)).run();
 }
 
+/**
+ * @brief Match using the Matchers::EndWith matcher, with the ending given as text.
+ *
+ * @param ending the text, in any form string_view_of() reads; a null C string fails, negated or not.
+ * @param msg Optional message to give on failure.
+ */
 template <typename A>
-void Expectation<A>::to_end_with(std::string ending, std::string msg) {
-  Matchers::EndWith<A, std::string>(*this, ending).set_message(std::move(msg)).run();
+template <Util::is_string_like T>
+  requires Util::compares_start_and_end<A, T>
+void Expectation<A>::to_end_with(T ending, std::string msg) {
+  Matchers::EndWith<A, T>(*this, ending).set_message(std::move(msg)).run();
 }
 
 template <typename A>

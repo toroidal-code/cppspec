@@ -1,7 +1,10 @@
+#include <list>
 #include <optional>
 #include <source_location>
 #include <string>
 #include <string_view>
+#include <utility>
+#include <vector>
 
 #include "cppspec.hpp"
 
@@ -27,6 +30,34 @@ ExpectationValue<T> negated(T value) {
   expectation.not_();
   return expectation;
 }
+
+// The line a search matcher adds below its message when the text it looks for is a null C string.
+const std::string null_expected_note = "\nnullptr is not text, so there is nothing to look for";
+
+// The results an expectation on actual reports to an example of its own when search runs it, positive and then
+// negated.
+template <typename A, typename Search>
+std::list<Result> searched_both_ways(A actual, Search search) {
+  auto location = std::source_location::current();
+  ItD example(location, "searches", [](ItD&) {});
+  ExpectationValue<A> positive(example, actual, location);
+  search(positive);
+  ExpectationValue<A> negative(example, actual, location);
+  negative.not_();
+  search(negative);
+  return example.get_results();
+}
+
+// Whether string_view_of() accepts a T: a temporary std::string is refused, so no view outlives its text.
+template <typename T>
+concept views_text = requires(T&& text) { string_view_of(std::forward<T>(text)); };
+
+// Whether to_start_with and to_end_with take text for an actual value of type A.
+template <typename A>
+concept starts_and_ends_with_text = requires(Expectation<A>& e) {
+  e.to_start_with("ab");
+  e.to_end_with("ab");
+};
 
 }  // namespace
 
@@ -184,6 +215,66 @@ describe c_string_spec("expect on a C string", $ {
     });
   });
 
+  context("when the expected text is null", _ {
+    it("fails start_with, end_with, match, partially_match and contain either way, saying there is no text to look for", _ {
+      const std::string text("abc");
+      const char* const pointer = "abc";
+      for (const std::list<Result>& results :
+           {searched_both_ways(text, [](auto& e) { e.to_start_with(null_text); }),
+            searched_both_ways(pointer, [](auto& e) { e.to_start_with(null_text); }),
+            searched_both_ways(text, [](auto& e) { e.to_end_with(null_text); }),
+            searched_both_ways(pointer, [](auto& e) { e.to_end_with(null_text); }),
+            searched_both_ways(text, [](auto& e) { e.to_match(null_text); }),
+            searched_both_ways(pointer, [](auto& e) { e.to_match(null_text); }),
+            searched_both_ways(text, [](auto& e) { e.to_partially_match(null_text); }),
+            searched_both_ways(pointer, [](auto& e) { e.to_partially_match(null_text); }),
+            searched_both_ways(text, [](auto& e) { e.to_contain(null_text); }),
+            searched_both_ways(pointer, [](auto& e) { e.to_contain(null_text); })}) {
+        expect(results.size()).to_equal(std::size_t{2});
+        for (const Result& r : results) {
+          expect(r).to_fail();
+          expect(r.get_message()).to_partially_match("expected abc to (not )?[a-z ]+ nullptr");
+          expect(r.get_message()).to_partially_match(null_expected_note);
+        }
+      }
+    });
+
+    it("fails start_with and end_with on a range of characters either way", _ {
+      const std::vector<char> letters{'a', 'b', 'c'};
+      for (const std::list<Result>& results :
+           {searched_both_ways(letters, [](auto& e) { e.to_start_with(null_text); }),
+            searched_both_ways(letters, [](auto& e) { e.to_end_with(null_text); })}) {
+        expect(results.size()).to_equal(std::size_t{2});
+        for (const Result& r : results) {
+          expect(r).to_fail();
+          expect(r.get_message()).to_partially_match(null_expected_note);
+        }
+      }
+    });
+
+    it("still compares a range of characters with text", _ {
+      const std::vector<char> letters{'a', 'b', 'c'};
+      expect(letters).to_start_with("ab");
+      expect(letters).not_().to_start_with("bc");
+      expect(letters).to_end_with(std::string_view("bc"));
+      expect(letters).not_().to_end_with(std::string("ab"));
+    });
+
+    it("compares no range but a range of characters with text", _ {
+      static_assert(starts_and_ends_with_text<std::vector<char>>);
+      static_assert(starts_and_ends_with_text<std::string>);
+      static_assert(starts_and_ends_with_text<const char*>);
+      static_assert(!starts_and_ends_with_text<std::vector<int>>);
+      static_assert(!starts_and_ends_with_text<std::vector<std::string>>);
+    });
+
+    it("finds a null pointer in a container of C strings as an element", _ {
+      const std::vector<const char*> pointers{"a", nullptr};
+      expect(pointers).to_contain(null_text);
+      expect(std::vector<const char*>{"a"}).not_().to_contain(null_text);
+    });
+  });
+
   context("printed", _ {
     it("prints a null C string as nullptr", _ {
       expect(Pretty::to_word(null_text)).to_equal(std::string("nullptr"));
@@ -211,6 +302,13 @@ describe c_string_spec("expect on a C string", $ {
       expect(string_view_of(text)).to_equal(abc);
       expect(string_view_of(pointer)).to_equal(abc);
       expect(string_view_of(static_cast<const char*>(pointer))).to_equal(abc);
+    });
+
+    it("refuses a temporary std::string, whose view would dangle", _ {
+      static_assert(!views_text<std::string>);
+      static_assert(views_text<const std::string&>);
+      static_assert(views_text<std::string_view>);
+      static_assert(views_text<const char*>);
     });
 
     it("views nothing for a null C string", _ {
