@@ -24,6 +24,39 @@
 namespace CppSpec::Util {
 
 /**
+ * @brief Removes the `enum `, `class `, `struct ` and `union ` keywords MSVC writes before every type in a type name
+ *
+ * MSVC names `std::vector<Colour>` as `class std::vector<enum Colour,class std::allocator<enum Colour> >`; without
+ * the keywords it reads `std::vector<Colour,std::allocator<Colour> >`. A keyword is removed only where it starts a
+ * word, so a name such as `my_class Foo` is kept whole.
+ *
+ * @param name a type name
+ *
+ * @return the name without the keywords
+ */
+inline std::string strip_type_keywords(std::string_view name) {
+  static constexpr std::string_view keywords[] = {"enum ", "class ", "struct ", "union "};
+  const auto continues_identifier = [](char c) {
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';
+  };
+  std::string stripped;
+  stripped.reserve(name.size());
+  std::size_t i = 0;
+  while (i < name.size()) {
+    const bool at_word_start = i == 0 || !continues_identifier(name[i - 1]);
+    const auto* keyword = std::ranges::find_if(
+        keywords, [&](std::string_view word) { return at_word_start && name.substr(i).starts_with(word); });
+    if (keyword != std::ranges::end(keywords)) {
+      i += keyword->size();
+    } else {
+      stripped += name[i];
+      ++i;
+    }
+  }
+  return stripped;
+}
+
+/**
  * Demangle a symbol into a human-readable string.
  *
  * @param mangled the mangled symbol
@@ -40,8 +73,9 @@ inline std::string demangle(const char* mangled) {
   return (status == 0) ? result.get() : mangled;
 }
 #else
+// MSVC's type_info::name() is already readable, but names every type with its keyword.
 inline std::string demangle(const char* name) {
-  return name;
+  return strip_type_keywords(name);
 }
 #endif
 

@@ -184,6 +184,17 @@ describe pretty_spec("Pretty::to_word", $ {
     });
   });
 
+  it("strips MSVC's enum, class, struct and union keywords from a type name, wherever they start a word", _ {
+    expect(Util::strip_type_keywords("enum Colour")).to_equal(std::string("Colour"));
+    expect(Util::strip_type_keywords("class std::vector<enum Colour,class std::allocator<enum Colour> >"))
+        .to_equal(std::string("std::vector<Colour,std::allocator<Colour> >"));
+    expect(Util::strip_type_keywords("struct `anonymous namespace'::Buf"))
+        .to_equal(std::string("`anonymous namespace'::Buf"));
+    expect(Util::strip_type_keywords("union U")).to_equal(std::string("U"));
+    expect(Util::strip_type_keywords("my_class Foo")).to_equal(std::string("my_class Foo"));
+    expect(Util::strip_type_keywords("Colour")).to_equal(std::string("Colour"));
+  });
+
   it("takes the last piece of a name, or nothing from a name with no pieces", _ {
     expect(Pretty::last("CppSpec::Matchers::Equal", ':')).to_equal(std::string("Equal"));
     expect(Pretty::last("", ':')).to_equal(std::string());
