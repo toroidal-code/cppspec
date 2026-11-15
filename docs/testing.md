@@ -17,6 +17,19 @@ Pass a formatter to `CppSpec::parse`:
 CppSpec::parse(argc, argv, CppSpec::Formatters::verbose)
 ```
 
+`verbose` and `progress` (the default) start each failure message with the file and line of the
+failing expectation, so an editor or terminal can jump to it:
+
+```
+spec/gain_spec.cpp:12: the gain
+expected (int) => 2
+     got (int) => 1
+Compared using `==`
+```
+
+`progress` lists only the expectations that failed. The `tap` and `junit` formatters report the
+file and line in their own fields.
+
 ## Example
 
 ```cpp

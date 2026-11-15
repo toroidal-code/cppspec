@@ -75,6 +75,11 @@ class ItBase : public Runnable {
   /**
    * @brief The `expect` object generator for objects and LiteralTypes
    *
+   * A C string (a char pointer, or a char array, which decays to one) is kept as the pointer it is, so to_be_null()
+   * works on it; the string matchers compare it as text. Because a char array decays to a pointer, it is read as a C
+   * string, up to its first NUL, so it must be NUL-terminated; pass `std::string_view(buffer, size)` for a fixed-size
+   * buffer that may not be.
+   *
    * @param value the item to wrap. This parameter is passed by value so
    *              that statements like `expect(2)` or `expect(SomeClass())`
    *              can be passed in
@@ -122,15 +127,6 @@ class ItBase : public Runnable {
    */
   template <typename T>
   ExpectationValue<T> expect(Let<T>& let, std::source_location location = std::source_location::current());
-
-  /**
-   * @brief The `expect` object generator for const char*
-   *
-   * @param string the string to wrap
-   * @return a ExpectationValue object containing a C++ string
-   */
-  ExpectationValue<std::string> expect(const char* string,
-                                       std::source_location location = std::source_location::current());
 
   void add_result(const Result& result) { results.push_back(result); }
   std::list<Result>& get_results() noexcept { return results; }

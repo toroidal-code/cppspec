@@ -17,12 +17,10 @@ jobs:
       fail-fast: false
       matrix:
         compiler: [native, llvm-20, gcc-14]
-        os: [ubuntu-latest, windows-latest, macos-14, macos-15]
+        os: [ubuntu-latest, windows-latest, macos-15]
         exclude:
           - os: windows-latest
             compiler: gcc-14
-          - os: macos-14
-            compiler: native # AppleClang is too old
 
     steps:
       - name: Checkout code
@@ -39,7 +37,7 @@ jobs:
           echo "CC=$LLVM_PREFIX/bin/clang" >> $GITHUB_ENV
           echo "CXX=$LLVM_PREFIX/bin/clang++" >> $GITHUB_ENV
           echo "LDFLAGS=-L$LLVM_PREFIX/lib/c++ -Wl,-rpath,$LLVM_PREFIX/lib/c++" >> $GITHUB_ENV
-        if: ${{ matrix.compiler == 'llvm-20' && (matrix.os == 'macos-14' || matrix.os == 'macos-15') }}
+        if: ${{ matrix.compiler == 'llvm-20' && matrix.os == 'macos-15' }}
 
       - name: Install LLVM and Clang (Ubuntu)
         run: |

@@ -3,11 +3,16 @@
  * @brief Utility functions and classes
  */
 #pragma once
+#include <algorithm>
+#include <concepts>
 #include <functional>
+#include <optional>
 #include <ranges>
 #include <sstream>
 #include <string>
+#include <string_view>
 #include <type_traits>
+#include <utility>
 
 #ifdef __GNUG__
 #include <cxxabi.h>
@@ -17,6 +22,39 @@
 #endif
 
 namespace CppSpec::Util {
+
+/**
+ * @brief Removes the `enum `, `class `, `struct ` and `union ` keywords MSVC writes before every type in a type name
+ *
+ * MSVC names `std::vector<Colour>` as `class std::vector<enum Colour,class std::allocator<enum Colour> >`; without
+ * the keywords it reads `std::vector<Colour,std::allocator<Colour> >`. A keyword is removed only where it starts a
+ * word, so a name such as `my_class Foo` is kept whole.
+ *
+ * @param name a type name
+ *
+ * @return the name without the keywords
+ */
+inline std::string strip_type_keywords(std::string_view name) {
+  static constexpr std::string_view keywords[] = {"enum ", "class ", "struct ", "union "};
+  const auto continues_identifier = [](char c) {
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';
+  };
+  std::string stripped;
+  stripped.reserve(name.size());
+  std::size_t i = 0;
+  while (i < name.size()) {
+    const bool at_word_start = i == 0 || !continues_identifier(name[i - 1]);
+    const auto* keyword = std::ranges::find_if(
+        keywords, [&](std::string_view word) { return at_word_start && name.substr(i).starts_with(word); });
+    if (keyword != std::ranges::end(keywords)) {
+      i += keyword->size();
+    } else {
+      stripped += name[i];
+      ++i;
+    }
+  }
+  return stripped;
+}
 
 /**
  * Demangle a symbol into a human-readable string.
@@ -35,8 +73,9 @@ inline std::string demangle(const char* mangled) {
   return (status == 0) ? result.get() : mangled;
 }
 #else
+// MSVC's type_info::name() is already readable, but names every type with its keyword.
 inline std::string demangle(const char* name) {
-  return name;
+  return strip_type_keywords(name);
 }
 #endif
 
@@ -102,6 +141,138 @@ concept is_functional =
 template <typename C>
 concept is_not_functional = !is_functional<C>;
 
+/**
+ * @brief Checks whether T is a C string: a pointer to char, const or not, or a char array, which decays to one.
+ *
+ * A pointer to volatile char is not a C string: it is printed and compared as a plain pointer.
+ *
+ * @tparam T a type to check
+ */
+template <typename T>
+concept is_c_string = std::is_pointer_v<std::decay_t<T>> &&
+                      std::same_as<std::remove_const_t<std::remove_pointer_t<std::decay_t<T>>>, char>;
+
+/**
+ * @brief Checks whether T is a character type that std::ostream does not print as a character: wchar_t, char8_t,
+ *        char16_t or char32_t.
+ *
+ * @tparam T a type to check
+ */
+template <typename T>
+concept is_wide_character = std::same_as<std::remove_cv_t<T>, wchar_t> || std::same_as<std::remove_cv_t<T>, char8_t> ||
+                            std::same_as<std::remove_cv_t<T>, char16_t> || std::same_as<std::remove_cv_t<T>, char32_t>;
+
+/**
+ * @brief Checks whether T is a pointer to a character type other than char: signed char, unsigned char, or a wide
+ *        character type.
+ *
+ * Only a char pointer is a C string. These point at bytes or code units, so they are printed as addresses and
+ * compared as pointers.
+ *
+ * @tparam T a type to check
+ */
+template <typename T>
+concept is_non_text_character_pointer =
+    std::is_pointer_v<T> && (std::same_as<std::remove_const_t<std::remove_pointer_t<T>>, signed char> ||
+                             std::same_as<std::remove_const_t<std::remove_pointer_t<T>>, unsigned char> ||
+                             std::same_as<std::remove_const_t<std::remove_pointer_t<T>>, wchar_t> ||
+                             std::same_as<std::remove_const_t<std::remove_pointer_t<T>>, char8_t> ||
+                             std::same_as<std::remove_const_t<std::remove_pointer_t<T>>, char16_t> ||
+                             std::same_as<std::remove_const_t<std::remove_pointer_t<T>>, char32_t>);
+
+/**
+ * @brief Checks whether T is a std::optional.
+ *
+ * @tparam T a type to check
+ */
+template <typename T>
+inline constexpr bool is_optional_v = false;
+
+template <typename T>
+inline constexpr bool is_optional_v<std::optional<T>> = true;
+
+/**
+ * @brief Checks whether T is text that CppSpec::string_view_of() can view: a C string, or a type that converts to
+ *        std::string_view, such as std::string and std::string_view.
+ *
+ * @tparam T a type to check
+ */
+template <typename T>
+concept is_string_like = is_c_string<T> || std::convertible_to<const std::remove_cvref_t<T>&, std::string_view>;
+
+/**
+ * @brief Checks whether to_start_with and to_end_with compare an actual value of type A with an expected one of type
+ *        E: text with text, a range with a range element by element, or a range of char with text.
+ *
+ * @tparam A the type of the actual value
+ * @tparam E the type of the expected value
+ */
+template <typename A, typename E>
+concept compares_start_and_end =
+    (is_string_like<A> && is_string_like<E>) ||
+    (std::ranges::range<A> &&
+     (std::ranges::range<E> ||
+      (is_string_like<E> && std::same_as<std::remove_cv_t<std::ranges::range_value_t<A>>, char>)));
+
+/**
+ * @brief Checks whether T is an integer type that std::cmp_less and its kin accept: every integral type but bool and
+ *        the character types (int8_t and uint8_t are in).
+ *
+ * @tparam T a type to check
+ */
+template <typename T>
+concept is_cmp_integer = std::integral<std::remove_cv_t<T>> && !std::same_as<std::remove_cv_t<T>, bool> &&
+                         !std::same_as<std::remove_cv_t<T>, char> && !is_wide_character<T>;
+
+/**
+ * @brief `a < b`, by value when both are integers (std::cmp_less, so a negative signed value is below any unsigned
+ *        one), and with `<` otherwise.
+ */
+template <typename A, typename B>
+constexpr bool less(const A& a, const B& b) {
+  if constexpr (is_cmp_integer<A> && is_cmp_integer<B>) {
+    return std::cmp_less(a, b);
+  } else {
+    return a < b;
+  }
+}
+
+/**
+ * @brief `a <= b`, by value when both are integers (std::cmp_less_equal), and with `<=` otherwise.
+ */
+template <typename A, typename B>
+constexpr bool less_equal(const A& a, const B& b) {
+  if constexpr (is_cmp_integer<A> && is_cmp_integer<B>) {
+    return std::cmp_less_equal(a, b);
+  } else {
+    return a <= b;
+  }
+}
+
+/**
+ * @brief `a > b`, by value when both are integers (std::cmp_greater), and with `>` otherwise.
+ */
+template <typename A, typename B>
+constexpr bool greater(const A& a, const B& b) {
+  if constexpr (is_cmp_integer<A> && is_cmp_integer<B>) {
+    return std::cmp_greater(a, b);
+  } else {
+    return a > b;
+  }
+}
+
+/**
+ * @brief `a >= b`, by value when both are integers (std::cmp_greater_equal), and with `>=` otherwise.
+ */
+template <typename A, typename B>
+constexpr bool greater_equal(const A& a, const B& b) {
+  if constexpr (is_cmp_integer<A> && is_cmp_integer<B>) {
+    return std::cmp_greater_equal(a, b);
+  } else {
+    return a >= b;
+  }
+}
+
 template <typename T>
 concept not_c_string = !std::is_same_v<T, const char*> && !std::is_same_v<T, char*> &&
                        !std::is_convertible_v<T, const char*> && !std::is_convertible_v<T, char*>;
@@ -143,3 +314,39 @@ concept not_c_string = !std::is_same_v<T, const char*> && !std::is_same_v<T, cha
 }
 
 }  // namespace CppSpec::Util
+
+namespace CppSpec {
+
+/**
+ * @brief View text as a std::string_view, the one form the string matchers and the printer compare and print.
+ *
+ * A char array passed here itself is read up to its first NUL and no further than its end. A char array given to
+ * expect() or to a matcher has already decayed to a pointer by the time it is viewed, so it is read as a C string,
+ * up to its first NUL, and must be NUL-terminated; wrap a fixed-size buffer in `std::string_view(buffer, size)`.
+ *
+ * A null C string is no text at all: it equals only another null C string, the matchers that search text fail on
+ * it, negated or not, whether it is the actual value or the text looked for, and it prints as `nullptr`.
+ *
+ * A temporary std::string is refused, because the view would outlive its text.
+ *
+ * @param text a std::string, std::string_view, char array or char pointer
+ *
+ * @return a view of the text, or std::nullopt for a null C string
+ */
+template <Util::is_string_like T>
+[[nodiscard]] constexpr std::optional<std::string_view> string_view_of(const T& text) {
+  if constexpr (std::is_array_v<T>) {
+    return std::string_view(std::ranges::begin(text), std::ranges::find(text, '\0'));
+  } else if constexpr (Util::is_c_string<T>) {
+    if (text == nullptr) {
+      return std::nullopt;
+    }
+    return std::string_view(text);
+  } else {
+    return std::string_view(text);
+  }
+}
+
+std::optional<std::string_view> string_view_of(const std::string&& text) = delete;
+
+}  // namespace CppSpec

@@ -2,6 +2,7 @@
 
 #include <argparse/argparse.hpp>
 #include <fstream>
+#include <memory>
 #include <string>
 #include <string_view>
 #include "formatters/junit_xml.hpp"
@@ -21,6 +22,19 @@ inline std::string file_name(std::string_view path) {
   }
   return std::string{file};
 }
+
+/**
+ * @brief The file that --output-junit names, with the JUnit XML formatter that writes to it
+ *
+ * The formatter is declared after the stream, so it is destroyed first: its destructor writes the XML to a stream
+ * that is still open, and the stream is closed after it.
+ */
+struct JUnitOutputFile {
+  std::ofstream stream;
+  Formatters::JUnitXML formatter{stream, false};
+
+  explicit JUnitOutputFile(const std::string& path) : stream(path) {}
+};
 
 inline Runner parse(int argc, char** const argv) {
   std::filesystem::path executable_path = argv[0];
@@ -61,9 +75,8 @@ inline Runner parse(int argc, char** const argv) {
 
   auto junit_output_filepath = program.get<std::string>("--output-junit");
   if (!junit_output_filepath.empty()) {
-    // open file stream
-    auto* file_stream = new std::ofstream(junit_output_filepath);
-    auto junit_output = std::make_shared<Formatters::JUnitXML>(*file_stream, false);
+    auto junit_file = std::make_shared<JUnitOutputFile>(junit_output_filepath);
+    std::shared_ptr<Formatters::BaseFormatter> junit_output{junit_file, &junit_file->formatter};
     return Runner{formatter, junit_output};
   }
   return Runner{formatter};

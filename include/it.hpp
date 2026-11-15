@@ -153,8 +153,4 @@ ExpectationValue<std::initializer_list<T>> ItBase::expect(std::initializer_list<
   return {*this, init_list, location};
 }
 
-inline ExpectationValue<std::string> ItBase::expect(const char* str, std::source_location location) {
-  return {*this, std::string(str), location};
-}
-
 }  // namespace CppSpec

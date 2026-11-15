@@ -41,7 +41,7 @@ inline void Verbose::format(const ItBase& it) {
   for (const Result& result : it.get_results()) {
     if (result.is_failure()) {
       out_stream << set_color(RED);
-      out_stream << result.get_message() << std::endl;
+      out_stream << located_message(result) << std::endl;
       out_stream << reset_color();
     }
   }

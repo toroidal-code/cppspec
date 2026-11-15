@@ -1,7 +1,23 @@
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <source_location>
+
 #include "cppspec.hpp"
 
 using namespace CppSpec;
 
+// Whether the matcher fails, run outside any example so the failure is not recorded.
+template <template <typename, typename> class M, typename A, typename E>
+bool fails(A actual, E bound, bool negated) {
+  auto ex = ExpectationValue(actual, std::source_location::current());
+  if (negated) {
+    ex.not_();
+  }
+  return M<A, E>(ex, bound).run().is_failure();
+}
+
+// clang-format off
 describe numeric_spec("numeric comparison matchers", $ {
   context("to_be_greater_than", _ {
     it("passes when actual > expected (int)", _ {
@@ -56,6 +72,38 @@ describe numeric_spec("numeric comparison matchers", $ {
       expect(0).not_().to_be_less_than(0);
       expect(-1).to_be_less_than(0);
       expect(1).not_().to_be_less_than(0);
+    });
+  });
+
+  context("with a signed and an unsigned integer", _ {
+    it("compares them by value", _ {
+      expect(-1).not_().to_be_greater_than(0u);
+      expect(0u).to_be_greater_than(-1);
+      expect(-1).to_be_less_than(0u);
+      expect(std::size_t{3}).not_().to_be_less_than(-1);
+      expect(std::numeric_limits<std::uint64_t>::max()).to_be_greater_than(std::int64_t{-1});
+      expect(std::int8_t{-1}).to_be_less_than(std::uint8_t{1});
+    });
+
+    it("compares characters and bools as the operators do", _ {
+      expect('b').to_be_greater_than('a');
+      expect(false).to_be_less_than(true);
+    });
+  });
+
+  context("with NaN", _ {
+    const double nan = std::numeric_limits<double>::quiet_NaN();
+
+    it("fails to_be_greater_than, negated or not", _ {
+      expect(fails<Matchers::BeGreaterThan>(nan, 0.0, false)).to_be_true();
+      expect(fails<Matchers::BeGreaterThan>(nan, 0.0, true)).to_be_true();
+      expect(fails<Matchers::BeGreaterThan>(0.0, nan, true)).to_be_true();
+    });
+
+    it("fails to_be_less_than, negated or not", _ {
+      expect(fails<Matchers::BeLessThan>(nan, 0.0, false)).to_be_true();
+      expect(fails<Matchers::BeLessThan>(nan, 0.0, true)).to_be_true();
+      expect(fails<Matchers::BeLessThan>(0.0, nan, true)).to_be_true();
     });
   });
 

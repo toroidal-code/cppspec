@@ -18,6 +18,12 @@ class Equal : public MatcherBase<A, E> {
  public:
   Equal(Expectation<A>& expectation, E expected) : MatcherBase<A, E>(expectation, expected) {}
 
+  /**
+   * @brief Whether the two values are compared as text, through string_view_of(), whatever form each is in, so two
+   *        C strings are compared by their text and not by their addresses
+   */
+  static constexpr bool compares_text = Util::is_string_like<A> && Util::is_string_like<E>;
+
   std::string verb() override { return "equal"; }
   std::string failure_message() override;
   std::string failure_message_when_negated() override;
@@ -26,6 +32,7 @@ class Equal : public MatcherBase<A, E> {
  protected:
   bool match() override;
   bool expected_is_a_literal();
+  std::string comparison();
   std::string actual_inspected();
   std::string simple_failure_message();
   // std::string detailed_failure_message();
@@ -46,7 +53,7 @@ std::string Equal<A, E>::failure_message_when_negated() {
   std::stringstream ss;
   ss << "expected not " << Pretty::inspect_object(MatcherBase<A, E>::expected()) << std::endl;
   ss << "         got " << actual_inspected() << std::endl;
-  ss << "Compared using `==`";
+  ss << comparison();
   return ss.str();
 }
 
@@ -55,7 +62,7 @@ std::string Equal<A, E>::simple_failure_message() {
   std::stringstream ss;
   ss << "expected " << Pretty::inspect_object(MatcherBase<A, E>::expected()) << std::endl;
   ss << "     got " << actual_inspected() << std::endl;
-  ss << "Compared using `==`";
+  ss << comparison();
   return ss.str();
 }
 
@@ -64,9 +71,24 @@ bool Equal<A, E>::diffable() {
   return !expected_is_a_literal();
 }
 
+// A null C string is a value of its own: it equals another null C string and differs from every piece of text.
 template <typename A, typename E>
 bool Equal<A, E>::match() {
-  return this->expected() == this->actual();
+  if constexpr (compares_text) {
+    return string_view_of(this->actual()) == string_view_of(this->expected());
+  } else {
+    return this->expected() == this->actual();
+  }
+}
+
+template <typename A, typename E>
+std::string Equal<A, E>::comparison() {
+  if constexpr (compares_text) {
+    if (!string_view_of(this->actual()) || !string_view_of(this->expected())) {
+      return "A null C string equals only another null C string";
+    }
+  }
+  return "Compared using `==`";
 }
 
 template <typename A, typename E>
