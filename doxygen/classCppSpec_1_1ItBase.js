@@ -2,7 +2,6 @@ var classCppSpec_1_1ItBase =
 [
     [ "ItBase", "classCppSpec_1_1ItBase.html#af40fba1cf1d43835ae0268b169f244d8", null ],
     [ "ItBase", "classCppSpec_1_1ItBase.html#ae13ea9650188ce79ab957594c1c3794b", null ],
-    [ "expect", "classCppSpec_1_1ItBase.html#a09fd74f7b72de7883fe228107c92064d", null ],
     [ "expect", "classCppSpec_1_1ItBase.html#a81467a3a7e04055e1685f10e0c94be97", null ],
     [ "expect", "classCppSpec_1_1ItBase.html#a00270530ecb561876eb48e0b743bedb7", null ],
     [ "expect", "classCppSpec_1_1ItBase.html#a1f408a682aab72ae8837a243f24a36fb", null ],

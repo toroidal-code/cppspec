@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['subject_0',['subject',['../classCppSpec_1_1ItCD.html#a348c2a47f1c19467b205fb101393d811',1,'CppSpec::ItCD']]]
+  ['compares_5ftext_0',['compares_text',['../classCppSpec_1_1Matchers_1_1Equal.html#a59e17a5c12616a696acd807bf4f77d8b',1,'CppSpec::Matchers::Equal']]]
 ];

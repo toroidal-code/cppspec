@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">C++Spec<span id="projectnumber">&#160;1.0.0</span>
+   <div id="projectname">C++Spec<span id="projectnumber">&#160;1.1.0</span>
    </div>
    <div id="projectbrief">BDD testing for C++</div>
   </td>
@@ -138,7 +138,7 @@ $(function(){initNavTree('verbose_8hpp_source.html','',''); });
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> Result&amp; result : it.get_results()) {</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="keywordflow">if</span> (result.is_failure()) {</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>      out_stream &lt;&lt; set_color(RED);</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>      out_stream &lt;&lt; result.get_message() &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>      out_stream &lt;&lt; <a class="code hl_function" href="classCppSpec_1_1Formatters_1_1BaseFormatter.html#af0cf42aac5f92f4d369ca5c3ac157e9f">located_message</a>(result) &lt;&lt; std::endl;</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>      out_stream &lt;&lt; reset_color();</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    }</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  }</div>
@@ -150,6 +150,7 @@ $(function(){initNavTree('verbose_8hpp_source.html','',''); });
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>}  <span class="comment">// namespace CppSpec::Formatters</span></div>
 <div class="ttc" id="aclassCppSpec_1_1Description_html"><div class="ttname"><a href="classCppSpec_1_1Description.html">CppSpec::Description</a></div><div class="ttdef"><b>Definition</b> description.hpp:22</div></div>
+<div class="ttc" id="aclassCppSpec_1_1Formatters_1_1BaseFormatter_html_af0cf42aac5f92f4d369ca5c3ac157e9f"><div class="ttname"><a href="classCppSpec_1_1Formatters_1_1BaseFormatter.html#af0cf42aac5f92f4d369ca5c3ac157e9f">CppSpec::Formatters::BaseFormatter::located_message</a></div><div class="ttdeci">static std::string located_message(const Result &amp;result)</div><div class="ttdoc">Prefix a result&#39;s message with the file and line of the expectation that reported it.</div><div class="ttdef"><b>Definition</b> formatters_base.hpp:112</div></div>
 <div class="ttc" id="aclassCppSpec_1_1Formatters_1_1Verbose_html"><div class="ttname"><a href="classCppSpec_1_1Formatters_1_1Verbose.html">CppSpec::Formatters::Verbose</a></div><div class="ttdef"><b>Definition</b> verbose.hpp:10</div></div>
 <div class="ttc" id="aclassCppSpec_1_1ItBase_html"><div class="ttname"><a href="classCppSpec_1_1ItBase.html">CppSpec::ItBase</a></div><div class="ttdoc">Base class for it expressions.</div><div class="ttdef"><b>Definition</b> it_base.hpp:32</div></div>
 <div class="ttc" id="aclassCppSpec_1_1Runnable_html_a31c0f37f68ef934bbd94b6413d777695"><div class="ttname"><a href="classCppSpec_1_1Runnable.html#a31c0f37f68ef934bbd94b6413d777695">CppSpec::Runnable::padding</a></div><div class="ttdeci">std::string padding() const noexcept</div><div class="ttdoc">Generate padding (indentation) fore the current object.</div><div class="ttdef"><b>Definition</b> runnable.hpp:153</div></div>

@@ -1,0 +1,18 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,211,147,236"/>
+<area shape="rect" id="Node000001" href="$structCppSpec_1_1Util_1_1prints__through__pretty.html" title=" " alt="" coords="195,85,425,154"/>
+<area shape="poly" id="edge45_Node000000_Node000001" title=" " alt="" coords="117,203,230,152,232,157,119,207"/>
+<area shape="rect" id="Node000002" href="$structCppSpec_1_1Util_1_1prints__through__pretty_3_01R_01_4.html" title=" " alt="" coords="473,135,637,175"/>
+<area shape="poly" id="edge47_Node000000_Node000002" title=" " alt="" coords="160,209,473,164,474,169,161,214"/>
+<area shape="rect" id="Node000003" href="$structCppSpec_1_1Util_1_1prints__through__pretty_3_01std_1_1optional_3_01T_01_4_01_4.html" title=" " alt="" coords="230,5,390,60"/>
+<area shape="poly" id="edge48_Node000000_Node000003" title=" " alt="" coords="88,197,130,134,159,100,193,70,228,51,231,56,196,75,163,104,134,138,93,200"/>
+<area shape="rect" id="Node000005" href="$structCppSpec_1_1Util_1_1prints__through__pretty_3_01std_1_1pair_3_01A_00_01B_01_4_01_4.html" title=" " alt="" coords="230,229,390,284"/>
+<area shape="poly" id="edge49_Node000000_Node000005" title=" " alt="" coords="161,233,230,243,230,248,160,238"/>
+<area shape="rect" id="Node000006" href="$structCppSpec_1_1Util_1_1prints__through__pretty_3_01std_1_1tuple_3_01Ts_8_8_8_01_4_01_4.html" title=" " alt="" coords="230,308,390,363"/>
+<area shape="poly" id="edge50_Node000000_Node000006" title=" " alt="" coords="107,242,148,268,196,294,231,309,229,314,194,299,146,273,104,246"/>
+<area shape="rect" id="Node000007" href="$structCppSpec_1_1Util_1_1prints__through__pretty.html" title="Whether T prints differently through Pretty than through operator&lt;&lt;, so a container holding it is pri..." alt="" coords="229,387,391,427"/>
+<area shape="poly" id="edge51_Node000000_Node000007" title=" " alt="" coords="92,247,133,310,162,344,196,373,230,390,227,394,193,378,158,348,129,314,88,250"/>
+<area shape="poly" id="edge46_Node000001_Node000002" title=" " alt="" coords="439,136,474,141,473,146,438,141"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="20,20,132,45"/>
+<area shape="poly" id="edge52_Node000004_Node000003" title=" " alt="" coords="146,30,230,30,230,35,146,35"/>
+</map>

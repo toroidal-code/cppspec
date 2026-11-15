@@ -1,0 +1,7 @@
+<map id="CppSpec::JUnitOutputFile" name="CppSpec::JUnitOutputFile">
+<area shape="rect" id="Node000001" title="The file that –output&#45;junit names, with the JUnit XML formatter that writes to it." alt="" coords="5,205,189,231"/>
+<area shape="rect" id="Node000002" href="$classCppSpec_1_1Formatters_1_1JUnitXML.html" title=" " alt="" coords="19,95,176,135"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="100,149,100,205,95,205,95,149"/>
+<area shape="rect" id="Node000003" href="$classCppSpec_1_1Formatters_1_1BaseFormatter.html" title=" " alt="" coords="19,5,176,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="100,59,100,95,95,95,95,59"/>
+</map>

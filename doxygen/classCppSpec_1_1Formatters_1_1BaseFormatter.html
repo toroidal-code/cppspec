@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">C++Spec<span id="projectnumber">&#160;1.0.0</span>
+   <div id="projectname">C++Spec<span id="projectnumber">&#160;1.1.0</span>
    </div>
    <div id="projectbrief">BDD testing for C++</div>
   </td>
@@ -141,6 +141,11 @@ const char *&#160;</td><td class="memItemRight"><b>status_color</b> (Result::Sta
 <tr class="memitem:a5bee141fc5b1533af0a10fb4aa0718a9" id="r_a5bee141fc5b1533af0a10fb4aa0718a9"><td class="memItemLeft"><a id="a5bee141fc5b1533af0a10fb4aa0718a9" name="a5bee141fc5b1533af0a10fb4aa0718a9"></a>
 const char *&#160;</td><td class="memItemRight"><b>reset_color</b> ()</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-static-methods" class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:af0cf42aac5f92f4d369ca5c3ac157e9f" id="r_af0cf42aac5f92f4d369ca5c3ac157e9f"><td class="memItemLeft">static std::string&#160;</td><td class="memItemRight"><a class="el" href="#af0cf42aac5f92f4d369ca5c3ac157e9f">located_message</a> (const <a class="el" href="classCppSpec_1_1Result.html">Result</a> &amp;result)</td></tr>
+<tr class="memdesc:af0cf42aac5f92f4d369ca5c3ac157e9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prefix a result's message with the file and line of the expectation that reported it.  <br /></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pro-attribs" class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
 <tr class="memitem:af4039842c0e73548810e999ddbfb046d" id="r_af4039842c0e73548810e999ddbfb046d"><td class="memItemLeft"><a id="af4039842c0e73548810e999ddbfb046d" name="af4039842c0e73548810e999ddbfb046d"></a>
@@ -150,6 +155,42 @@ int&#160;</td><td class="memItemRight"><b>test_counter</b> = 1</td></tr>
 <tr class="memitem:a617a0a0df4ed71c87157b53bf0d4fd5b" id="r_a617a0a0df4ed71c87157b53bf0d4fd5b"><td class="memItemLeft"><a id="a617a0a0df4ed71c87157b53bf0d4fd5b" name="a617a0a0df4ed71c87157b53bf0d4fd5b"></a>
 bool&#160;</td><td class="memItemRight"><b>color_output</b></td></tr>
 </table>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+<a id="af0cf42aac5f92f4d369ca5c3ac157e9f" name="af0cf42aac5f92f4d369ca5c3ac157e9f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0cf42aac5f92f4d369ca5c3ac157e9f">&#9670;&#160;</a></span>located_message()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string CppSpec::Formatters::BaseFormatter::located_message </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classCppSpec_1_1Result.html">Result</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>result</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Prefix a result's message with the file and line of the expectation that reported it. </p>
+<p>Every formatter that prints failure messages as text uses this, so an editor or terminal can jump from any of them to the failing expectation.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">result</td><td>the result to describe</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><span class="tt"><a href="file:line:">file:line:</a> message</span> </dd></dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>include/formatters/<a class="el" href="formatters__base_8hpp_source.html">formatters_base.hpp</a></li>
 </ul>

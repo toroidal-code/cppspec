@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">C++Spec<span id="projectnumber">&#160;1.0.0</span>
+   <div id="projectname">C++Spec<span id="projectnumber">&#160;1.1.0</span>
    </div>
    <div id="projectbrief">BDD testing for C++</div>
   </td>
@@ -135,9 +135,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a32296d37a2475f0e7093e4b2578e6d78" id="r_a32296d37a2475f0e7093e4b2578e6d78"><td class="memItemLeft"><a id="a32296d37a2475f0e7093e4b2578e6d78" name="a32296d37a2475f0e7093e4b2578e6d78"></a>
 &#160;</td><td class="memItemRight"><b>MatcherBase</b> (<a class="el" href="classCppSpec_1_1Expectation.html">Expectation</a>&lt; Actual &gt; &amp;expectation, Expected expected)</td></tr>
 <tr class="memitem:aac2ae323ec0a6f753e00dbda3222b087" id="r_aac2ae323ec0a6f753e00dbda3222b087"><td class="memItemLeft">virtual std::string&#160;</td><td class="memItemRight"><a class="el" href="#aac2ae323ec0a6f753e00dbda3222b087">failure_message</a> ()</td></tr>
-<tr class="memdesc:aac2ae323ec0a6f753e00dbda3222b087"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get message to give on match failure.  <br /></td></tr>
+<tr class="memdesc:aac2ae323ec0a6f753e00dbda3222b087"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the matcher's own message for a failed match; the handler puts any custom message above it.  <br /></td></tr>
 <tr class="memitem:a78f11f0e90ffa5f1dc9bc292e4fa77de" id="r_a78f11f0e90ffa5f1dc9bc292e4fa77de"><td class="memItemLeft">virtual std::string&#160;</td><td class="memItemRight"><a class="el" href="#a78f11f0e90ffa5f1dc9bc292e4fa77de">failure_message_when_negated</a> ()</td></tr>
-<tr class="memdesc:a78f11f0e90ffa5f1dc9bc292e4fa77de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get message to give on match failure when negated.  <br /></td></tr>
+<tr class="memdesc:a78f11f0e90ffa5f1dc9bc292e4fa77de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the matcher's own message for a failed negated match; the handler puts any custom message above it.  <br /></td></tr>
 <tr class="memitem:a37687815b711874d613d6c5f6b1603cd" id="r_a37687815b711874d613d6c5f6b1603cd"><td class="memItemLeft">virtual std::string&#160;</td><td class="memItemRight"><a class="el" href="#a37687815b711874d613d6c5f6b1603cd">description</a> ()</td></tr>
 <tr class="memdesc:a37687815b711874d613d6c5f6b1603cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the description of the Matcher.  <br /></td></tr>
 <tr class="memitem:af192d35b8d99c77b30f352c47781c958" id="r_af192d35b8d99c77b30f352c47781c958"><td class="memItemLeft"><a id="af192d35b8d99c77b30f352c47781c958" name="af192d35b8d99c77b30f352c47781c958"></a>
@@ -150,6 +150,12 @@ Expected &amp;&#160;</td><td class="memItemRight"><b>expected</b> ()</td></tr>
 <a class="el" href="classCppSpec_1_1Expectation.html">Expectation</a>&lt; Actual &gt; &amp;&#160;</td><td class="memItemRight"><b>expectation</b> ()</td></tr>
 <tr class="memitem:ad069c3479755788671ec9620b757753e" id="r_ad069c3479755788671ec9620b757753e"><td class="memItemLeft">virtual MatcherBase &amp;&#160;</td><td class="memItemRight"><a class="el" href="#ad069c3479755788671ec9620b757753e">set_message</a> (std::string message)</td></tr>
 <tr class="memdesc:ad069c3479755788671ec9620b757753e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a custom failure message.  <br /></td></tr>
+<tr class="memitem:a3298754b0624b7001651455a22f9bf08" id="r_a3298754b0624b7001651455a22f9bf08"><td class="memItemLeft"><a id="a3298754b0624b7001651455a22f9bf08" name="a3298754b0624b7001651455a22f9bf08"></a>
+std::string&#160;</td><td class="memItemRight"><b>full_failure_message</b> ()</td></tr>
+<tr class="memdesc:a3298754b0624b7001651455a22f9bf08"><td class="mdescLeft">&#160;</td><td class="mdescRight">What a failed match reports: the custom message, when one was set, on the line above the matcher's own <a class="el" href="#aac2ae323ec0a6f753e00dbda3222b087" title="Get the matcher&#39;s own message for a failed match; the handler puts any custom message above it.">failure_message()</a>. <br /></td></tr>
+<tr class="memitem:aba1d5ec200c5b95db0eeff8d8cd3d937" id="r_aba1d5ec200c5b95db0eeff8d8cd3d937"><td class="memItemLeft"><a id="aba1d5ec200c5b95db0eeff8d8cd3d937" name="aba1d5ec200c5b95db0eeff8d8cd3d937"></a>
+std::string&#160;</td><td class="memItemRight"><b>full_failure_message_when_negated</b> ()</td></tr>
+<tr class="memdesc:aba1d5ec200c5b95db0eeff8d8cd3d937"><td class="mdescLeft">&#160;</td><td class="mdescRight">What a failed negated match reports: the custom message, when one was set, on the line above the matcher's own <a class="el" href="#a78f11f0e90ffa5f1dc9bc292e4fa77de" title="Get the matcher&#39;s own message for a failed negated match; the handler puts any custom message above i...">failure_message_when_negated()</a>. <br /></td></tr>
 <tr class="memitem:ab02d8ecf292ee311c2fc56676198c064" id="r_ab02d8ecf292ee311c2fc56676198c064"><td class="memItemLeft"><a id="ab02d8ecf292ee311c2fc56676198c064" name="ab02d8ecf292ee311c2fc56676198c064"></a>
 std::source_location&#160;</td><td class="memItemRight"><b>get_location</b> () const</td></tr>
 <tr class="memitem:a5439ce1a1bc97679eed33d3caf72e239" id="r_a5439ce1a1bc97679eed33d3caf72e239"><td class="memItemLeft"><a class="el" href="classCppSpec_1_1Result.html">Result</a>&#160;</td><td class="memItemRight"><a class="el" href="#a5439ce1a1bc97679eed33d3caf72e239">run</a> ()</td></tr>
@@ -166,6 +172,11 @@ std::string&#160;</td><td class="memItemRight"><b>name_to_sentence</b> (const st
 <tr class="memitem:a7912661907dcfae358d88caf85cf5879 inherit pub_methods_structCppSpec_1_1Pretty" id="r_a7912661907dcfae358d88caf85cf5879"><td class="memTemplParams" colspan="2">template&lt;typename O&gt; </td></tr>
 <tr class="memitem:a7912661907dcfae358d88caf85cf5879 inherit pub_methods_structCppSpec_1_1Pretty template"><td class="memItemLeft">std::string&#160;</td><td class="memItemRight"><a class="el" href="structCppSpec_1_1Pretty.html#a7912661907dcfae358d88caf85cf5879">inspect_object</a> (const O &amp;o)</td></tr>
 <tr class="memdesc:a7912661907dcfae358d88caf85cf5879 inherit pub_methods_structCppSpec_1_1Pretty"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a string of the class and data of an object.  <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-static-attribs" class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:a99bc91e4923995c2672caa802f28e2a6" id="r_a99bc91e4923995c2672caa802f28e2a6"><td class="memItemLeft">static constexpr std::string_view&#160;</td><td class="memItemRight"><a class="el" href="#a99bc91e4923995c2672caa802f28e2a6">empty_failure_message</a></td></tr>
+<tr class="memdesc:a99bc91e4923995c2672caa802f28e2a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">What a failure reports in place of a matcher's own message that is empty.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pro-attribs" class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -185,12 +196,27 @@ static std::string&#160;</td><td class="memItemRight"><b>underscore</b> (const s
 static std::string&#160;</td><td class="memItemRight"><b>last</b> (const std::string &amp;s, char delim)</td></tr>
 <tr class="memitem:a74fc9b9c32e076e4ce4c8ac639a56734 inherit pub_static_methods_structCppSpec_1_1Pretty" id="r_a74fc9b9c32e076e4ce4c8ac639a56734"><td class="memItemLeft">
 static std::string&#160;</td><td class="memItemRight"><b>improve_hash_formatting</b> (const std::string &amp;inspect_string)</td></tr>
-<tr class="memitem:a33579b889af5937608f3b21c15f8d8a6 inherit pub_static_methods_structCppSpec_1_1Pretty" id="r_a33579b889af5937608f3b21c15f8d8a6"><td class="memTemplParams" colspan="2">template&lt;Util::is_streamable T&gt; </td></tr>
+<tr class="memitem:a33579b889af5937608f3b21c15f8d8a6 inherit pub_static_methods_structCppSpec_1_1Pretty" id="r_a33579b889af5937608f3b21c15f8d8a6"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
 <tr class="memitem:a33579b889af5937608f3b21c15f8d8a6 inherit pub_static_methods_structCppSpec_1_1Pretty template"><td class="memItemLeft">static std::string&#160;</td><td class="memItemRight"><a class="el" href="structCppSpec_1_1Pretty.html#a33579b889af5937608f3b21c15f8d8a6">to_word</a> (const T &amp;item)</td></tr>
 <tr class="memdesc:a33579b889af5937608f3b21c15f8d8a6 inherit pub_static_methods_structCppSpec_1_1Pretty"><td class="mdescLeft">&#160;</td><td class="mdescRight">Formats an object as a string when operator&lt;&lt; is available.  <br /></td></tr>
 <tr class="memitem:a87b916df4df1195f457f3d7221a05d7c inherit pub_static_methods_structCppSpec_1_1Pretty" id="r_a87b916df4df1195f457f3d7221a05d7c"><td class="memTemplParams" colspan="2">
 template&lt;typename T&gt; </td></tr>
 <tr class="memitem:a87b916df4df1195f457f3d7221a05d7c inherit pub_static_methods_structCppSpec_1_1Pretty template"><td class="memItemLeft">static std::string&#160;</td><td class="memItemRight"><b>to_word</b> (const T &amp;item)</td></tr>
+<tr class="memitem:a87b916df4df1195f457f3d7221a05d7c inherit pub_static_methods_structCppSpec_1_1Pretty" id="r_a87b916df4df1195f457f3d7221a05d7c"><td class="memTemplParams" colspan="2">
+template&lt;typename T&gt; </td></tr>
+<tr class="memitem:a87b916df4df1195f457f3d7221a05d7c inherit pub_static_methods_structCppSpec_1_1Pretty template"><td class="memItemLeft">static std::string&#160;</td><td class="memItemRight"><b>to_word</b> (const T &amp;item)</td></tr>
+<tr class="memitem:a87b916df4df1195f457f3d7221a05d7c inherit pub_static_methods_structCppSpec_1_1Pretty" id="r_a87b916df4df1195f457f3d7221a05d7c"><td class="memTemplParams" colspan="2">
+template&lt;typename T&gt; </td></tr>
+<tr class="memitem:a87b916df4df1195f457f3d7221a05d7c inherit pub_static_methods_structCppSpec_1_1Pretty template"><td class="memItemLeft">static std::string&#160;</td><td class="memItemRight"><b>to_word</b> (const T &amp;item)</td></tr>
+<tr class="memitem:a87b916df4df1195f457f3d7221a05d7c inherit pub_static_methods_structCppSpec_1_1Pretty" id="r_a87b916df4df1195f457f3d7221a05d7c"><td class="memTemplParams" colspan="2">
+template&lt;typename T&gt; </td></tr>
+<tr class="memitem:a87b916df4df1195f457f3d7221a05d7c inherit pub_static_methods_structCppSpec_1_1Pretty template"><td class="memItemLeft">static std::string&#160;</td><td class="memItemRight"><b>to_word</b> (const T &amp;item)</td></tr>
+<tr class="memitem:a87b916df4df1195f457f3d7221a05d7c inherit pub_static_methods_structCppSpec_1_1Pretty" id="r_a87b916df4df1195f457f3d7221a05d7c"><td class="memTemplParams" colspan="2">
+template&lt;typename T&gt; </td></tr>
+<tr class="memitem:a87b916df4df1195f457f3d7221a05d7c inherit pub_static_methods_structCppSpec_1_1Pretty template"><td class="memItemLeft">static std::string&#160;</td><td class="memItemRight"><b>to_word</b> (const T &amp;item)</td></tr>
+<tr class="memitem:abc89f029fce1d8e878b0f84b2d5b82ce inherit pub_static_methods_structCppSpec_1_1Pretty" id="r_abc89f029fce1d8e878b0f84b2d5b82ce"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
+<tr class="memitem:abc89f029fce1d8e878b0f84b2d5b82ce inherit pub_static_methods_structCppSpec_1_1Pretty template"><td class="memItemLeft">static std::string&#160;</td><td class="memItemRight"><a class="el" href="structCppSpec_1_1Pretty.html#abc89f029fce1d8e878b0f84b2d5b82ce">to_word</a> (const std::optional&lt; T &gt; &amp;item)</td></tr>
+<tr class="memdesc:abc89f029fce1d8e878b0f84b2d5b82ce inherit pub_static_methods_structCppSpec_1_1Pretty"><td class="mdescLeft">&#160;</td><td class="mdescRight">Formats an optional as its value, or <span class="tt">std::nullopt</span> when it holds none.  <br /></td></tr>
 <tr class="memitem:a3a6a9c860933842b24ab07c6f2107312 inherit pub_static_methods_structCppSpec_1_1Pretty" id="r_a3a6a9c860933842b24ab07c6f2107312"><td class="memTemplParams" colspan="2">
 template&lt;typename T&gt; </td></tr>
 <tr class="memitem:a3a6a9c860933842b24ab07c6f2107312 inherit pub_static_methods_structCppSpec_1_1Pretty template"><td class="memItemLeft">static std::string&#160;</td><td class="memItemRight"><b>to_word_type</b> (const T &amp;item)</td></tr>
@@ -204,12 +230,17 @@ template&lt;typename T&gt; </td></tr>
 <tr class="memitem:a1fb7debcc05ccfc159d7fcbc02a9f058 inherit pub_static_methods_structCppSpec_1_1Pretty" id="r_a1fb7debcc05ccfc159d7fcbc02a9f058"><td class="memTemplParams" colspan="2">
 template&lt;typename T&gt; </td></tr>
 <tr class="memitem:a1fb7debcc05ccfc159d7fcbc02a9f058 inherit pub_static_methods_structCppSpec_1_1Pretty template"><td class="memItemLeft">static std::string&#160;</td><td class="memItemRight"><b>inspect_object</b> (const T &amp;object)</td></tr>
+<tr class="memitem:a5e16a6cfe2b30e2e4195eedc65c2fc3c inherit pub_static_methods_structCppSpec_1_1Pretty" id="r_a5e16a6cfe2b30e2e4195eedc65c2fc3c"><td class="memItemLeft">static std::string&#160;</td><td class="memItemRight"><a class="el" href="structCppSpec_1_1Pretty.html#a5e16a6cfe2b30e2e4195eedc65c2fc3c">address_of</a> (const void *address)</td></tr>
+<tr class="memdesc:a5e16a6cfe2b30e2e4195eedc65c2fc3c inherit pub_static_methods_structCppSpec_1_1Pretty"><td class="mdescLeft">&#160;</td><td class="mdescRight">Formats an address as <span class="tt">0x</span> and lowercase hex digits, the same on every platform.  <br /></td></tr>
 <tr class="memitem:ac54bcef71b31394a3e6438daa046aec5 inherit pub_static_methods_structCppSpec_1_1Pretty" id="r_ac54bcef71b31394a3e6438daa046aec5"><td class="memItemLeft">
 template&lt;&gt; </td></tr>
 <tr class="memitem:ac54bcef71b31394a3e6438daa046aec5 inherit pub_static_methods_structCppSpec_1_1Pretty template"><td class="memItemLeft">std::string&#160;</td><td class="memItemRight"><b>to_word</b> (const bool &amp;item)</td></tr>
-<tr class="memitem:a85e63f75b6e70af6d2f90cd4489f8689 inherit pub_static_methods_structCppSpec_1_1Pretty" id="r_a85e63f75b6e70af6d2f90cd4489f8689"><td class="memItemLeft">template&lt;&gt; </td></tr>
-<tr class="memitem:a85e63f75b6e70af6d2f90cd4489f8689 inherit pub_static_methods_structCppSpec_1_1Pretty template"><td class="memItemLeft">std::string&#160;</td><td class="memItemRight"><a class="el" href="structCppSpec_1_1Pretty.html#a85e63f75b6e70af6d2f90cd4489f8689">inspect_object</a> (const char *const &amp;o)</td></tr>
-<tr class="memdesc:a85e63f75b6e70af6d2f90cd4489f8689 inherit pub_static_methods_structCppSpec_1_1Pretty"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specialization for C-style strings.  <br /></td></tr>
+<tr class="memitem:ad3a3b355a1dbac018714b4e533c339bb inherit pub_static_methods_structCppSpec_1_1Pretty" id="r_ad3a3b355a1dbac018714b4e533c339bb"><td class="memItemLeft">
+template&lt;&gt; </td></tr>
+<tr class="memitem:ad3a3b355a1dbac018714b4e533c339bb inherit pub_static_methods_structCppSpec_1_1Pretty template"><td class="memItemLeft">std::string&#160;</td><td class="memItemRight"><b>to_word</b> (const unsigned char &amp;item)</td></tr>
+<tr class="memitem:a5cd4d1d2bc114a1f4cfde09498fa55be inherit pub_static_methods_structCppSpec_1_1Pretty" id="r_a5cd4d1d2bc114a1f4cfde09498fa55be"><td class="memItemLeft">
+template&lt;&gt; </td></tr>
+<tr class="memitem:a5cd4d1d2bc114a1f4cfde09498fa55be inherit pub_static_methods_structCppSpec_1_1Pretty template"><td class="memItemLeft">std::string&#160;</td><td class="memItemRight"><b>to_word</b> (const signed char &amp;item)</td></tr>
 <tr class="inherit_header pub_attribs_structCppSpec_1_1Pretty"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_attribs_structCppSpec_1_1Pretty')"><span class="dynarrow"><span class="arrowhead closed"></span></span>Public Attributes inherited from <a class="el" href="structCppSpec_1_1Pretty.html">CppSpec::Pretty</a></td></tr>
 <tr class="memitem:a94e5a7310638d4c7ee3739432b6f21ae inherit pub_attribs_structCppSpec_1_1Pretty" id="r_a94e5a7310638d4c7ee3739432b6f21ae"><td class="memItemLeft">
 std::string&#160;</td><td class="memItemRight"><b>_name</b></td></tr>
@@ -282,10 +313,10 @@ template&lt;typename A, typename E&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Get message to give on match failure. </p>
+<p>Get the matcher's own message for a failed match; the handler puts any custom message above it. </p>
 <dl class="section return"><dt>Returns</dt><dd>the message </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classCppSpec_1_1Matchers_1_1BeWithin.html#a69aa065eee91ebfc086b856f5d6537f4">CppSpec::Matchers::BeWithin&lt; A, E &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1ContainBase.html#a0cace43b1d2962d89204122e58addc75">CppSpec::Matchers::ContainBase&lt; A, E, U &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1ContainBase.html#a0cace43b1d2962d89204122e58addc75">CppSpec::Matchers::ContainBase&lt; A, U, U &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1Equal.html#a80ddc4dad17e5115b265c30cee78a9b7">CppSpec::Matchers::Equal&lt; A, E &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1Equal.html#a80ddc4dad17e5115b265c30cee78a9b7">CppSpec::Matchers::Equal&lt; T, E &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1Satisfy.html#a0d78cd0b417db6d8ceb5434e3f29b299">CppSpec::Matchers::Satisfy&lt; A &gt;</a>, and <a class="el" href="classCppSpec_1_1Matchers_1_1Throw.html#a8d6b1eec9c58c22385addc8081a55a50">CppSpec::Matchers::Throw&lt; A, Ex &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classCppSpec_1_1Matchers_1_1BeWithin.html#a69aa065eee91ebfc086b856f5d6537f4">CppSpec::Matchers::BeWithin&lt; A, E &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1ContainBase.html#a0cace43b1d2962d89204122e58addc75">CppSpec::Matchers::ContainBase&lt; A, E, U &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1ContainBase.html#a0cace43b1d2962d89204122e58addc75">CppSpec::Matchers::ContainBase&lt; A, U, U &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1EndWith.html#aaa99ebe4309c8b16f9bcd66dc701749e">CppSpec::Matchers::EndWith&lt; A, E &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1Equal.html#a80ddc4dad17e5115b265c30cee78a9b7">CppSpec::Matchers::Equal&lt; A, E &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1Equal.html#a80ddc4dad17e5115b265c30cee78a9b7">CppSpec::Matchers::Equal&lt; T, E &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1Match.html#a680627894554dd6e393cdffdd34f99c9">CppSpec::Matchers::Match&lt; A &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1MatchPartial.html#a225b1052b120baf25d84d68366d5e976">CppSpec::Matchers::MatchPartial&lt; A &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1Satisfy.html#a0d78cd0b417db6d8ceb5434e3f29b299">CppSpec::Matchers::Satisfy&lt; A &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1StartWith.html#a4b5319ff9e6f478f6fa866cd01d4e5c4">CppSpec::Matchers::StartWith&lt; A, E &gt;</a>, and <a class="el" href="classCppSpec_1_1Matchers_1_1Throw.html#a8d6b1eec9c58c22385addc8081a55a50">CppSpec::Matchers::Throw&lt; A, Ex &gt;</a>.</p>
 
 </div>
 </div>
@@ -314,10 +345,10 @@ template&lt;typename A, typename E&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Get message to give on match failure when negated. </p>
+<p>Get the matcher's own message for a failed negated match; the handler puts any custom message above it. </p>
 <dl class="section return"><dt>Returns</dt><dd>the message </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classCppSpec_1_1Matchers_1_1BeWithin.html#aeff54824c55114a272c61bfac885e639">CppSpec::Matchers::BeWithin&lt; A, E &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1ContainBase.html#a7504cd327944aab333109cb3706b65ee">CppSpec::Matchers::ContainBase&lt; A, E, U &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1ContainBase.html#a7504cd327944aab333109cb3706b65ee">CppSpec::Matchers::ContainBase&lt; A, U, U &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1Equal.html#a69de3e052e734081fb7f834af8b292e8">CppSpec::Matchers::Equal&lt; A, E &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1Equal.html#a69de3e052e734081fb7f834af8b292e8">CppSpec::Matchers::Equal&lt; T, E &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1Satisfy.html#a808c1e1b9c38b21935650ba5ad0b1a65">CppSpec::Matchers::Satisfy&lt; A &gt;</a>, and <a class="el" href="classCppSpec_1_1Matchers_1_1Throw.html#a967e7cdde3e4cc3db7425f39dfef9125">CppSpec::Matchers::Throw&lt; A, Ex &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classCppSpec_1_1Matchers_1_1BeWithin.html#aeff54824c55114a272c61bfac885e639">CppSpec::Matchers::BeWithin&lt; A, E &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1ContainBase.html#a7504cd327944aab333109cb3706b65ee">CppSpec::Matchers::ContainBase&lt; A, E, U &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1ContainBase.html#a7504cd327944aab333109cb3706b65ee">CppSpec::Matchers::ContainBase&lt; A, U, U &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1EndWith.html#a92c9c1d4174ca225798dfce8aef3c52c">CppSpec::Matchers::EndWith&lt; A, E &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1Equal.html#a69de3e052e734081fb7f834af8b292e8">CppSpec::Matchers::Equal&lt; A, E &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1Equal.html#a69de3e052e734081fb7f834af8b292e8">CppSpec::Matchers::Equal&lt; T, E &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1Match.html#a0abb2096c25463a80fa0993f7983253b">CppSpec::Matchers::Match&lt; A &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1MatchPartial.html#a2a0af945695d757654c65b060af5f557">CppSpec::Matchers::MatchPartial&lt; A &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1Satisfy.html#a808c1e1b9c38b21935650ba5ad0b1a65">CppSpec::Matchers::Satisfy&lt; A &gt;</a>, <a class="el" href="classCppSpec_1_1Matchers_1_1StartWith.html#a662cd9e1cc07c8f68c6d902d67a0991d">CppSpec::Matchers::StartWith&lt; A, E &gt;</a>, and <a class="el" href="classCppSpec_1_1Matchers_1_1Throw.html#a967e7cdde3e4cc3db7425f39dfef9125">CppSpec::Matchers::Throw&lt; A, Ex &gt;</a>.</p>
 
 </div>
 </div>
@@ -382,6 +413,36 @@ template&lt;typename A, typename E&gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the modified Matcher </dd></dl>
+
+</div>
+</div>
+<a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
+<a id="a99bc91e4923995c2672caa802f28e2a6" name="a99bc91e4923995c2672caa802f28e2a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99bc91e4923995c2672caa802f28e2a6">&#9670;&#160;</a></span>empty_failure_message</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Actual, typename Expected&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string_view <a class="el" href="classCppSpec_1_1Matchers_1_1MatcherBase.html">CppSpec::Matchers::MatcherBase</a>&lt; Actual, Expected &gt;::empty_failure_message</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">                                                    =</div>
+<div class="line"><span class="stringliteral">&quot;Failure message is empty. Does your matcher define the appropriate failure_message[_when_negated] method to &quot;</span></div>
+<div class="line"><span class="stringliteral">&quot;return a string?&quot;</span></div>
+</div><!-- fragment -->
+<p>What a failure reports in place of a matcher's own message that is empty. </p>
 
 </div>
 </div>

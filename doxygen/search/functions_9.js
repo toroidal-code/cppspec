@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['padding_0',['padding',['../classCppSpec_1_1Runnable.html#a31c0f37f68ef934bbd94b6413d777695',1,'CppSpec::Runnable']]],
-  ['positive_1',['positive',['../classCppSpec_1_1Expectation.html#a11077d298319d69222e03b23a63e21bc',1,'CppSpec::Expectation']]],
-  ['pretty_3a_3ainspect_5fobject_3c_20std_3a_3astring_20_3e_2',['inspect_object&lt; std::string &gt;',['../pretty__matchers_8hpp.html#ac13cd4a6559c3d8d6b355cc507e746be',1,'CppSpec']]]
+  ['needs_5fdescription_0',['needs_description',['../classCppSpec_1_1ItBase.html#a2f0782966fa91682e6c2e4ce607ba792',1,'CppSpec::ItBase']]],
+  ['no_5ftext_5fto_5flook_5ffor_1',['no_text_to_look_for',['../matcher__base_8hpp.html#ae264548260999277ba2db4d1bc68020a',1,'CppSpec::Matchers']]],
+  ['no_5ftext_5fto_5fsearch_2',['no_text_to_search',['../matcher__base_8hpp.html#a56b5dd68801ac9968fddbde427463b74',1,'CppSpec::Matchers']]],
+  ['null_5ftext_5fnotes_3',['null_text_notes',['../classCppSpec_1_1Matchers_1_1ContainBase.html#a29f7d67fd7a0d92a52aa578aa8bf4002',1,'CppSpec::Matchers::ContainBase']]]
 ];

@@ -7,6 +7,18 @@ var hierarchy =
       [ "CppSpec::Formatters::Verbose", "classCppSpec_1_1Formatters_1_1Verbose.html", null ]
     ] ],
     [ "CppSpec::Matchers::BeWithinHelper&lt; A, E &gt;", "classCppSpec_1_1Matchers_1_1BeWithinHelper.html", null ],
+    [ "std::bool_constant", null, [
+      [ "CppSpec::Util::prints_through_pretty< std::remove_cv_t< std::ranges::range_value_t< const R > > >", "structCppSpec_1_1Util_1_1prints__through__pretty.html", [
+        [ "CppSpec::Util::prints_through_pretty< R >", "structCppSpec_1_1Util_1_1prints__through__pretty_3_01R_01_4.html", null ]
+      ] ],
+      [ "CppSpec::Util::prints_through_pretty< R >", "structCppSpec_1_1Util_1_1prints__through__pretty_3_01R_01_4.html", null ],
+      [ "CppSpec::Util::prints_through_pretty< std::optional< T > >", "structCppSpec_1_1Util_1_1prints__through__pretty_3_01std_1_1optional_3_01T_01_4_01_4.html", null ],
+      [ "CppSpec::Util::prints_through_pretty< std::pair< A, B > >", "structCppSpec_1_1Util_1_1prints__through__pretty_3_01std_1_1pair_3_01A_00_01B_01_4_01_4.html", null ],
+      [ "CppSpec::Util::prints_through_pretty< std::tuple< Ts... > >", "structCppSpec_1_1Util_1_1prints__through__pretty_3_01std_1_1tuple_3_01Ts_8_8_8_01_4_01_4.html", null ],
+      [ "CppSpec::Util::prints_through_pretty< T >", "structCppSpec_1_1Util_1_1prints__through__pretty.html", null ],
+      [ "CppSpec::Util::prints_through_pretty< std::pair< A, B > >", "structCppSpec_1_1Util_1_1prints__through__pretty_3_01std_1_1pair_3_01A_00_01B_01_4_01_4.html", null ],
+      [ "CppSpec::Util::prints_through_pretty< std::tuple< Ts... > >", "structCppSpec_1_1Util_1_1prints__through__pretty_3_01std_1_1tuple_3_01Ts_8_8_8_01_4_01_4.html", null ]
+    ] ],
     [ "CppSpec::Expectation&lt; A &gt;", "classCppSpec_1_1Expectation.html", [
       [ "CppSpec::ExpectationValue< A >", "classCppSpec_1_1ExpectationValue.html", null ]
     ] ],
@@ -16,6 +28,7 @@ var hierarchy =
     [ "std::false_type", null, [
       [ "pretty_print::is_container< std::optional< T > >", "structpretty__print_1_1is__container_3_01std_1_1optional_3_01T_01_4_01_4.html", null ]
     ] ],
+    [ "CppSpec::JUnitOutputFile", "structCppSpec_1_1JUnitOutputFile.html", null ],
     [ "CppSpec::LetBase", "classCppSpec_1_1LetBase.html", null ],
     [ "CppSpec::NegativeExpectationHandler", "structCppSpec_1_1NegativeExpectationHandler.html", null ],
     [ "CppSpec::PositiveExpectationHandler", "structCppSpec_1_1PositiveExpectationHandler.html", null ],
@@ -82,5 +95,8 @@ var hierarchy =
     [ "CppSpec::Formatters::JUnitNodes::TestCase", "structCppSpec_1_1Formatters_1_1JUnitNodes_1_1TestCase.html", null ],
     [ "CppSpec::Formatters::JUnitNodes::TestSuite", "structCppSpec_1_1Formatters_1_1JUnitNodes_1_1TestSuite.html", null ],
     [ "CppSpec::Formatters::JUnitNodes::TestSuites", "structCppSpec_1_1Formatters_1_1JUnitNodes_1_1TestSuites.html", null ],
+    [ "std::true_type", null, [
+      [ "CppSpec::Util::prints_through_pretty< std::optional< T > >", "structCppSpec_1_1Util_1_1prints__through__pretty_3_01std_1_1optional_3_01T_01_4_01_4.html", null ]
+    ] ],
     [ "CppSpec::Util::verbose_assert&lt; result &gt;", "structCppSpec_1_1Util_1_1verbose__assert.html", null ]
 ];

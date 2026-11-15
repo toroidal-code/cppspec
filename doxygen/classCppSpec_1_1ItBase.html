@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">C++Spec<span id="projectnumber">&#160;1.0.0</span>
+   <div id="projectname">C++Spec<span id="projectnumber">&#160;1.1.0</span>
    </div>
    <div id="projectbrief">BDD testing for C++</div>
   </td>
@@ -147,8 +147,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a81467a3a7e04055e1685f10e0c94be97" id="r_a81467a3a7e04055e1685f10e0c94be97"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
 <tr class="memitem:a81467a3a7e04055e1685f10e0c94be97 template"><td class="memItemLeft"><a class="el" href="classCppSpec_1_1ExpectationValue.html">ExpectationValue</a>&lt; T &gt;&#160;</td><td class="memItemRight"><a class="el" href="#a81467a3a7e04055e1685f10e0c94be97">expect</a> (Let&lt; T &gt; &amp;let, std::source_location location=std::source_location::current())</td></tr>
 <tr class="memdesc:a81467a3a7e04055e1685f10e0c94be97"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <span class="tt"><a class="el" href="#abfb6f526937d7e8245344e6917ee264e" title="The expect object generator for objects and LiteralTypes.">expect</a></span> object generator for Let.  <br /></td></tr>
-<tr class="memitem:a09fd74f7b72de7883fe228107c92064d" id="r_a09fd74f7b72de7883fe228107c92064d"><td class="memItemLeft"><a class="el" href="classCppSpec_1_1ExpectationValue.html">ExpectationValue</a>&lt; std::string &gt;&#160;</td><td class="memItemRight"><a class="el" href="#a09fd74f7b72de7883fe228107c92064d">expect</a> (const char *string, std::source_location location=std::source_location::current())</td></tr>
-<tr class="memdesc:a09fd74f7b72de7883fe228107c92064d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <span class="tt"><a class="el" href="#abfb6f526937d7e8245344e6917ee264e" title="The expect object generator for objects and LiteralTypes.">expect</a></span> object generator for const char*.  <br /></td></tr>
 <tr class="memitem:a5cf7cc1804206c720af92cb0f10418f4" id="r_a5cf7cc1804206c720af92cb0f10418f4"><td class="memItemLeft"><a id="a5cf7cc1804206c720af92cb0f10418f4" name="a5cf7cc1804206c720af92cb0f10418f4"></a>
 void&#160;</td><td class="memItemRight"><b>add_result</b> (const <a class="el" href="classCppSpec_1_1Result.html">Result</a> &amp;result)</td></tr>
 <tr class="memitem:a4011751f613f38e015346c6c18a18d9f" id="r_a4011751f613f38e015346c6c18a18d9f"><td class="memItemLeft"><a id="a4011751f613f38e015346c6c18a18d9f" name="a4011751f613f38e015346c6c18a18d9f"></a>
@@ -274,46 +272,8 @@ size_t&#160;</td><td class="memItemRight"><b>num_failures</b> () const noexcept<
 </div>
 </div>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
-<a id="a09fd74f7b72de7883fe228107c92064d" name="a09fd74f7b72de7883fe228107c92064d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a09fd74f7b72de7883fe228107c92064d">&#9670;&#160;</a></span>expect() <span class="overload">[1/5]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classCppSpec_1_1ExpectationValue.html">ExpectationValue</a>&lt; std::string &gt; CppSpec::ItBase::expect </td>
-          <td>(</td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>string</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::source_location</td>          <td class="paramname"><span class="paramname"><em>location</em></span><span class="paramdefsep"> = </span><span class="paramdefval">std::source_location::current()</span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>The <span class="tt"><a class="el" href="#abfb6f526937d7e8245344e6917ee264e" title="The expect object generator for objects and LiteralTypes.">expect</a></span> object generator for const char*. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">string</td><td>the string to wrap </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>a <a class="el" href="classCppSpec_1_1ExpectationValue.html">ExpectationValue</a> object containing a C++ string </dd></dl>
-
-</div>
-</div>
 <a id="a81467a3a7e04055e1685f10e0c94be97" name="a81467a3a7e04055e1685f10e0c94be97"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a81467a3a7e04055e1685f10e0c94be97">&#9670;&#160;</a></span>expect() <span class="overload">[2/5]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a81467a3a7e04055e1685f10e0c94be97">&#9670;&#160;</a></span>expect() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -351,7 +311,7 @@ template&lt;typename T&gt; </div>
 </div>
 </div>
 <a id="a00270530ecb561876eb48e0b743bedb7" name="a00270530ecb561876eb48e0b743bedb7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a00270530ecb561876eb48e0b743bedb7">&#9670;&#160;</a></span>expect() <span class="overload">[3/5]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a00270530ecb561876eb48e0b743bedb7">&#9670;&#160;</a></span>expect() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -392,7 +352,7 @@ template&lt;typename T&gt; </div>
 </div>
 </div>
 <a id="a1f408a682aab72ae8837a243f24a36fb" name="a1f408a682aab72ae8837a243f24a36fb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1f408a682aab72ae8837a243f24a36fb">&#9670;&#160;</a></span>expect() <span class="overload">[4/5]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f408a682aab72ae8837a243f24a36fb">&#9670;&#160;</a></span>expect() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -430,7 +390,7 @@ template&lt;Util::is_functional T&gt; </div>
 </div>
 </div>
 <a id="abfb6f526937d7e8245344e6917ee264e" name="abfb6f526937d7e8245344e6917ee264e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abfb6f526937d7e8245344e6917ee264e">&#9670;&#160;</a></span>expect() <span class="overload">[5/5]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#abfb6f526937d7e8245344e6917ee264e">&#9670;&#160;</a></span>expect() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -452,6 +412,7 @@ template&lt;Util::is_not_functional T&gt; </div>
 
 <p>The <span class="tt"><a class="el" href="#abfb6f526937d7e8245344e6917ee264e" title="The expect object generator for objects and LiteralTypes.">expect</a></span> object generator for objects and LiteralTypes. </p>
 <p>A simple expect statement.</p>
+<p>A C string (a char pointer, or a char array, which decays to one) is kept as the pointer it is, so to_be_null() works on it; the string matchers compare it as text. Because a char array decays to a pointer, it is read as a C string, up to its first NUL, so it must be NUL-terminated; pass <span class="tt">std::string_view(buffer, size)</span> for a fixed-size buffer that may not be.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">value</td><td>the item to wrap. This parameter is passed by value so that statements like <span class="tt">expect(2)</span> or <span class="tt">expect(SomeClass())</span> can be passed in</td></tr>

@@ -20,21 +20,21 @@
 <area shape="poly" id="edge32_Node000001_Node000032" title=" " alt="" coords="74,860,83,915,101,985,115,1023,133,1059,154,1093,180,1123,196,1135,193,1139,177,1127,150,1097,128,1062,110,1025,96,987,78,916,69,861"/>
 <area shape="rect" id="Node000034" href="$classCppSpec_1_1Matchers_1_1MatcherBase.html" title="the base class for all Matcher classes and objects" alt="" coords="192,1202,359,1257"/>
 <area shape="poly" id="edge34_Node000001_Node000034" title=" " alt="" coords="73,859,79,924,95,1011,109,1058,127,1105,151,1148,181,1188,195,1200,191,1204,177,1191,147,1151,122,1107,104,1060,90,1013,73,925,67,860"/>
-<area shape="rect" id="Node000003" href="$classCppSpec_1_1Matchers_1_1BeBetween.html" title=" " alt="" coords="438,5,593,45"/>
+<area shape="rect" id="Node000003" href="$classCppSpec_1_1Matchers_1_1BeBetween.html" title="Matches a value between two bounds, inclusive or exclusive, compared by value when both sides are int..." alt="" coords="438,5,593,45"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="287,247,307,204,335,152,373,100,418,55,438,43,441,48,422,59,377,104,340,155,312,206,292,249"/>
-<area shape="rect" id="Node000004" href="$classCppSpec_1_1Matchers_1_1BeGreaterThan.html" title=" " alt="" coords="428,69,603,109"/>
+<area shape="rect" id="Node000004" href="$classCppSpec_1_1Matchers_1_1BeGreaterThan.html" title="Matches a value above the expected one: actual &gt; expected, compared by value when both are integers (..." alt="" coords="428,69,603,109"/>
 <area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="295,248,346,183,381,149,419,119,441,107,444,112,421,124,384,153,350,187,299,252"/>
-<area shape="rect" id="Node000005" href="$classCppSpec_1_1Matchers_1_1BeLessThan.html" title=" " alt="" coords="438,133,593,173"/>
+<area shape="rect" id="Node000005" href="$classCppSpec_1_1Matchers_1_1BeLessThan.html" title="Matches a value below the expected one: actual &lt; expected, compared by value when both are integers (..." alt="" coords="438,133,593,173"/>
 <area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="312,251,361,216,419,183,447,171,449,176,421,188,364,221,315,255"/>
 <area shape="rect" id="Node000006" href="$classCppSpec_1_1Matchers_1_1BeWithin.html" title=" " alt="" coords="438,197,593,237"/>
 <area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="364,255,439,235,441,240,365,260"/>
 <area shape="rect" id="Node000007" href="$classCppSpec_1_1Matchers_1_1ContainBase.html" title=" " alt="" coords="427,261,604,301"/>
 <area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="371,279,426,279,426,284,371,284"/>
-<area shape="rect" id="Node000009" href="$classCppSpec_1_1Matchers_1_1EndWith.html" title=" " alt="" coords="438,325,593,365"/>
+<area shape="rect" id="Node000009" href="$classCppSpec_1_1Matchers_1_1EndWith.html" title="The end with matcher." alt="" coords="438,325,593,365"/>
 <area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="365,302,441,323,439,328,364,308"/>
 <area shape="rect" id="Node000010" href="$classCppSpec_1_1Matchers_1_1Equal.html" title="The equal matcher." alt="" coords="438,389,593,429"/>
 <area shape="poly" id="edge9_Node000002_Node000010" title=" " alt="" coords="315,308,364,342,421,375,449,387,447,392,419,380,361,346,312,312"/>
-<area shape="rect" id="Node000011" href="$classCppSpec_1_1Matchers_1_1StartWith.html" title=" " alt="" coords="438,453,593,493"/>
+<area shape="rect" id="Node000011" href="$classCppSpec_1_1Matchers_1_1StartWith.html" title="The start with matcher." alt="" coords="438,453,593,493"/>
 <area shape="poly" id="edge10_Node000002_Node000011" title=" " alt="" coords="299,311,350,376,384,410,421,439,444,451,441,456,419,444,381,414,346,379,295,314"/>
 <area shape="rect" id="Node000008" href="$classCppSpec_1_1Matchers_1_1Contain.html" title=" " alt="" coords="679,261,834,301"/>
 <area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="618,279,679,279,679,284,618,284"/>
@@ -61,9 +61,9 @@
 <area shape="poly" id="edge28_Node000025_Node000028" title=" " alt="" coords="365,1006,441,1027,439,1032,364,1012"/>
 <area shape="rect" id="Node000027" href="$classCppSpec_1_1Matchers_1_1HaveValueEqualTo.html" title=" " alt="" coords="659,965,855,1005"/>
 <area shape="poly" id="edge27_Node000026_Node000027" title=" " alt="" coords="606,983,658,983,658,988,606,988"/>
-<area shape="rect" id="Node000030" href="$classCppSpec_1_1Matchers_1_1Match.html" title=" " alt="" coords="438,1093,593,1133"/>
+<area shape="rect" id="Node000030" href="$classCppSpec_1_1Matchers_1_1Match.html" title="The match matcher: the whole of the actual text matches a regular expression." alt="" coords="438,1093,593,1133"/>
 <area shape="poly" id="edge30_Node000029_Node000030" title=" " alt="" coords="369,1094,438,1102,437,1107,368,1099"/>
-<area shape="rect" id="Node000031" href="$classCppSpec_1_1Matchers_1_1MatchPartial.html" title=" " alt="" coords="438,1157,593,1197"/>
+<area shape="rect" id="Node000031" href="$classCppSpec_1_1Matchers_1_1MatchPartial.html" title="The partially match matcher: a regular expression matches somewhere in the actual text." alt="" coords="438,1157,593,1197"/>
 <area shape="poly" id="edge31_Node000029_Node000031" title=" " alt="" coords="355,1115,421,1143,454,1155,452,1160,419,1148,353,1120"/>
 <area shape="rect" id="Node000033" href="$classCppSpec_1_1Matchers_1_1Satisfy.html" title=" " alt="" coords="438,1221,593,1261"/>
 <area shape="poly" id="edge33_Node000032_Node000033" title=" " alt="" coords="349,1179,373,1188,421,1207,455,1219,453,1224,419,1212,371,1193,347,1184"/>

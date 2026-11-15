@@ -7,5 +7,7 @@ var searchData=
   ['spec_4',['C++Spec',['../index.html',1,'']]],
   ['start_5fwith_2ehpp_5',['start_with.hpp',['../start__with_8hpp.html',1,'']]],
   ['startwith_6',['StartWith',['../classCppSpec_1_1Matchers_1_1StartWith.html',1,'CppSpec::Matchers']]],
-  ['subject_7',['subject',['../classCppSpec_1_1ItCD.html#a348c2a47f1c19467b205fb101393d811',1,'CppSpec::ItCD']]]
+  ['string_5fview_5fof_7',['string_view_of',['../util_8hpp.html#a510e01827457b8c7ee1de1b7bec33742',1,'CppSpec']]],
+  ['strip_5ftype_5fkeywords_8',['strip_type_keywords',['../util_8hpp.html#a7bca837d3f0df5fde8bf164ae7e29598',1,'CppSpec::Util']]],
+  ['subject_9',['subject',['../classCppSpec_1_1ItCD.html#a348c2a47f1c19467b205fb101393d811',1,'CppSpec::ItCD']]]
 ];

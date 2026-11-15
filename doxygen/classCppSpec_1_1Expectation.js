@@ -13,6 +13,10 @@ var classCppSpec_1_1Expectation =
     [ "to_be_within", "classCppSpec_1_1Expectation.html#aed9b431bbfe5729d11101e844c45c090", null ],
     [ "to_contain", "classCppSpec_1_1Expectation.html#ae42603bfb6283f73a7bd4b4f40f66992", null ],
     [ "to_contain", "classCppSpec_1_1Expectation.html#a1edc3c2ec03516d7359b0ae5acd7299a", null ],
+    [ "to_end_with", "classCppSpec_1_1Expectation.html#a6ce6a13487c3049c7f977509edaef7b1", null ],
     [ "to_equal", "classCppSpec_1_1Expectation.html#ac6b898a5711a410b3733da24eb4e8cf1", null ],
-    [ "to_satisfy", "classCppSpec_1_1Expectation.html#a2eaf3647d0427652e0b77e881b7cf036", null ]
+    [ "to_match", "classCppSpec_1_1Expectation.html#a85de6dca3eb5e27cda228eac173917f5", null ],
+    [ "to_partially_match", "classCppSpec_1_1Expectation.html#a9c732a886834bf5c088163ed48f220a4", null ],
+    [ "to_satisfy", "classCppSpec_1_1Expectation.html#a2eaf3647d0427652e0b77e881b7cf036", null ],
+    [ "to_start_with", "classCppSpec_1_1Expectation.html#a1da1364c071d0af26a851c285e761586", null ]
 ];

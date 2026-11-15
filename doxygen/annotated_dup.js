@@ -34,14 +34,20 @@ var annotated_dup =
         [ "BeWithin", "classCppSpec_1_1Matchers_1_1BeWithin.html", "classCppSpec_1_1Matchers_1_1BeWithin" ],
         [ "BeWithinHelper", "classCppSpec_1_1Matchers_1_1BeWithinHelper.html", null ],
         [ "Satisfy", "classCppSpec_1_1Matchers_1_1Satisfy.html", "classCppSpec_1_1Matchers_1_1Satisfy" ],
-        [ "EndWith", "classCppSpec_1_1Matchers_1_1EndWith.html", null ],
+        [ "EndWith", "classCppSpec_1_1Matchers_1_1EndWith.html", "classCppSpec_1_1Matchers_1_1EndWith" ],
         [ "Match", "classCppSpec_1_1Matchers_1_1Match.html", "classCppSpec_1_1Matchers_1_1Match" ],
         [ "MatchPartial", "classCppSpec_1_1Matchers_1_1MatchPartial.html", "classCppSpec_1_1Matchers_1_1MatchPartial" ],
-        [ "StartWith", "classCppSpec_1_1Matchers_1_1StartWith.html", null ]
+        [ "StartWith", "classCppSpec_1_1Matchers_1_1StartWith.html", "classCppSpec_1_1Matchers_1_1StartWith" ]
       ] ],
       [ "Util", null, [
+        [ "prints_through_pretty", "structCppSpec_1_1Util_1_1prints__through__pretty.html", null ],
+        [ "prints_through_pretty&lt; std::optional&lt; T &gt; &gt;", "structCppSpec_1_1Util_1_1prints__through__pretty_3_01std_1_1optional_3_01T_01_4_01_4.html", null ],
+        [ "prints_through_pretty&lt; std::pair&lt; A, B &gt; &gt;", "structCppSpec_1_1Util_1_1prints__through__pretty_3_01std_1_1pair_3_01A_00_01B_01_4_01_4.html", null ],
+        [ "prints_through_pretty&lt; std::tuple&lt; Ts... &gt; &gt;", "structCppSpec_1_1Util_1_1prints__through__pretty_3_01std_1_1tuple_3_01Ts_8_8_8_01_4_01_4.html", null ],
+        [ "prints_through_pretty&lt; R &gt;", "structCppSpec_1_1Util_1_1prints__through__pretty_3_01R_01_4.html", null ],
         [ "verbose_assert", "structCppSpec_1_1Util_1_1verbose__assert.html", null ]
       ] ],
+      [ "JUnitOutputFile", "structCppSpec_1_1JUnitOutputFile.html", null ],
       [ "ClassDescription", "classCppSpec_1_1ClassDescription.html", "classCppSpec_1_1ClassDescription" ],
       [ "Description", "classCppSpec_1_1Description.html", null ],
       [ "Expectation", "classCppSpec_1_1Expectation.html", "classCppSpec_1_1Expectation" ],
@@ -52,7 +58,7 @@ var annotated_dup =
       [ "ItD", "classCppSpec_1_1ItD.html", "classCppSpec_1_1ItD" ],
       [ "ItCD", "classCppSpec_1_1ItCD.html", "classCppSpec_1_1ItCD" ],
       [ "ItBase", "classCppSpec_1_1ItBase.html", "classCppSpec_1_1ItBase" ],
-      [ "LetBase", "classCppSpec_1_1LetBase.html", null ],
+      [ "LetBase", "classCppSpec_1_1LetBase.html", "classCppSpec_1_1LetBase" ],
       [ "Pretty", "structCppSpec_1_1Pretty.html", "structCppSpec_1_1Pretty" ],
       [ "Result", "classCppSpec_1_1Result.html", null ],
       [ "Runnable", "classCppSpec_1_1Runnable.html", "classCppSpec_1_1Runnable" ],

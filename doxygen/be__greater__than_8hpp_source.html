@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">C++Spec<span id="projectnumber">&#160;1.0.0</span>
+   <div id="projectname">C++Spec<span id="projectnumber">&#160;1.1.0</span>
    </div>
    <div id="projectbrief">BDD testing for C++</div>
   </td>
@@ -98,23 +98,28 @@ $(function(){initNavTree('be__greater__than_8hpp_source.html','',''); });
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="matcher__base_8hpp.html">matchers/matcher_base.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="keyword">namespace </span>CppSpec::Matchers {</div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> A, <span class="keyword">typename</span> E&gt;</div>
-<div class="foldopen" id="foldopen00010" data-start="{" data-end="};">
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno"><a class="line" href="classCppSpec_1_1Matchers_1_1BeGreaterThan.html">   10</a></span><span class="keyword">class </span>BeGreaterThan : <span class="keyword">public</span> MatcherBase&lt;A, E&gt; {</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>  BeGreaterThan(<a class="code hl_class" href="classCppSpec_1_1Expectation.html">Expectation&lt;A&gt;</a>&amp; expectation, E <a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>) : MatcherBase&lt;A, E&gt;(expectation, <a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>) {}</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>  <span class="keywordtype">bool</span> match()<span class="keyword"> override </span>{ <span class="keywordflow">return</span> this-&gt;actual() &gt; this-&gt;expected(); }</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>  std::string verb()<span class="keyword"> override </span>{ <span class="keywordflow">return</span> <span class="stringliteral">&quot;be greater than&quot;</span>; }</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>};</div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="util_8hpp.html">util.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">namespace </span>CppSpec::Matchers {</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> A, <span class="keyword">typename</span> E&gt;</div>
+<div class="foldopen" id="foldopen00016" data-start="{" data-end="};">
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno"><a class="line" href="classCppSpec_1_1Matchers_1_1BeGreaterThan.html">   16</a></span><span class="keyword">class </span>BeGreaterThan : <span class="keyword">public</span> MatcherBase&lt;A, E&gt; {</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>  BeGreaterThan(<a class="code hl_class" href="classCppSpec_1_1Expectation.html">Expectation&lt;A&gt;</a>&amp; expectation, E <a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>) : MatcherBase&lt;A, E&gt;(expectation, <a class="code hl_concept" href="conceptCppSpec_1_1Matchers_1_1expected.html">expected</a>) {}</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  <span class="keywordtype">bool</span> match()<span class="keyword"> override </span>{ <span class="keywordflow">return</span> <a class="code hl_function" href="util_8hpp.html#ad7b329b0f0bd813de715a47cfe220f48">Util::greater</a>(this-&gt;actual(), this-&gt;expected()); }</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>  <span class="keywordtype">bool</span> negated_match()<span class="keyword"> override </span>{ <span class="keywordflow">return</span> <a class="code hl_function" href="util_8hpp.html#ae986fa8194c8493705f974bfb0fe3774">Util::less_equal</a>(this-&gt;actual(), this-&gt;expected()); }</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>  std::string verb()<span class="keyword"> override </span>{ <span class="keywordflow">return</span> <span class="stringliteral">&quot;be greater than&quot;</span>; }</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>};</div>
 </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>}  <span class="comment">// namespace CppSpec::Matchers</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>}  <span class="comment">// namespace CppSpec::Matchers</span></div>
 <div class="ttc" id="aclassCppSpec_1_1Expectation_html"><div class="ttname"><a href="classCppSpec_1_1Expectation.html">CppSpec::Expectation</a></div><div class="ttdoc">Wraps the target of an expectation.</div><div class="ttdef"><b>Definition</b> expectation.hpp:48</div></div>
 <div class="ttc" id="aconceptCppSpec_1_1Matchers_1_1expected_html"><div class="ttname"><a href="conceptCppSpec_1_1Matchers_1_1expected.html">CppSpec::Matchers::expected</a></div><div class="ttdef"><b>Definition</b> have_error.hpp:9</div></div>
 <div class="ttc" id="amatcher__base_8hpp_html"><div class="ttname"><a href="matcher__base_8hpp.html">matcher_base.hpp</a></div><div class="ttdoc">Contains the base class for all Matchers.</div></div>
+<div class="ttc" id="autil_8hpp_html"><div class="ttname"><a href="util_8hpp.html">util.hpp</a></div><div class="ttdoc">Utility functions and classes.</div></div>
+<div class="ttc" id="autil_8hpp_html_ad7b329b0f0bd813de715a47cfe220f48"><div class="ttname"><a href="util_8hpp.html#ad7b329b0f0bd813de715a47cfe220f48">CppSpec::Util::greater</a></div><div class="ttdeci">constexpr bool greater(const A &amp;a, const B &amp;b)</div><div class="ttdoc">a &gt; b, by value when both are integers (std::cmp_greater), and with &gt; otherwise.</div><div class="ttdef"><b>Definition</b> util.hpp:256</div></div>
+<div class="ttc" id="autil_8hpp_html_ae986fa8194c8493705f974bfb0fe3774"><div class="ttname"><a href="util_8hpp.html#ae986fa8194c8493705f974bfb0fe3774">CppSpec::Util::less_equal</a></div><div class="ttdeci">constexpr bool less_equal(const A &amp;a, const B &amp;b)</div><div class="ttdoc">a &lt;= b, by value when both are integers (std::cmp_less_equal), and with &lt;= otherwise.</div><div class="ttdef"><b>Definition</b> util.hpp:244</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 </div><!-- container -->
