@@ -383,7 +383,12 @@ inline std::string Pretty::to_word(const T& item) {
   };
   if constexpr (std::ranges::input_range<const T>) {
     for (const auto& element : item) {
-      append(element);
+      // std::vector<bool> may hand out a proxy for each element, as libc++'s does; it is printed as the bool it holds.
+      if constexpr (std::same_as<std::remove_cv_t<std::ranges::range_value_t<const T>>, bool>) {
+        append(static_cast<bool>(element));
+      } else {
+        append(element);
+      }
     }
   } else {
     std::apply([&](const auto&... elements) { (append(elements), ...); }, item);
