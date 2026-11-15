@@ -179,10 +179,13 @@ describe pretty_spec("Pretty::to_word", $ {
 
     it("compares containers of enums and of optionals, printing them by value", _ {
       expect(std::vector<Colour>{Colour::Red}).to_equal(std::vector<Colour>{Colour::Red});
-      expect(std::vector<std::optional<int>>{1}).not_().to_equal(std::vector<std::optional<int>>{std::nullopt});
+      // The element is written as an optional: Clang 19 and earlier read `std::vector<std::optional<int>>{1}` in a
+      // generic lambda as a vector of one empty optional, through the size constructor.
+      const auto one = std::vector<std::optional<int>>{std::optional<int>{1}};
+      expect(one).not_().to_equal(std::vector<std::optional<int>>{std::nullopt});
       expect(equal_failure(std::vector<Colour>{Colour::Red}, std::vector<Colour>{Colour::Blue}))
           .to_partially_match("=> \\[Colour\\(3\\)\\]\n +got .* => \\[Colour\\(2\\)\\]");
-      expect(equal_failure(std::vector<std::optional<int>>{1}, std::vector<std::optional<int>>{std::nullopt}))
+      expect(equal_failure(one, std::vector<std::optional<int>>{std::nullopt}))
           .to_partially_match("=> \\[std::nullopt\\]\n +got .* => \\[1\\]");
     });
   });
