@@ -10,6 +10,7 @@
 #include <forward_list>
 #include <list>
 #include <map>
+#include <memory>
 #include <optional>
 #include <ranges>
 #include <regex>
@@ -190,6 +191,17 @@ struct Pretty {
 
   template <typename T>
   static std::string inspect_object(const T& object);
+
+  /**
+   * @brief Formats an address as `0x` and lowercase hex digits, the same on every platform
+   *
+   * std::ostream prints a pointer in the platform's `%p` form, which on MSVC has no `0x` and uppercase digits.
+   *
+   * @param address the address to be processed
+   *
+   * @return the string representation, e.g. `0x7ffd5c3e1a2c`
+   */
+  static std::string address_of(const void* address) { return std::format("{}", address); }
 };
 
 /**
@@ -307,7 +319,7 @@ template <typename T>
 inline std::string Pretty::to_word(const T& item) {
   std::stringstream ss;
   // Ruby-style inspect for objects without an overloaded operator<<
-  ss << "#<" << Util::demangle(typeid(item).name()) << ":" << &item << ">";
+  ss << "#<" << Util::demangle(typeid(item).name()) << ":" << address_of(std::addressof(item)) << ">";
   return ss.str();
 }
 
@@ -342,9 +354,7 @@ inline std::string Pretty::to_word(const T& item) {
   if (item == nullptr) {
     return "nullptr";
   }
-  std::ostringstream oss;
-  oss << static_cast<const void*>(item);
-  return oss.str();
+  return address_of(item);
 }
 
 /**

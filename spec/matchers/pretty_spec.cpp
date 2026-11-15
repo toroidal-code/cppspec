@@ -43,6 +43,9 @@ struct Bytes {
   [[nodiscard]] auto end() const { return bytes.end(); }
 };
 
+// A type with no operator<<.
+struct Unprintable {};
+
 // The message Equal reports when it fails on the given values.
 template <typename T>
 std::string equal_failure(T actual, T expected) {
@@ -182,6 +185,10 @@ describe pretty_spec("Pretty::to_word", $ {
       expect(equal_failure(std::vector<std::optional<int>>{1}, std::vector<std::optional<int>>{std::nullopt}))
           .to_partially_match("=> \\[std::nullopt\\]\n +got .* => \\[1\\]");
     });
+  });
+
+  it("prints an object with no operator<< as its type and a 0x address", _ {
+    expect(Pretty::to_word(Unprintable{})).to_match("#<.*Unprintable:0x[0-9a-f]+>");
   });
 
   it("strips MSVC's enum, class, struct and union keywords from a type name, wherever they start a word", _ {
